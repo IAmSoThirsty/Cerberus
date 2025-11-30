@@ -24,6 +24,12 @@ class HeuristicGuardian(BaseGuardian):
     MEDIUM_THRESHOLD = 0.5
     LOW_THRESHOLD = 0.3
 
+    # Capitalization analysis constants
+    CAP_RATIO_THRESHOLD = 0.5
+    CAP_RATIO_DIVISOR = 2
+    CAP_FALLBACK_SCORE = 0.5
+    CAP_UPPER_COUNT_THRESHOLD = 10
+
     def __init__(self, guardian_id: str | None = None) -> None:
         """Initialize the heuristic guardian.
 
@@ -53,9 +59,15 @@ class HeuristicGuardian(BaseGuardian):
         lower_count = sum(1 for c in content if c.islower())
         if lower_count > 0:
             cap_ratio = upper_count / lower_count
-            scores["capitalization"] = min(cap_ratio / 2, 1.0) if cap_ratio > 0.5 else 0.0
+            if cap_ratio > self.CAP_RATIO_THRESHOLD:
+                scores["capitalization"] = min(cap_ratio / self.CAP_RATIO_DIVISOR, 1.0)
+            else:
+                scores["capitalization"] = 0.0
         else:
-            scores["capitalization"] = 0.5 if upper_count > 10 else 0.0
+            if upper_count > self.CAP_UPPER_COUNT_THRESHOLD:
+                scores["capitalization"] = self.CAP_FALLBACK_SCORE
+            else:
+                scores["capitalization"] = 0.0
 
         # Heuristic 3: Instruction-like phrases
         instruction_phrases = [

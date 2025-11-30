@@ -138,7 +138,7 @@ class HubCoordinator:
                 logger.warning(
                     "threat_detected",
                     guardian_id=guardian.guardian_id,
-                    threat_level=result.threat_level.value,
+                    threat_level=result.threat_level.name.lower(),
                     message=result.message,
                 )
 
@@ -150,19 +150,19 @@ class HubCoordinator:
         all_safe = all(r.is_safe for r in results)
         highest_threat = ThreatLevel.NONE
         for result in results:
-            if result.threat_level.value > highest_threat.value:
+            if result.threat_level > highest_threat:
                 highest_threat = result.threat_level
 
         return {
             "decision": "allowed" if all_safe else "blocked",
             "is_safe": all_safe,
-            "highest_threat": highest_threat.value,
+            "highest_threat": highest_threat.name.lower(),
             "guardian_count": self.guardian_count,
             "results": [
                 {
                     "guardian_id": r.guardian_id,
                     "is_safe": r.is_safe,
-                    "threat_level": r.threat_level.value,
+                    "threat_level": r.threat_level.name.lower(),
                     "message": r.message,
                 }
                 for r in results

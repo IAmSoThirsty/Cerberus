@@ -143,7 +143,7 @@ class PatternGuardian(BaseGuardian):
         return GuardianResult(
             guardian_id=self.guardian_id,
             is_safe=is_safe,
-            threat_level=threat_level if not is_safe else ThreatLevel.NONE,
+            threat_level=threat_level,
             message=message,
             details=details,
         )

@@ -2,18 +2,18 @@
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from enum import Enum
+from enum import IntEnum
 from typing import Any
 
 
-class ThreatLevel(Enum):
-    """Classification of detected threats."""
+class ThreatLevel(IntEnum):
+    """Classification of detected threats with numeric values for comparison."""
 
-    NONE = "none"
-    LOW = "low"
-    MEDIUM = "medium"
-    HIGH = "high"
-    CRITICAL = "critical"
+    NONE = 0
+    LOW = 1
+    MEDIUM = 2
+    HIGH = 3
+    CRITICAL = 4
 
 
 @dataclass

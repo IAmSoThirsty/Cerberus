@@ -1,6 +1,6 @@
 # Cerberus Guard Bot Configuration
 
-# This directory contains configuration files for the Cerberus Guard Bot.
+This directory contains configuration files for the Cerberus Guard Bot.
 
 ## Files
 
