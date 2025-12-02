@@ -1,7 +1,5 @@
 # Cerberus Guard Bot
 
-A hardened, multi-agent shield for AI-to-AGI systems.
-
 ## Features
 
 - 🛡️ **Multi-Guardian Architecture**: Three different guardian types with unique analysis styles
