@@ -1,1 +1,1 @@
-"""Tests for Cerberus guardians and hub."""
+"""Test package for Cerberus Guard Bot."""

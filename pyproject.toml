@@ -3,18 +3,18 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "cerberus-guard"
+name = "cerberus-guard-bot"
 version = "0.1.0"
 description = "Cerberus Guard Bot: a hardened, multi-agent shield for AI-to-AGI systems"
 readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.10"
 authors = [
-    {name = "Cerberus Team"}
+    {name = "IAmSoThirsty"}
 ]
-keywords = ["ai", "safety", "guard", "multi-agent", "security"]
+keywords = ["AI", "AGI", "security", "guardian", "multi-agent"]
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 2 - Pre-Alpha",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
@@ -26,19 +26,20 @@ classifiers = [
 ]
 dependencies = [
     "pydantic>=2.0.0",
+    "structlog>=24.0.0",
 ]
 
 [project.optional-dependencies]
 dev = [
-    "pytest>=7.0.0",
+    "pytest>=8.0.0",
     "pytest-cov>=4.0.0",
-    "ruff>=0.1.0",
+    "pytest-asyncio>=0.23.0",
+    "ruff>=0.4.0",
     "mypy>=1.0.0",
 ]
 
-[project.urls]
-Homepage = "https://github.com/IAmSoThirsty/Cerberus"
-Repository = "https://github.com/IAmSoThirsty/Cerberus"
+[project.scripts]
+cerberus = "cerberus.main:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
@@ -48,7 +49,7 @@ line-length = 100
 target-version = "py310"
 
 [tool.ruff.lint]
-select = ["E", "F", "W", "I", "N", "UP", "B", "C4"]
+select = ["E", "F", "I", "N", "W", "UP"]
 ignore = []
 
 [tool.mypy]
@@ -56,9 +57,9 @@ python_version = "3.10"
 warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = true
+strict = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-python_files = ["test_*.py"]
-python_classes = ["Test*"]
-python_functions = ["test_*"]
+asyncio_mode = "auto"
+addopts = "-v --cov=cerberus --cov-report=term-missing"

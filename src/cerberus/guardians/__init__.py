@@ -1,22 +1,14 @@
-"""
-Guardian implementations for Cerberus.
+"""Guardian agents package - contains different guardian implementations."""
 
-Contains multiple guardian types with different detection styles:
-- PatternGuardian: Rule-based pattern matching
-- HeuristicGuardian: Heuristic analysis approach
-- StatisticalGuardian: Statistical anomaly detection
-"""
-
-from cerberus.guardians.base import Guardian, ThreatLevel, ThreatReport
-from cerberus.guardians.heuristic_guardian import HeuristicGuardian
-from cerberus.guardians.pattern_guardian import PatternGuardian
-from cerberus.guardians.statistical_guardian import StatisticalGuardian
+from cerberus.guardians.base import BaseGuardian, GuardianResult
+from cerberus.guardians.heuristic import HeuristicGuardian
+from cerberus.guardians.pattern import PatternGuardian
+from cerberus.guardians.strict import StrictGuardian
 
 __all__ = [
-    "Guardian",
-    "ThreatLevel",
-    "ThreatReport",
-    "PatternGuardian",
+    "BaseGuardian",
+    "GuardianResult",
+    "StrictGuardian",
     "HeuristicGuardian",
-    "StatisticalGuardian",
+    "PatternGuardian",
 ]
