@@ -157,9 +157,9 @@ class CerberusHub:
         # Use highest threat level
         max_threat = max(threat_levels, key=lambda t: list(ThreatLevel).index(t))
 
-        # Weighted average confidence (higher confidence reports weighted more)
-        if sum(confidences) > 0:
-            weighted_conf = sum(c * c for c in confidences) / sum(confidences)
+        # Aggregated confidence (simple average of guardian confidences)
+        if confidences:
+            weighted_conf = sum(confidences) / len(confidences)
         else:
             weighted_conf = 0.0
 
