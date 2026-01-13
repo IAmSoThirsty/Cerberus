@@ -197,19 +197,30 @@ class CerberusHub:
         """
         Detect if a bypass attempt occurred.
 
-        A bypass is detected when:
-        - At least one guardian detected a high/critical threat
-        - But another guardian detected low/no threat
-        This indicates an attempt to exploit blind spots.
+        A bypass is detected when there is strong disagreement between guardians:
+        - Multiple guardians report high/critical threat levels, while
+          at least one reports low/no threat, or vice versa.
+
+        This reduces false positives from normal variation between different
+        detection strategies (for example, entropy vs pattern matching) while
+        still flagging likely attempts to exploit blind spots.
         """
-        high_threat_detected = any(
-            r.threat_level in (ThreatLevel.HIGH, ThreatLevel.CRITICAL) for r in reports
+        # With very few guardians, disagreements are noisy and expected.
+        if len(reports) < 3:
+            return False
+
+        high_crit_count = sum(
+            1 for r in reports if r.threat_level in (ThreatLevel.HIGH, ThreatLevel.CRITICAL)
         )
-        low_threat_detected = any(
-            r.threat_level in (ThreatLevel.NONE, ThreatLevel.LOW) for r in reports
+        low_none_count = sum(
+            1 for r in reports if r.threat_level in (ThreatLevel.NONE, ThreatLevel.LOW)
         )
 
-        return high_threat_detected and low_threat_detected
+        # Require disagreement involving multiple guardians on at least one side,
+        # to avoid treating a single outlier as a bypass attempt.
+        return (high_crit_count >= 2 and low_none_count >= 1) or (
+            high_crit_count >= 1 and low_none_count >= 2
+        )
 
     def _handle_bypass(self) -> None:
         """Handle a detected bypass attempt by spawning new guardians."""
