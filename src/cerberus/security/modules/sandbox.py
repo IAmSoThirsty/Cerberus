@@ -13,9 +13,10 @@ import resource
 import subprocess
 import sys
 import tempfile
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, Set
+from typing import Any
 
 
 @dataclass
@@ -26,7 +27,7 @@ class SandboxConfig:
     max_cpu_time_seconds: int = 30  # Maximum CPU time
     max_file_size_mb: int = 10  # Maximum file size
     max_processes: int = 10  # Maximum number of processes
-    allowed_syscalls: Optional[Set[str]] = None  # Allowed system calls
+    allowed_syscalls: set[str] | None = None  # Allowed system calls
     network_enabled: bool = False  # Allow network access
     filesystem_readonly: bool = True  # Read-only filesystem
     temp_dir_only: bool = True  # Only access temp directory
@@ -43,7 +44,7 @@ class AgentSandbox:
     Sandbox for agent execution with resource limits
     """
 
-    def __init__(self, config: Optional[SandboxConfig] = None):
+    def __init__(self, config: SandboxConfig | None = None):
         """
         Initialize agent sandbox
 
@@ -109,7 +110,7 @@ class AgentSandbox:
                 (self.config.max_processes, self.config.max_processes),
             )
 
-    def execute_code(self, code: str, timeout: Optional[int] = None) -> Dict:
+    def execute_code(self, code: str, timeout: int | None = None) -> dict:
         """
         Execute Python code in sandbox
 
@@ -147,7 +148,7 @@ class AgentSandbox:
             except subprocess.TimeoutExpired:
                 raise SandboxViolation("Execution timeout")
 
-    def _get_sandboxed_env(self) -> Dict[str, str]:
+    def _get_sandboxed_env(self) -> dict[str, str]:
         """Get sandboxed environment variables"""
         # Start with minimal environment
         env = {
@@ -174,7 +175,7 @@ class PluginSandbox:
     Sandbox for plugin execution with capability controls
     """
 
-    def __init__(self, config: Optional[SandboxConfig] = None):
+    def __init__(self, config: SandboxConfig | None = None):
         """
         Initialize plugin sandbox
 
@@ -182,7 +183,7 @@ class PluginSandbox:
             config: Sandbox configuration
         """
         self.config = config or SandboxConfig()
-        self.allowed_modules: Set[str] = {
+        self.allowed_modules: set[str] = {
             "json",
             "re",
             "math",
@@ -244,7 +245,7 @@ class PluginSandbox:
             if f"import {module}" in code or f"from {module}" in code:
                 raise SandboxViolation(f"Blocked import: {module}")
 
-    def _get_restricted_globals(self) -> Dict:
+    def _get_restricted_globals(self) -> dict:
         """Get restricted global namespace for plugin execution"""
         # Start with empty globals
         restricted = {"__builtins__": {}}
@@ -322,7 +323,7 @@ class ContainerSandbox:
         self.memory_limit = memory_limit
         self.cpu_limit = cpu_limit
 
-    def execute(self, command: List[str], timeout: int = 30) -> Dict:
+    def execute(self, command: list[str], timeout: int = 30) -> dict:
         """
         Execute command in container
 

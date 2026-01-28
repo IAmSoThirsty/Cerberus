@@ -8,13 +8,12 @@ Real-time security monitoring with:
 - Metrics collection (Prometheus-ready)
 """
 
-import json
-import time
 from collections import defaultdict, deque
+from collections.abc import Callable
 from dataclasses import asdict, dataclass, field
 from datetime import datetime, timedelta
 from enum import Enum
-from typing import Any, Callable, Deque, Dict, List, Optional
+from typing import Any
 
 
 class AlertSeverity(Enum):
@@ -46,12 +45,12 @@ class Alert:
     category: str
     created_at: datetime = field(default_factory=datetime.now)
     status: AlertStatus = AlertStatus.OPEN
-    source: Optional[str] = None
-    metadata: Dict[str, Any] = field(default_factory=dict)
-    resolved_at: Optional[datetime] = None
-    resolved_by: Optional[str] = None
+    source: str | None = None
+    metadata: dict[str, Any] = field(default_factory=dict)
+    resolved_at: datetime | None = None
+    resolved_by: str | None = None
 
-    def to_dict(self) -> Dict:
+    def to_dict(self) -> dict:
         """Convert to dictionary"""
         data = asdict(self)
         data["severity"] = self.severity.value
@@ -69,7 +68,7 @@ class SecurityMetric:
     name: str
     value: float
     timestamp: datetime = field(default_factory=datetime.now)
-    labels: Dict[str, str] = field(default_factory=dict)
+    labels: dict[str, str] = field(default_factory=dict)
 
 
 @dataclass
@@ -82,10 +81,10 @@ class Incident:
     severity: AlertSeverity
     created_at: datetime = field(default_factory=datetime.now)
     status: str = "open"
-    related_alerts: List[str] = field(default_factory=list)
-    timeline: List[Dict] = field(default_factory=list)
-    assigned_to: Optional[str] = None
-    resolved_at: Optional[datetime] = None
+    related_alerts: list[str] = field(default_factory=list)
+    timeline: list[dict] = field(default_factory=list)
+    assigned_to: str | None = None
+    resolved_at: datetime | None = None
 
 
 class AlertManager:
@@ -95,8 +94,8 @@ class AlertManager:
 
     def __init__(self):
         """Initialize alert manager"""
-        self.alerts: Dict[str, Alert] = {}
-        self.handlers: Dict[AlertSeverity, List[Callable]] = defaultdict(list)
+        self.alerts: dict[str, Alert] = {}
+        self.handlers: dict[AlertSeverity, list[Callable]] = defaultdict(list)
 
     def create_alert(
         self,
@@ -104,8 +103,8 @@ class AlertManager:
         title: str,
         description: str,
         category: str,
-        source: Optional[str] = None,
-        metadata: Optional[Dict] = None,
+        source: str | None = None,
+        metadata: dict | None = None,
     ) -> Alert:
         """
         Create new alert
@@ -160,7 +159,7 @@ class AlertManager:
                 pass
 
     def register_handler(
-        self, handler: Callable, severity: Optional[AlertSeverity] = None
+        self, handler: Callable, severity: AlertSeverity | None = None
     ):
         """
         Register alert handler
@@ -171,7 +170,7 @@ class AlertManager:
         """
         self.handlers[severity].append(handler)
 
-    def acknowledge_alert(self, alert_id: str, user: Optional[str] = None) -> bool:
+    def acknowledge_alert(self, alert_id: str, user: str | None = None) -> bool:
         """Acknowledge alert"""
         alert = self.alerts.get(alert_id)
         if alert:
@@ -179,7 +178,7 @@ class AlertManager:
             return True
         return False
 
-    def resolve_alert(self, alert_id: str, user: Optional[str] = None) -> bool:
+    def resolve_alert(self, alert_id: str, user: str | None = None) -> bool:
         """Resolve alert"""
         alert = self.alerts.get(alert_id)
         if alert:
@@ -189,7 +188,7 @@ class AlertManager:
             return True
         return False
 
-    def get_active_alerts(self, severity: Optional[AlertSeverity] = None) -> List[Alert]:
+    def get_active_alerts(self, severity: AlertSeverity | None = None) -> list[Alert]:
         """Get active (not resolved) alerts"""
         alerts = [
             a
@@ -202,7 +201,7 @@ class AlertManager:
 
         return sorted(alerts, key=lambda a: a.created_at, reverse=True)
 
-    def get_statistics(self) -> Dict:
+    def get_statistics(self) -> dict:
         """Get alert statistics"""
         stats = {
             "total_alerts": len(self.alerts),
@@ -234,7 +233,7 @@ class SecurityMonitor:
 
     def __init__(
         self,
-        alert_manager: Optional[AlertManager] = None,
+        alert_manager: AlertManager | None = None,
         anomaly_threshold: float = 3.0,
         window_size: int = 100,
     ):
@@ -251,18 +250,18 @@ class SecurityMonitor:
         self.window_size = window_size
 
         # Metric storage
-        self.metrics: Dict[str, Deque[SecurityMetric]] = defaultdict(
+        self.metrics: dict[str, deque[SecurityMetric]] = defaultdict(
             lambda: deque(maxlen=window_size)
         )
 
         # Incident tracking
-        self.incidents: Dict[str, Incident] = {}
+        self.incidents: dict[str, Incident] = {}
 
         # Counter metrics
-        self.counters: Dict[str, int] = defaultdict(int)
+        self.counters: dict[str, int] = defaultdict(int)
 
     def record_metric(
-        self, name: str, value: float, labels: Optional[Dict[str, str]] = None
+        self, name: str, value: float, labels: dict[str, str] | None = None
     ):
         """
         Record security metric
@@ -326,7 +325,7 @@ class SecurityMonitor:
         title: str,
         description: str,
         severity: AlertSeverity,
-        related_alerts: Optional[List[str]] = None,
+        related_alerts: list[str] | None = None,
     ) -> Incident:
         """Create security incident"""
         import secrets
@@ -355,7 +354,7 @@ class SecurityMonitor:
 
         return incident
 
-    def get_metric_stats(self, metric_name: str) -> Optional[Dict]:
+    def get_metric_stats(self, metric_name: str) -> dict | None:
         """Get statistics for metric"""
         metrics = list(self.metrics.get(metric_name, []))
 
@@ -373,7 +372,7 @@ class SecurityMonitor:
             "latest": values[-1],
         }
 
-    def get_all_metrics(self) -> Dict[str, Dict]:
+    def get_all_metrics(self) -> dict[str, dict]:
         """Get all metric statistics"""
         return {
             name: self.get_metric_stats(name) for name in self.metrics.keys()
@@ -414,7 +413,7 @@ class SecurityMonitor:
 
         return "\n".join(lines)
 
-    def get_system_health(self) -> Dict:
+    def get_system_health(self) -> dict:
         """Get overall system health status"""
         active_alerts = self.alert_manager.get_active_alerts()
 

@@ -9,14 +9,13 @@ Provides encryption at rest for sensitive data with:
 """
 
 import base64
-import hashlib
 import json
 import os
 import secrets
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any
 
 from cryptography.fernet import Fernet, MultiFernet
 from cryptography.hazmat.primitives import hashes
@@ -30,7 +29,7 @@ class EncryptionKey:
     key_id: str
     key_data: bytes
     created_at: datetime
-    expires_at: Optional[datetime] = None
+    expires_at: datetime | None = None
     is_active: bool = True
 
 
@@ -55,7 +54,7 @@ class KeyManager:
         self.key_dir.mkdir(parents=True, exist_ok=True)
         self.rotation_days = rotation_days
 
-        self.keys: Dict[str, EncryptionKey] = {}
+        self.keys: dict[str, EncryptionKey] = {}
         self._load_keys()
 
         # Ensure we have at least one active key
@@ -66,7 +65,7 @@ class KeyManager:
         """Load keys from disk"""
         key_file = self.key_dir / "keys.json"
         if key_file.exists():
-            with open(key_file, "r") as f:
+            with open(key_file) as f:
                 data = json.load(f)
                 for key_data in data.get("keys", []):
                     key = EncryptionKey(
@@ -108,7 +107,7 @@ class KeyManager:
         # Set restrictive permissions
         os.chmod(key_file, 0o600)
 
-    def generate_key(self, key_id: Optional[str] = None) -> EncryptionKey:
+    def generate_key(self, key_id: str | None = None) -> EncryptionKey:
         """
         Generate a new encryption key
 
@@ -157,11 +156,11 @@ class KeyManager:
 
         return new_key
 
-    def get_key(self, key_id: str) -> Optional[EncryptionKey]:
+    def get_key(self, key_id: str) -> EncryptionKey | None:
         """Get key by ID"""
         return self.keys.get(key_id)
 
-    def get_active_key(self) -> Optional[EncryptionKey]:
+    def get_active_key(self) -> EncryptionKey | None:
         """Get the current active key"""
         active_keys = self._get_active_keys()
         return active_keys[0] if active_keys else None
@@ -186,7 +185,7 @@ class KeyManager:
         return False
 
     def derive_key_from_password(
-        self, password: str, salt: Optional[bytes] = None
+        self, password: str, salt: bytes | None = None
     ) -> bytes:
         """
         Derive encryption key from password using PBKDF2
@@ -217,7 +216,7 @@ class EncryptionManager:
     Manages encryption and decryption of sensitive data
     """
 
-    def __init__(self, key_manager: Optional[KeyManager] = None):
+    def __init__(self, key_manager: KeyManager | None = None):
         """
         Initialize encryption manager
 
@@ -226,7 +225,7 @@ class EncryptionManager:
         """
         self.key_manager = key_manager or KeyManager()
 
-    def encrypt(self, data: bytes) -> Dict[str, str]:
+    def encrypt(self, data: bytes) -> dict[str, str]:
         """
         Encrypt data with active key
 
@@ -248,7 +247,7 @@ class EncryptionManager:
             "data": base64.b64encode(encrypted).decode("utf-8"),
         }
 
-    def decrypt(self, encrypted_data: Dict[str, str]) -> bytes:
+    def decrypt(self, encrypted_data: dict[str, str]) -> bytes:
         """
         Decrypt data
 
@@ -269,7 +268,7 @@ class EncryptionManager:
 
         return fernet.decrypt(encrypted)
 
-    def encrypt_with_multi_key(self, data: bytes) -> Dict[str, str]:
+    def encrypt_with_multi_key(self, data: bytes) -> dict[str, str]:
         """
         Encrypt with multiple keys for rotation support
 
@@ -293,20 +292,20 @@ class EncryptionManager:
             "data": base64.b64encode(encrypted).decode("utf-8"),
         }
 
-    def encrypt_string(self, text: str) -> Dict[str, str]:
+    def encrypt_string(self, text: str) -> dict[str, str]:
         """Encrypt string"""
         return self.encrypt(text.encode("utf-8"))
 
-    def decrypt_string(self, encrypted_data: Dict[str, str]) -> str:
+    def decrypt_string(self, encrypted_data: dict[str, str]) -> str:
         """Decrypt string"""
         return self.decrypt(encrypted_data).decode("utf-8")
 
-    def encrypt_json(self, data: Any) -> Dict[str, str]:
+    def encrypt_json(self, data: Any) -> dict[str, str]:
         """Encrypt JSON-serializable data"""
         json_str = json.dumps(data)
         return self.encrypt_string(json_str)
 
-    def decrypt_json(self, encrypted_data: Dict[str, str]) -> Any:
+    def decrypt_json(self, encrypted_data: dict[str, str]) -> Any:
         """Decrypt JSON data"""
         json_str = self.decrypt_string(encrypted_data)
         return json.loads(json_str)
@@ -335,7 +334,7 @@ class EncryptionManager:
             input_path: Path to encrypted file
             output_path: Path to output file
         """
-        with open(input_path, "r") as f:
+        with open(input_path) as f:
             encrypted = json.load(f)
 
         data = self.decrypt(encrypted)
@@ -343,7 +342,7 @@ class EncryptionManager:
         with open(output_path, "wb") as f:
             f.write(data)
 
-    def rotate_encrypted_data(self, encrypted_data: Dict[str, str]) -> Dict[str, str]:
+    def rotate_encrypted_data(self, encrypted_data: dict[str, str]) -> dict[str, str]:
         """
         Re-encrypt data with new key
 

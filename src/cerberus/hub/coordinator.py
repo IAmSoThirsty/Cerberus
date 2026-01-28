@@ -2,10 +2,14 @@
 
 import random
 import string
+import time
+from collections import defaultdict
+from threading import Lock
 from typing import Any
 
 import structlog
 
+from cerberus.config import settings
 from cerberus.guardians.base import BaseGuardian, GuardianResult, ThreatLevel
 from cerberus.guardians.heuristic import HeuristicGuardian
 from cerberus.guardians.pattern import PatternGuardian
@@ -19,11 +23,9 @@ class HubCoordinator:
 
     The hub manages a pool of guardians, distributes analysis tasks,
     aggregates results, and handles the exponential growth mechanism
-    when bypass attempts are detected.
+    when bypass attempts are detected. Includes rate limiting to prevent
+    resource exhaustion from rapid spawning.
     """
-
-    MAX_GUARDIANS = 27
-    GUARDIAN_GROWTH_FACTOR = 3
 
     GUARDIAN_TYPES: list[type[BaseGuardian]] = [
         StrictGuardian,
@@ -36,12 +38,30 @@ class HubCoordinator:
 
         Args:
             max_guardians: Maximum number of guardians before shutdown.
-                          Defaults to 27.
+                          Defaults to value from settings.
         """
-        self.max_guardians = max_guardians or self.MAX_GUARDIANS
+        self.max_guardians = max_guardians or settings.max_guardians
         self._guardians: list[BaseGuardian] = []
         self._shutdown = False
+
+        # Spawn rate limiting (token bucket)
+        self._spawn_lock = Lock()
+        self._spawn_tokens = float(settings.spawn_rate_per_minute)
+        self._last_token_refill = time.time()
+        self._last_spawn_time = 0.0
+
+        # Per-source rate limiting
+        self._source_attempts: dict[str, list[float]] = defaultdict(list)
+        self._last_cleanup = time.time()
+
         self._initialize_guardians()
+
+        logger.info(
+            "hub_initialized",
+            spawn_factor=settings.spawn_factor,
+            max_guardians=self.max_guardians,
+            spawn_cooldown=settings.spawn_cooldown_seconds,
+        )
 
     def _generate_guardian_id(self) -> str:
         """Generate a unique guardian identifier."""
@@ -70,13 +90,137 @@ class HubCoordinator:
         """Check if the hub has initiated shutdown."""
         return self._shutdown
 
-    def _spawn_new_guardians(self) -> None:
+    def _refill_spawn_tokens(self) -> None:
+        """Refill spawn tokens based on time elapsed (token bucket algorithm)."""
+        now = time.time()
+        elapsed = now - self._last_token_refill
+        rate_per_sec = settings.spawn_rate_per_minute / 60.0
+        tokens_to_add = elapsed * rate_per_sec
+
+        with self._spawn_lock:
+            self._spawn_tokens = min(
+                settings.spawn_rate_per_minute,
+                self._spawn_tokens + tokens_to_add,
+            )
+            self._last_token_refill = now
+
+    def _can_spawn(self, source_id: str | None = None) -> bool:
+        """Check if spawning is allowed based on rate limits.
+
+        Args:
+            source_id: Optional identifier for the source requesting spawn
+
+        Returns:
+            True if spawning is allowed, False otherwise
+        """
+        self._refill_spawn_tokens()
+        now = time.time()
+
+        # Check per-source rate limit if source_id provided
+        if source_id:
+            if not self._check_source_rate_limit(source_id, now):
+                logger.warning(
+                    "source_rate_limit_exceeded",
+                    source_id=source_id,
+                )
+                return False
+
+        with self._spawn_lock:
+            # Check cooldown
+            if now - self._last_spawn_time < settings.spawn_cooldown_seconds:
+                return False
+
+            # Check token availability
+            if self._spawn_tokens < 1:
+                return False
+
+            # Consume one token
+            self._spawn_tokens -= 1
+            self._last_spawn_time = now
+            return True
+
+    def _check_source_rate_limit(self, source_id: str, now: float) -> bool:
+        """Check if a specific source has exceeded its rate limit.
+
+        Args:
+            source_id: Identifier for the source
+            now: Current timestamp
+
+        Returns:
+            True if within rate limit, False if exceeded
+        """
+        with self._spawn_lock:  # Protect source_attempts dictionary
+            # Clean up old attempts periodically
+            if now - self._last_cleanup > settings.rate_limit_cleanup_interval_seconds:
+                self._cleanup_source_attempts(now)
+
+            # Get attempts for this source in the last minute
+            window_start = now - 60.0
+            attempts = self._source_attempts[source_id]
+
+            # Remove old attempts
+            attempts[:] = [t for t in attempts if t > window_start]
+
+            # Check if within limit
+            if len(attempts) >= settings.per_source_rate_limit_per_minute:
+                return False
+
+            # Add current attempt
+            attempts.append(now)
+            return True
+
+    def _cleanup_source_attempts(self, now: float) -> None:
+        """Clean up old source attempt records.
+        
+        Note: This method assumes the caller holds _spawn_lock.
+        """
+        window_start = now - 60.0
+        sources_to_remove = []
+
+        for source_id, attempts in self._source_attempts.items():
+            # Remove old attempts
+            attempts[:] = [t for t in attempts if t > window_start]
+            # Mark for removal if no recent attempts
+            if not attempts:
+                sources_to_remove.append(source_id)
+
+        # Remove empty sources
+        for source_id in sources_to_remove:
+            del self._source_attempts[source_id]
+
+        self._last_cleanup = now
+        logger.debug(
+            "source_rate_limit_cleanup",
+            removed_sources=len(sources_to_remove),
+        )
+
+    def _spawn_new_guardians(self, source_id: str | None = None) -> None:
         """Spawn new guardians in response to a bypass attempt.
 
-        Spawns GUARDIAN_GROWTH_FACTOR new guardians of random types.
-        If this exceeds MAX_GUARDIANS, initiates total shutdown.
+        Spawns new guardians based on spawn_factor (default: 3).
+        Includes rate limiting to prevent resource exhaustion.
+        If this exceeds max_guardians, initiates total shutdown.
+
+        Args:
+            source_id: Optional identifier for the source of the bypass
         """
-        for _ in range(self.GUARDIAN_GROWTH_FACTOR):
+        # Check if spawning is allowed based on rate limits
+        if not self._can_spawn(source_id):
+            logger.info(
+                "spawn_throttled",
+                current_guardians=self.guardian_count,
+                source_id=source_id,
+            )
+            return
+
+        # Calculate how many guardians to spawn
+        current_count = self.guardian_count
+        spawn_count = min(
+            settings.spawn_factor,
+            self.max_guardians - current_count,
+        )
+
+        for _ in range(spawn_count):
             guardian_type = random.choice(self.GUARDIAN_TYPES)
             guardian_id = self._generate_guardian_id()
             guardian = guardian_type(guardian_id)
@@ -88,6 +232,13 @@ class HubCoordinator:
                 total_guardians=self.guardian_count,
             )
 
+        logger.info(
+            "guardians_spawned",
+            spawned=spawn_count,
+            total_guardians=self.guardian_count,
+        )
+
+        # Check if we've reached or exceeded max guardians after spawning
         if self.guardian_count >= self.max_guardians:
             self._initiate_shutdown()
 
@@ -101,12 +252,15 @@ class HubCoordinator:
             max_guardians=self.max_guardians,
         )
 
-    def analyze(self, content: str, context: dict[str, Any] | None = None) -> dict[str, Any]:
+    def analyze(
+        self, content: str, context: dict[str, Any] | None = None, source_id: str | None = None
+    ) -> dict[str, Any]:
         """Analyze content through all active guardians.
 
         Args:
             content: The content to analyze.
             context: Optional context for analysis.
+            source_id: Optional identifier for the source (e.g., user ID, IP)
 
         Returns:
             Dictionary containing aggregated results and decision.
@@ -140,11 +294,12 @@ class HubCoordinator:
                     guardian_id=guardian.guardian_id,
                     threat_level=result.threat_level.name.lower(),
                     message=result.message,
+                    source_id=source_id,
                 )
 
         # Spawn new guardians if bypass was detected
         if bypass_detected:
-            self._spawn_new_guardians()
+            self._spawn_new_guardians(source_id)
 
         # Aggregate results
         all_safe = all(r.is_safe for r in results)
@@ -179,6 +334,8 @@ class HubCoordinator:
             "hub_status": "shutdown" if self._shutdown else "active",
             "guardian_count": self.guardian_count,
             "max_guardians": self.max_guardians,
+            "spawn_factor": settings.spawn_factor,
+            "spawn_tokens_available": self._spawn_tokens,
             "guardians": [
                 {
                     "id": g.guardian_id,

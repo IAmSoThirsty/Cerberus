@@ -5,15 +5,22 @@ The hub manages multiple guardians, aggregates their threat reports,
 and implements the exponential growth mechanism for handling bypass attempts.
 """
 
+import logging
 import random
+import time
+from collections import defaultdict
+from threading import Lock
 from typing import Any
 
 from pydantic import BaseModel, Field
 
+from cerberus.config import settings
 from cerberus.guardians.base import Guardian, ThreatLevel, ThreatReport
 from cerberus.guardians.heuristic_guardian import HeuristicGuardian
 from cerberus.guardians.pattern_guardian import PatternGuardian
 from cerberus.guardians.statistical_guardian import StatisticalGuardian
+
+logger = logging.getLogger(__name__)
 
 
 class HubDecision(BaseModel):
@@ -42,17 +49,16 @@ class CerberusHub:
     Central coordinator for Cerberus guardian agents.
 
     Manages a pool of guardians, aggregates their threat assessments,
-    and implements exponential growth on bypass detection.
+    and implements exponential growth on bypass detection with rate limiting.
 
     The hub starts with 3 guardians (one of each type). When a bypass
-    is detected, 3 new random guardians are spawned. This continues
-    until the maximum of 27 guardians is reached, at which point
-    total shutdown is triggered.
+    is detected, new guardians are spawned based on spawn_factor (default: 3).
+    Spawning is rate-limited to prevent resource exhaustion. When the
+    maximum number of guardians is reached (default: 27), total shutdown
+    is triggered.
     """
 
     INITIAL_GUARDIAN_COUNT = 3
-    GUARDIANS_PER_SPAWN = 3
-    MAX_GUARDIANS = 27
     GUARDIAN_TYPES: list[type[Guardian]] = [
         PatternGuardian,
         HeuristicGuardian,
@@ -72,8 +78,29 @@ class CerberusHub:
         self._auto_grow = auto_grow
         self._shutdown = False
 
+        # Spawn rate limiting (token bucket)
+        self._spawn_lock = Lock()
+        self._spawn_tokens = float(settings.spawn_rate_per_minute)
+        self._last_token_refill = time.time()
+        self._last_spawn_time = 0.0
+
+        # Per-source rate limiting
+        self._source_attempts: dict[str, list[float]] = defaultdict(list)
+        self._last_cleanup = time.time()
+
         # Initialize with one guardian of each type
         self._initialize_guardians()
+
+        logger.info(
+            "CerberusHub initialized",
+            extra={
+                "extra_fields": {
+                    "spawn_factor": settings.spawn_factor,
+                    "max_guardians": settings.max_guardians,
+                    "spawn_cooldown": settings.spawn_cooldown_seconds,
+                }
+            },
+        )
 
     def _initialize_guardians(self) -> None:
         """Initialize the starting set of guardians."""
@@ -82,6 +109,108 @@ class CerberusHub:
             HeuristicGuardian(),
             StatisticalGuardian(),
         ]
+
+    def _refill_spawn_tokens(self) -> None:
+        """Refill spawn tokens based on time elapsed (token bucket algorithm)."""
+        now = time.time()
+        elapsed = now - self._last_token_refill
+        rate_per_sec = settings.spawn_rate_per_minute / 60.0
+        tokens_to_add = elapsed * rate_per_sec
+
+        with self._spawn_lock:
+            self._spawn_tokens = min(
+                settings.spawn_rate_per_minute,
+                self._spawn_tokens + tokens_to_add,
+            )
+            self._last_token_refill = now
+
+    def _can_spawn(self, source_id: str | None = None) -> bool:
+        """
+        Check if spawning is allowed based on rate limits.
+
+        Args:
+            source_id: Optional identifier for the source requesting spawn
+
+        Returns:
+            True if spawning is allowed, False otherwise
+        """
+        self._refill_spawn_tokens()
+        now = time.time()
+
+        # Check per-source rate limit if source_id provided
+        if source_id:
+            if not self._check_source_rate_limit(source_id, now):
+                logger.warning(
+                    "Per-source rate limit exceeded",
+                    extra={"extra_fields": {"source_id": source_id}},
+                )
+                return False
+
+        with self._spawn_lock:
+            # Check cooldown
+            if now - self._last_spawn_time < settings.spawn_cooldown_seconds:
+                return False
+
+            # Check token availability
+            if self._spawn_tokens < 1:
+                return False
+
+            # Consume one token
+            self._spawn_tokens -= 1
+            self._last_spawn_time = now
+            return True
+
+    def _check_source_rate_limit(self, source_id: str, now: float) -> bool:
+        """
+        Check if a specific source has exceeded its rate limit.
+
+        Args:
+            source_id: Identifier for the source
+            now: Current timestamp
+
+        Returns:
+            True if within rate limit, False if exceeded
+        """
+        # Clean up old attempts periodically
+        if now - self._last_cleanup > settings.rate_limit_cleanup_interval_seconds:
+            self._cleanup_source_attempts(now)
+
+        # Get attempts for this source in the last minute
+        window_start = now - 60.0
+        attempts = self._source_attempts[source_id]
+
+        # Remove old attempts
+        attempts[:] = [t for t in attempts if t > window_start]
+
+        # Check if within limit
+        if len(attempts) >= settings.per_source_rate_limit_per_minute:
+            return False
+
+        # Add current attempt
+        attempts.append(now)
+        return True
+
+    def _cleanup_source_attempts(self, now: float) -> None:
+        """Clean up old source attempt records."""
+        window_start = now - 60.0
+        sources_to_remove = []
+
+        for source_id, attempts in self._source_attempts.items():
+            # Remove old attempts
+            attempts[:] = [t for t in attempts if t > window_start]
+            # Mark for removal if no recent attempts
+            if not attempts:
+                sources_to_remove.append(source_id)
+
+        # Remove empty sources
+        for source_id in sources_to_remove:
+            del self._source_attempts[source_id]
+
+        self._last_cleanup = now
+        logger.debug(
+            "Cleaned up source rate limit records",
+            extra={"extra_fields": {"removed_sources": len(sources_to_remove)}},
+        )
 
     @property
     def guardian_count(self) -> int:
@@ -98,13 +227,16 @@ class CerberusHub:
         """Return the number of detected bypass attempts."""
         return self._bypass_attempts
 
-    def analyze(self, content: str, context: dict[str, Any] | None = None) -> HubDecision:
+    def analyze(
+        self, content: str, context: dict[str, Any] | None = None, source_id: str | None = None
+    ) -> HubDecision:
         """
         Analyze content through all active guardians.
 
         Args:
             content: The content to analyze
             context: Optional context information
+            source_id: Optional identifier for the source (e.g., user ID, IP)
 
         Returns:
             HubDecision with aggregated results from all guardians
@@ -131,7 +263,7 @@ class CerberusHub:
 
         # Check for bypass attempt (high threat but one guardian missed it)
         if self._detect_bypass_attempt(reports):
-            self._handle_bypass()
+            self._handle_bypass(source_id)
             decision.bypass_attempts = self._bypass_attempts
 
             if self._shutdown:
@@ -222,22 +354,78 @@ class CerberusHub:
             high_crit_count >= 1 and low_none_count >= 2
         )
 
-    def _handle_bypass(self) -> None:
-        """Handle a detected bypass attempt by spawning new guardians."""
+    def _handle_bypass(self, source_id: str | None = None) -> None:
+        """
+        Handle a detected bypass attempt by spawning new guardians.
+
+        Args:
+            source_id: Optional identifier for the source of the bypass attempt
+        """
         self._bypass_attempts += 1
+
+        logger.warning(
+            "Bypass attempt detected",
+            extra={
+                "extra_fields": {
+                    "bypass_attempts": self._bypass_attempts,
+                    "source_id": source_id,
+                    "current_guardians": self.guardian_count,
+                }
+            },
+        )
 
         if not self._auto_grow:
             return
 
+        # Check if spawning is allowed based on rate limits
+        if not self._can_spawn(source_id):
+            logger.info(
+                "Spawn throttled due to rate limits",
+                extra={
+                    "extra_fields": {
+                        "current_guardians": self.guardian_count,
+                        "source_id": source_id,
+                    }
+                },
+            )
+            return
+
+        # Calculate how many guardians to spawn
+        current_count = self.guardian_count
+        spawn_count = min(
+            settings.spawn_factor,
+            settings.max_guardians - current_count,
+        )
+
         # Spawn new guardians
-        for _ in range(self.GUARDIANS_PER_SPAWN):
-            if self.guardian_count >= self.MAX_GUARDIANS:
+        for _ in range(spawn_count):
+            if self.guardian_count >= settings.max_guardians:
                 self._shutdown = True
+                logger.critical(
+                    "Maximum guardian count reached - triggering shutdown",
+                    extra={
+                        "extra_fields": {
+                            "guardian_count": self.guardian_count,
+                            "max_guardians": settings.max_guardians,
+                        }
+                    },
+                )
                 return
 
             # Randomly select guardian type
             guardian_class = random.choice(self.GUARDIAN_TYPES)
             self._guardians.append(guardian_class())
+
+        logger.info(
+            "Spawned new guardians",
+            extra={
+                "extra_fields": {
+                    "spawned": spawn_count,
+                    "total_guardians": self.guardian_count,
+                }
+            },
+        )
+
 
     def add_guardian(self, guardian: Guardian) -> bool:
         """
@@ -249,7 +437,7 @@ class CerberusHub:
         Returns:
             True if guardian was added, False if at capacity
         """
-        if self.guardian_count >= self.MAX_GUARDIANS:
+        if self.guardian_count >= settings.max_guardians:
             return False
         self._guardians.append(guardian)
         return True
@@ -258,10 +446,12 @@ class CerberusHub:
         """Get current status of the hub."""
         return {
             "active_guardians": self.guardian_count,
-            "max_guardians": self.MAX_GUARDIANS,
+            "max_guardians": settings.max_guardians,
+            "spawn_factor": settings.spawn_factor,
             "bypass_attempts": self._bypass_attempts,
             "is_shutdown": self._shutdown,
             "guardian_types": [g.guardian_type for g in self._guardians],
+            "spawn_tokens_available": self._spawn_tokens,
         }
 
     def reset(self) -> None:
@@ -269,4 +459,10 @@ class CerberusHub:
         self._guardians.clear()
         self._bypass_attempts = 0
         self._shutdown = False
+        self._spawn_tokens = float(settings.spawn_rate_per_minute)
+        self._last_token_refill = time.time()
+        self._last_spawn_time = 0.0
+        self._source_attempts.clear()
+        self._last_cleanup = time.time()
         self._initialize_guardians()
+        logger.info("CerberusHub reset to initial state")
