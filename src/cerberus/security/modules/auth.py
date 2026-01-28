@@ -10,10 +10,8 @@ Password hashing and authentication with:
 
 import hashlib
 import secrets
-import time
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
-from typing import Dict, Optional
 
 import bcrypt
 
@@ -26,8 +24,8 @@ class Session:
     user_id: str
     created_at: datetime
     expires_at: datetime
-    ip_address: Optional[str] = None
-    user_agent: Optional[str] = None
+    ip_address: str | None = None
+    user_agent: str | None = None
     is_active: bool = True
 
 
@@ -88,7 +86,7 @@ class PasswordHasher:
         except Exception:
             return False
 
-    def hash_password_pbkdf2(self, password: str, salt: Optional[bytes] = None) -> Dict:
+    def hash_password_pbkdf2(self, password: str, salt: bytes | None = None) -> dict:
         """
         Hash password using PBKDF2
 
@@ -114,7 +112,7 @@ class PasswordHasher:
             "algorithm": "pbkdf2_sha256",
         }
 
-    def verify_password_pbkdf2(self, password: str, hash_data: Dict) -> bool:
+    def verify_password_pbkdf2(self, password: str, hash_data: dict) -> bool:
         """
         Verify password against PBKDF2 hash
 
@@ -138,7 +136,7 @@ class PasswordHasher:
             return False
 
     def validate_password_strength(
-        self, password: str, policy: Optional[PasswordPolicy] = None
+        self, password: str, policy: PasswordPolicy | None = None
     ) -> tuple[bool, str]:
         """
         Validate password against policy
@@ -179,11 +177,11 @@ class User:
     user_id: str
     username: str
     password_hash: str
-    email: Optional[str] = None
+    email: str | None = None
     created_at: datetime = field(default_factory=datetime.now)
-    last_login: Optional[datetime] = None
+    last_login: datetime | None = None
     failed_login_attempts: int = 0
-    locked_until: Optional[datetime] = None
+    locked_until: datetime | None = None
     password_changed_at: datetime = field(default_factory=datetime.now)
     previous_passwords: list = field(default_factory=list)
     is_active: bool = True
@@ -196,7 +194,7 @@ class AuthManager:
 
     def __init__(
         self,
-        password_policy: Optional[PasswordPolicy] = None,
+        password_policy: PasswordPolicy | None = None,
         session_duration_hours: int = 24,
         max_failed_attempts: int = 5,
         lockout_duration_minutes: int = 30,
@@ -216,16 +214,16 @@ class AuthManager:
         self.max_failed_attempts = max_failed_attempts
         self.lockout_duration = timedelta(minutes=lockout_duration_minutes)
 
-        self.users: Dict[str, User] = {}
-        self.sessions: Dict[str, Session] = {}
+        self.users: dict[str, User] = {}
+        self.sessions: dict[str, Session] = {}
 
     def create_user(
         self,
         username: str,
         password: str,
-        email: Optional[str] = None,
-        user_id: Optional[str] = None,
-    ) -> tuple[bool, str, Optional[User]]:
+        email: str | None = None,
+        user_id: str | None = None,
+    ) -> tuple[bool, str, User | None]:
         """
         Create new user
 
@@ -272,9 +270,9 @@ class AuthManager:
         self,
         username: str,
         password: str,
-        ip_address: Optional[str] = None,
-        user_agent: Optional[str] = None,
-    ) -> tuple[bool, Optional[Session], str]:
+        ip_address: str | None = None,
+        user_agent: str | None = None,
+    ) -> tuple[bool, Session | None, str]:
         """
         Authenticate user and create session
 
@@ -316,7 +314,7 @@ class AuthManager:
                 return (
                     False,
                     None,
-                    f"Account locked due to too many failed attempts",
+                    "Account locked due to too many failed attempts",
                 )
 
             return False, None, "Invalid username or password"
@@ -334,8 +332,8 @@ class AuthManager:
     def _create_session(
         self,
         user_id: str,
-        ip_address: Optional[str] = None,
-        user_agent: Optional[str] = None,
+        ip_address: str | None = None,
+        user_agent: str | None = None,
     ) -> Session:
         """Create new session"""
         session_id = secrets.token_urlsafe(32)
@@ -353,7 +351,7 @@ class AuthManager:
 
         return session
 
-    def validate_session(self, session_id: str) -> Optional[User]:
+    def validate_session(self, session_id: str) -> User | None:
         """
         Validate session and return user
 

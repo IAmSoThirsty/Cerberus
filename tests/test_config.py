@@ -12,7 +12,7 @@ class TestConfiguration:
     def test_default_values(self) -> None:
         """Configuration should have sensible defaults."""
         settings = CerberusSettings()
-        
+
         assert settings.spawn_factor == 3
         assert settings.max_guardians == 27
         assert settings.spawn_cooldown_seconds == 1.0
@@ -28,14 +28,14 @@ class TestConfiguration:
         # Valid values
         settings = CerberusSettings(spawn_factor=1)
         assert settings.spawn_factor == 1
-        
+
         settings = CerberusSettings(spawn_factor=10)
         assert settings.spawn_factor == 10
-        
+
         # Invalid values
         with pytest.raises(ValidationError):
             CerberusSettings(spawn_factor=0)  # Too low
-        
+
         with pytest.raises(ValidationError):
             CerberusSettings(spawn_factor=11)  # Too high
 
@@ -44,14 +44,14 @@ class TestConfiguration:
         # Valid values (must also set spawn_factor to satisfy constraint)
         settings = CerberusSettings(spawn_factor=1, max_guardians=1)
         assert settings.max_guardians == 1
-        
+
         settings = CerberusSettings(spawn_factor=1, max_guardians=1000)
         assert settings.max_guardians == 1000
-        
+
         # Invalid values
         with pytest.raises(ValidationError):
             CerberusSettings(spawn_factor=1, max_guardians=0)  # Too low
-        
+
         with pytest.raises(ValidationError):
             CerberusSettings(spawn_factor=1, max_guardians=1001)  # Too high
 
@@ -60,10 +60,10 @@ class TestConfiguration:
         # Valid: max >= spawn_factor
         settings = CerberusSettings(spawn_factor=3, max_guardians=3)
         assert settings.max_guardians == 3
-        
+
         settings = CerberusSettings(spawn_factor=5, max_guardians=10)
         assert settings.max_guardians == 10
-        
+
         # Invalid: max < spawn_factor
         with pytest.raises(ValidationError, match="max_guardians.*spawn_factor"):
             CerberusSettings(spawn_factor=5, max_guardians=4)
@@ -73,14 +73,14 @@ class TestConfiguration:
         # Valid values
         settings = CerberusSettings(spawn_cooldown_seconds=0.0)
         assert settings.spawn_cooldown_seconds == 0.0
-        
+
         settings = CerberusSettings(spawn_cooldown_seconds=60.0)
         assert settings.spawn_cooldown_seconds == 60.0
-        
+
         # Invalid values
         with pytest.raises(ValidationError):
             CerberusSettings(spawn_cooldown_seconds=-1.0)  # Negative
-        
+
         with pytest.raises(ValidationError):
             CerberusSettings(spawn_cooldown_seconds=61.0)  # Too high
 
@@ -90,7 +90,7 @@ class TestConfiguration:
         for level in ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]:
             settings = CerberusSettings(log_level=level)
             assert settings.log_level == level
-            
+
             settings = CerberusSettings(log_level=level.lower())
             assert settings.log_level == level  # Should be uppercased
 
@@ -105,10 +105,10 @@ class TestConfiguration:
         monkeypatch.setenv("CERBERUS_MAX_GUARDIANS", "50")
         monkeypatch.setenv("CERBERUS_LOG_LEVEL", "DEBUG")
         monkeypatch.setenv("CERBERUS_LOG_JSON", "false")
-        
+
         # Create new settings instance (reads from env)
         settings = CerberusSettings()
-        
+
         assert settings.spawn_factor == 5
         assert settings.max_guardians == 50
         assert settings.log_level == "DEBUG"
@@ -120,7 +120,7 @@ class TestConfiguration:
         monkeypatch.setenv("SPAWN_FACTOR", "10")
         settings = CerberusSettings()
         assert settings.spawn_factor == 3  # Default, not 10
-        
+
         # With prefix, should override
         monkeypatch.setenv("CERBERUS_SPAWN_FACTOR", "10")
         settings = CerberusSettings()
@@ -133,7 +133,7 @@ class TestConfiguration:
             per_source_rate_limit_per_minute=60,
             rate_limit_cleanup_interval_seconds=600,
         )
-        
+
         assert settings.spawn_rate_per_minute == 120
         assert settings.per_source_rate_limit_per_minute == 60
         assert settings.rate_limit_cleanup_interval_seconds == 600
@@ -144,6 +144,6 @@ class TestConfiguration:
             enable_audit_logging=False,
             enable_metrics=False,
         )
-        
+
         assert settings.enable_audit_logging is False
         assert settings.enable_metrics is False

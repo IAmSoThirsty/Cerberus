@@ -12,7 +12,6 @@ import re
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
-from typing import Dict, List, Optional, Set
 
 
 class ThreatLevel(Enum):
@@ -46,10 +45,10 @@ class ThreatSignature:
 
     name: str
     category: ThreatCategory
-    patterns: List[str]
+    patterns: list[str]
     severity: ThreatLevel
     description: str
-    indicators: List[str] = field(default_factory=list)
+    indicators: list[str] = field(default_factory=list)
 
 
 @dataclass
@@ -61,8 +60,8 @@ class ThreatDetectionResult:
     category: ThreatCategory
     confidence: float  # 0.0 to 1.0
     details: str
-    matched_signatures: List[str] = field(default_factory=list)
-    indicators: List[str] = field(default_factory=list)
+    matched_signatures: list[str] = field(default_factory=list)
+    indicators: list[str] = field(default_factory=list)
     timestamp: datetime = field(default_factory=datetime.now)
 
 
@@ -73,8 +72,8 @@ class ThreatDetector:
 
     def __init__(self):
         """Initialize threat detector with signatures"""
-        self.signatures: List[ThreatSignature] = []
-        self.behavior_history: Dict[str, List] = {}
+        self.signatures: list[ThreatSignature] = []
+        self.behavior_history: dict[str, list] = {}
 
         # Load default signatures
         self._load_default_signatures()
@@ -204,7 +203,7 @@ class ThreatDetector:
         )
 
     def detect(
-        self, input_text: str, source_id: Optional[str] = None
+        self, input_text: str, source_id: str | None = None
     ) -> ThreatDetectionResult:
         """
         Detect threats in input
@@ -280,7 +279,7 @@ class ThreatDetector:
 
     def _analyze_behavior(
         self, input_text: str, source_id: str
-    ) -> Optional[ThreatDetectionResult]:
+    ) -> ThreatDetectionResult | None:
         """Analyze behavioral patterns"""
         # Track behavior history
         if source_id not in self.behavior_history:
@@ -338,7 +337,7 @@ class ThreatDetector:
                 return True
         return False
 
-    def get_statistics(self) -> Dict:
+    def get_statistics(self) -> dict:
         """Get detection statistics"""
         return {
             "total_signatures": len(self.signatures),
@@ -346,7 +345,7 @@ class ThreatDetector:
             "tracked_sources": len(self.behavior_history),
         }
 
-    def _count_by_category(self) -> Dict[str, int]:
+    def _count_by_category(self) -> dict[str, int]:
         """Count signatures by category"""
         counts = {}
         for sig in self.signatures:
@@ -354,7 +353,7 @@ class ThreatDetector:
             counts[category] = counts.get(category, 0) + 1
         return counts
 
-    def clear_history(self, source_id: Optional[str] = None):
+    def clear_history(self, source_id: str | None = None):
         """Clear behavior history"""
         if source_id:
             self.behavior_history.pop(source_id, None)

@@ -16,7 +16,6 @@ import re
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Dict, List, Optional, Union
 
 
 class AttackType(Enum):
@@ -42,8 +41,8 @@ class ValidationResult:
     attack_type: AttackType
     confidence: float  # 0.0 to 1.0
     details: str
-    sanitized_input: Optional[str] = None
-    patterns_matched: List[str] = None
+    sanitized_input: str | None = None
+    patterns_matched: list[str] = None
 
     def __post_init__(self):
         if self.patterns_matched is None:
@@ -172,7 +171,7 @@ class InputValidator:
             re.compile(p, re.IGNORECASE) for p in self.JAILBREAK_PATTERNS
         ]
 
-    def validate(self, input_data: Union[str, Dict, List]) -> ValidationResult:
+    def validate(self, input_data: str | dict | list) -> ValidationResult:
         """
         Validate input data for various attack vectors
 
@@ -223,48 +222,48 @@ class InputValidator:
             sanitized_input=input_str,
         )
 
-    def _check_sql_injection(self, input_str: str) -> List[str]:
+    def _check_sql_injection(self, input_str: str) -> list[str]:
         """Check for SQL injection patterns"""
         return self._match_patterns(self.compiled_sql, input_str)
 
-    def _check_xss(self, input_str: str) -> List[str]:
+    def _check_xss(self, input_str: str) -> list[str]:
         """Check for XSS patterns"""
         return self._match_patterns(self.compiled_xss, input_str)
 
-    def _check_command_injection(self, input_str: str) -> List[str]:
+    def _check_command_injection(self, input_str: str) -> list[str]:
         """Check for command injection patterns"""
         return self._match_patterns(self.compiled_command, input_str)
 
-    def _check_path_traversal(self, input_str: str) -> List[str]:
+    def _check_path_traversal(self, input_str: str) -> list[str]:
         """Check for path traversal patterns"""
         return self._match_patterns(self.compiled_path, input_str)
 
-    def _check_xxe(self, input_str: str) -> List[str]:
+    def _check_xxe(self, input_str: str) -> list[str]:
         """Check for XXE patterns"""
         return self._match_patterns(self.compiled_xxe, input_str)
 
-    def _check_ldap_injection(self, input_str: str) -> List[str]:
+    def _check_ldap_injection(self, input_str: str) -> list[str]:
         """Check for LDAP injection patterns"""
         # LDAP patterns need more context, so we're more lenient
         patterns = self._match_patterns(self.compiled_ldap, input_str)
         # Only flag if multiple patterns found
         return patterns if len(patterns) >= 3 else []
 
-    def _check_nosql_injection(self, input_str: str) -> List[str]:
+    def _check_nosql_injection(self, input_str: str) -> list[str]:
         """Check for NoSQL injection patterns"""
         return self._match_patterns(self.compiled_nosql, input_str)
 
-    def _check_prompt_injection(self, input_str: str) -> List[str]:
+    def _check_prompt_injection(self, input_str: str) -> list[str]:
         """Check for AI/LLM prompt injection patterns"""
         return self._match_patterns(self.compiled_prompt, input_str)
 
-    def _check_jailbreak(self, input_str: str) -> List[str]:
+    def _check_jailbreak(self, input_str: str) -> list[str]:
         """Check for jailbreak attempt patterns"""
         return self._match_patterns(self.compiled_jailbreak, input_str)
 
     def _match_patterns(
-        self, compiled_patterns: List[re.Pattern], input_str: str
-    ) -> List[str]:
+        self, compiled_patterns: list[re.Pattern], input_str: str
+    ) -> list[str]:
         """Match input against compiled patterns"""
         matched = []
         for pattern in compiled_patterns:
@@ -272,7 +271,7 @@ class InputValidator:
                 matched.append(pattern.pattern)
         return matched
 
-    def _calculate_confidence(self, patterns_matched: List[str]) -> float:
+    def _calculate_confidence(self, patterns_matched: list[str]) -> float:
         """Calculate confidence score based on number of patterns matched"""
         # More patterns = higher confidence
         base_confidence = 0.6

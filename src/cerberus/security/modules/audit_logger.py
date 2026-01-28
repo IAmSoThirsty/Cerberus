@@ -17,7 +17,7 @@ from dataclasses import asdict, dataclass, field
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any
 
 
 class AuditEventType(Enum):
@@ -55,21 +55,21 @@ class AuditEvent:
     event_type: AuditEventType
     severity: AuditSeverity
     timestamp: float = field(default_factory=time.time)
-    user_id: Optional[str] = None
-    source_ip: Optional[str] = None
-    resource: Optional[str] = None
-    action: Optional[str] = None
-    result: Optional[str] = None
-    details: Optional[Dict[str, Any]] = None
-    guardian_id: Optional[str] = None
-    threat_level: Optional[str] = None
-    signature: Optional[str] = None
+    user_id: str | None = None
+    source_ip: str | None = None
+    resource: str | None = None
+    action: str | None = None
+    result: str | None = None
+    details: dict[str, Any] | None = None
+    guardian_id: str | None = None
+    threat_level: str | None = None
+    signature: str | None = None
 
     def __post_init__(self):
         if self.details is None:
             self.details = {}
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert event to dictionary"""
         data = asdict(self)
         data["event_type"] = self.event_type.value
@@ -90,7 +90,7 @@ class AuditLogger:
     def __init__(
         self,
         log_dir: str = "/var/log/cerberus",
-        secret_key: Optional[bytes] = None,
+        secret_key: bytes | None = None,
         enable_tamper_detection: bool = True,
         max_log_size: int = 10 * 1024 * 1024,  # 10 MB
     ):
@@ -240,9 +240,9 @@ class AuditLogger:
     def log_access(
         self,
         granted: bool,
-        user_id: Optional[str] = None,
-        resource: Optional[str] = None,
-        details: Optional[Dict] = None,
+        user_id: str | None = None,
+        resource: str | None = None,
+        details: dict | None = None,
     ):
         """Log access attempt"""
         event = AuditEvent(
@@ -260,8 +260,8 @@ class AuditLogger:
     def log_threat(
         self,
         threat_level: str,
-        guardian_id: Optional[str] = None,
-        details: Optional[Dict] = None,
+        guardian_id: str | None = None,
+        details: dict | None = None,
     ):
         """Log threat detection"""
         event = AuditEvent(
@@ -278,9 +278,9 @@ class AuditLogger:
     def log_auth(
         self,
         success: bool,
-        user_id: Optional[str] = None,
-        source_ip: Optional[str] = None,
-        details: Optional[Dict] = None,
+        user_id: str | None = None,
+        source_ip: str | None = None,
+        details: dict | None = None,
     ):
         """Log authentication attempt"""
         event = AuditEvent(
@@ -297,9 +297,9 @@ class AuditLogger:
 
     def log_rate_limit(
         self,
-        user_id: Optional[str] = None,
-        source_ip: Optional[str] = None,
-        details: Optional[Dict] = None,
+        user_id: str | None = None,
+        source_ip: str | None = None,
+        details: dict | None = None,
     ):
         """Log rate limit exceeded"""
         event = AuditEvent(
@@ -313,8 +313,8 @@ class AuditLogger:
 
     def log_config_change(
         self,
-        user_id: Optional[str] = None,
-        details: Optional[Dict] = None,
+        user_id: str | None = None,
+        details: dict | None = None,
     ):
         """Log configuration change"""
         event = AuditEvent(
@@ -328,7 +328,7 @@ class AuditLogger:
     def log_guardian_spawned(
         self,
         guardian_id: str,
-        details: Optional[Dict] = None,
+        details: dict | None = None,
     ):
         """Log guardian spawned"""
         event = AuditEvent(
@@ -342,7 +342,7 @@ class AuditLogger:
     def log_system_shutdown(
         self,
         reason: str,
-        details: Optional[Dict] = None,
+        details: dict | None = None,
     ):
         """Log system shutdown"""
         event = AuditEvent(
@@ -372,7 +372,7 @@ class AuditLogger:
         # Recreate logger with new file
         self._setup_logger()
 
-    def get_metrics(self) -> Dict[str, Any]:
+    def get_metrics(self) -> dict[str, Any]:
         """
         Get audit metrics for Prometheus
 
@@ -395,7 +395,7 @@ class AuditLogger:
         if not log_file.exists():
             return True
 
-        with open(log_file, "r") as f:
+        with open(log_file) as f:
             for line in f:
                 try:
                     event_dict = json.loads(line.strip())

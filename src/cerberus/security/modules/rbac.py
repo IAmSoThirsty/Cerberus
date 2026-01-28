@@ -10,7 +10,6 @@ Implements flexible RBAC system for:
 
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Dict, List, Optional, Set
 
 
 class Permission(Enum):
@@ -58,8 +57,8 @@ class Role:
 
     name: str
     description: str
-    permissions: Set[Permission] = field(default_factory=set)
-    parent_roles: List[str] = field(default_factory=list)
+    permissions: set[Permission] = field(default_factory=set)
+    parent_roles: list[str] = field(default_factory=list)
 
     def add_permission(self, permission: Permission):
         """Add permission to role"""
@@ -80,7 +79,7 @@ class User:
 
     user_id: str
     username: str
-    roles: Set[str] = field(default_factory=set)
+    roles: set[str] = field(default_factory=set)
     disabled: bool = False
 
     def add_role(self, role_name: str):
@@ -99,8 +98,8 @@ class RBACManager:
 
     def __init__(self):
         """Initialize RBAC manager with default roles"""
-        self.roles: Dict[str, Role] = {}
-        self.users: Dict[str, User] = {}
+        self.roles: dict[str, Role] = {}
+        self.users: dict[str, User] = {}
 
         # Create default roles
         self._create_default_roles()
@@ -183,7 +182,7 @@ class RBACManager:
         self.roles[role.name] = role
         return True
 
-    def get_role(self, role_name: str) -> Optional[Role]:
+    def get_role(self, role_name: str) -> Role | None:
         """Get role by name"""
         return self.roles.get(role_name)
 
@@ -215,7 +214,7 @@ class RBACManager:
         self.users[user.user_id] = user
         return True
 
-    def get_user(self, user_id: str) -> Optional[User]:
+    def get_user(self, user_id: str) -> User | None:
         """Get user by ID"""
         return self.users.get(user_id)
 
@@ -311,7 +310,7 @@ class RBACManager:
 
         return False
 
-    def get_user_permissions(self, user_id: str) -> Set[Permission]:
+    def get_user_permissions(self, user_id: str) -> set[Permission]:
         """
         Get all permissions for user
 
@@ -333,7 +332,7 @@ class RBACManager:
 
         return permissions
 
-    def _get_all_role_permissions(self, role: Role) -> Set[Permission]:
+    def _get_all_role_permissions(self, role: Role) -> set[Permission]:
         """Get all permissions for role including inherited"""
         permissions = set(role.permissions)
 
@@ -361,11 +360,11 @@ class RBACManager:
                 f"User {user_id} does not have permission: {permission.value}"
             )
 
-    def list_roles(self) -> List[str]:
+    def list_roles(self) -> list[str]:
         """List all role names"""
         return list(self.roles.keys())
 
-    def list_users(self) -> List[str]:
+    def list_users(self) -> list[str]:
         """List all user IDs"""
         return list(self.users.keys())
 

@@ -10,10 +10,9 @@ Decorator and middleware for per-source/agent rate limiting with:
 
 import functools
 import time
-from collections import defaultdict
+from collections.abc import Callable
 from dataclasses import dataclass
 from threading import Lock
-from typing import Callable, Dict, Optional, Tuple
 
 
 @dataclass
@@ -151,7 +150,7 @@ class RateLimiter:
 
     def __init__(
         self,
-        default_config: Optional[RateLimitConfig] = None,
+        default_config: RateLimitConfig | None = None,
         use_token_bucket: bool = True,
     ):
         """
@@ -167,7 +166,7 @@ class RateLimiter:
         self.use_token_bucket = use_token_bucket
 
         # Storage for per-source limiters
-        self.limiters: Dict[str, object] = {}
+        self.limiters: dict[str, object] = {}
         self.lock = Lock()
 
         # Global limiter (optional)
@@ -194,9 +193,9 @@ class RateLimiter:
 
     def check_limit(
         self,
-        source_id: Optional[str] = None,
-        config: Optional[RateLimitConfig] = None,
-    ) -> Tuple[bool, Optional[float]]:
+        source_id: str | None = None,
+        config: RateLimitConfig | None = None,
+    ) -> tuple[bool, float | None]:
         """
         Check if request is within rate limit
 
@@ -228,7 +227,7 @@ class RateLimiter:
 
         return allowed, retry_after
 
-    def get_stats(self, source_id: Optional[str] = None) -> Dict:
+    def get_stats(self, source_id: str | None = None) -> dict:
         """
         Get rate limit statistics
 
@@ -267,7 +266,7 @@ class RateLimiter:
 
         return stats
 
-    def reset(self, source_id: Optional[str] = None):
+    def reset(self, source_id: str | None = None):
         """
         Reset rate limit for source
 
@@ -300,7 +299,7 @@ def rate_limit(
     max_requests: int = 100,
     window_seconds: int = 60,
     per_source: bool = True,
-    get_source_id: Optional[Callable] = None,
+    get_source_id: Callable | None = None,
 ):
     """
     Decorator for rate limiting functions/methods
@@ -374,8 +373,8 @@ class RateLimitExceeded(Exception):
     def __init__(
         self,
         message: str,
-        retry_after: Optional[float] = None,
-        source_id: Optional[str] = None,
+        retry_after: float | None = None,
+        source_id: str | None = None,
     ):
         super().__init__(message)
         self.retry_after = retry_after
