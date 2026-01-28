@@ -149,27 +149,31 @@ class HubCoordinator:
         Returns:
             True if within rate limit, False if exceeded
         """
-        # Clean up old attempts periodically
-        if now - self._last_cleanup > settings.rate_limit_cleanup_interval_seconds:
-            self._cleanup_source_attempts(now)
+        with self._spawn_lock:  # Protect source_attempts dictionary
+            # Clean up old attempts periodically
+            if now - self._last_cleanup > settings.rate_limit_cleanup_interval_seconds:
+                self._cleanup_source_attempts(now)
 
-        # Get attempts for this source in the last minute
-        window_start = now - 60.0
-        attempts = self._source_attempts[source_id]
+            # Get attempts for this source in the last minute
+            window_start = now - 60.0
+            attempts = self._source_attempts[source_id]
 
-        # Remove old attempts
-        attempts[:] = [t for t in attempts if t > window_start]
+            # Remove old attempts
+            attempts[:] = [t for t in attempts if t > window_start]
 
-        # Check if within limit
-        if len(attempts) >= settings.per_source_rate_limit_per_minute:
-            return False
+            # Check if within limit
+            if len(attempts) >= settings.per_source_rate_limit_per_minute:
+                return False
 
-        # Add current attempt
-        attempts.append(now)
-        return True
+            # Add current attempt
+            attempts.append(now)
+            return True
 
     def _cleanup_source_attempts(self, now: float) -> None:
-        """Clean up old source attempt records."""
+        """Clean up old source attempt records.
+        
+        Note: This method assumes the caller holds _spawn_lock.
+        """
         window_start = now - 60.0
         sources_to_remove = []
 

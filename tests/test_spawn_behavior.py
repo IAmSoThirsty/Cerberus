@@ -152,9 +152,3 @@ class TestSpawnEdgeCases:
         # Should spawn only 2 to reach max of 5 (not spawn_factor of 3)
         assert hub.guardian_count == 5
         assert hub.is_shutdown
-
-    def test_no_spawn_when_auto_grow_disabled(self) -> None:
-        """Spawning should not occur if auto_grow is False."""
-        # Note: HubCoordinator doesn't expose auto_grow parameter yet,
-        # but this test documents expected behavior
-        pass  # Placeholder for future implementation
