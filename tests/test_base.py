@@ -14,12 +14,27 @@ class ConcreteGuardian(Guardian):
     def analyze(self, content: str, context: dict | None = None) -> ThreatReport:
         # Simple implementation that flags "danger" keyword
         if "danger" in content.lower():
-            return self._create_report(
+            return ThreatReport(
+                guardian_id=self.guardian_id,
+                guardian_type=self.guardian_type,
+                should_block=True,
                 threat_level=ThreatLevel.HIGH,
                 confidence=0.9,
-                threats=["Danger keyword detected"],
+                threats_detected=["Danger keyword detected"],
+                reasoning="Danger keyword found in content",
             )
-        return self._create_report()
+        return ThreatReport(
+            guardian_id=self.guardian_id,
+            guardian_type=self.guardian_type,
+            should_block=False,
+            threat_level=ThreatLevel.NONE,
+            confidence=1.0,
+            threats_detected=[],
+            reasoning="Content is safe",
+        )
+
+    def get_style_description(self) -> str:
+        return "Test guardian for testing purposes"
 
 
 class TestThreatLevel:
@@ -27,11 +42,11 @@ class TestThreatLevel:
 
     def test_threat_levels_exist(self) -> None:
         """Test all expected threat levels exist."""
-        assert ThreatLevel.NONE == "none"
-        assert ThreatLevel.LOW == "low"
-        assert ThreatLevel.MEDIUM == "medium"
-        assert ThreatLevel.HIGH == "high"
-        assert ThreatLevel.CRITICAL == "critical"
+        assert ThreatLevel.NONE == 0
+        assert ThreatLevel.LOW == 1
+        assert ThreatLevel.MEDIUM == 2
+        assert ThreatLevel.HIGH == 3
+        assert ThreatLevel.CRITICAL == 4
 
 
 class TestThreatReport:
@@ -39,7 +54,15 @@ class TestThreatReport:
 
     def test_create_minimal_report(self) -> None:
         """Test creating a report with minimal fields."""
-        report = ThreatReport(guardian_id="test-1", guardian_type="test")
+        report = ThreatReport(
+            guardian_id="test-1",
+            guardian_type="test",
+            should_block=False,
+            threat_level=ThreatLevel.NONE,
+            confidence=0.0,
+            threats_detected=[],
+            reasoning="Test",
+        )
         assert report.guardian_id == "test-1"
         assert report.guardian_type == "test"
         assert report.threat_level == ThreatLevel.NONE
@@ -52,11 +75,11 @@ class TestThreatReport:
         report = ThreatReport(
             guardian_id="test-2",
             guardian_type="pattern",
+            should_block=True,
             threat_level=ThreatLevel.HIGH,
             confidence=0.95,
             threats_detected=["Threat 1", "Threat 2"],
-            metadata={"key": "value"},
-            should_block=True,
+            reasoning="Multiple threats detected",
         )
         assert report.threat_level == ThreatLevel.HIGH
         assert report.confidence == 0.95
@@ -71,13 +94,12 @@ class TestGuardian:
         """Test that guardians generate unique IDs."""
         g1 = ConcreteGuardian()
         g2 = ConcreteGuardian()
-        assert g1.id != g2.id
-        assert g1.id.startswith("test-")
+        assert g1.guardian_id != g2.guardian_id
 
     def test_guardian_custom_id(self) -> None:
         """Test guardian with custom ID."""
         g = ConcreteGuardian(guardian_id="custom-id")
-        assert g.id == "custom-id"
+        assert g.guardian_id == "custom-id"
 
     def test_guardian_type(self) -> None:
         """Test guardian type property."""

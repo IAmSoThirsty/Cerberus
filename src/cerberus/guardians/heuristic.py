@@ -7,7 +7,7 @@ analysis style.
 
 from typing import Any
 
-from cerberus.guardians.base import BaseGuardian, GuardianResult, ThreatLevel
+from cerberus.guardians.base import BaseGuardian, ThreatReport, ThreatLevel
 
 
 class HeuristicGuardian(BaseGuardian):
@@ -37,6 +37,11 @@ class HeuristicGuardian(BaseGuardian):
             guardian_id: Unique identifier. Defaults to 'heuristic-guardian'.
         """
         super().__init__(guardian_id or "heuristic-guardian")
+
+    @property
+    def guardian_type(self) -> str:
+        """Return the type identifier for this guardian."""
+        return "heuristic"
 
     def _calculate_threat_score(self, content: str) -> tuple[float, dict[str, float]]:
         """Calculate a threat score based on multiple heuristics.
@@ -122,7 +127,7 @@ class HeuristicGuardian(BaseGuardian):
             return ThreatLevel.LOW
         return ThreatLevel.NONE
 
-    def analyze(self, content: str, context: dict[str, Any] | None = None) -> GuardianResult:
+    def analyze(self, content: str, context: dict[str, Any] | None = None) -> ThreatReport:
         """Analyze content using heuristic scoring.
 
         Args:
@@ -130,7 +135,7 @@ class HeuristicGuardian(BaseGuardian):
             context: Optional context for analysis adjustments.
 
         Returns:
-            GuardianResult with threat assessment.
+            ThreatReport with threat assessment.
         """
         score, breakdown = self._calculate_threat_score(content)
 
@@ -140,14 +145,22 @@ class HeuristicGuardian(BaseGuardian):
             threshold *= 0.5
 
         threat_level = self._score_to_threat_level(score)
-        is_safe = score < threshold
+        should_block = score >= threshold
 
-        return GuardianResult(
+        # Build threats list based on breakdown
+        threats_detected = []
+        for factor, factor_score in breakdown.items():
+            if factor_score > 0.5:
+                threats_detected.append(f"{factor}: {factor_score:.2f}")
+
+        return ThreatReport(
             guardian_id=self.guardian_id,
-            is_safe=is_safe,
-            threat_level=threat_level if not is_safe else ThreatLevel.NONE,
-            message=f"Heuristic analysis complete. Threat score: {score:.2f}",
-            details={"score": score, "breakdown": breakdown, "threshold": threshold},
+            guardian_type=self.guardian_type,
+            should_block=should_block,
+            threat_level=threat_level if should_block else ThreatLevel.NONE,
+            confidence=score,
+            threats_detected=threats_detected,
+            reasoning=f"Heuristic analysis complete. Threat score: {score:.2f}",
         )
 
     def get_style_description(self) -> str:

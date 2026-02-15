@@ -7,7 +7,7 @@ than simple keyword matching.
 
 from typing import Any
 
-from cerberus.guardians.base import BaseGuardian, GuardianResult, ThreatLevel
+from cerberus.guardians.base import BaseGuardian, ThreatReport, ThreatLevel
 
 
 class PatternGuardian(BaseGuardian):
@@ -38,6 +38,11 @@ class PatternGuardian(BaseGuardian):
             guardian_id: Unique identifier. Defaults to 'pattern-guardian'.
         """
         super().__init__(guardian_id or "pattern-guardian")
+
+    @property
+    def guardian_type(self) -> str:
+        """Return the type identifier for this guardian."""
+        return "pattern"
 
     def _find_context_window(self, content: str, position: int, window: int = 50) -> str:
         """Extract context around a position in the content.
@@ -111,7 +116,7 @@ class PatternGuardian(BaseGuardian):
 
         return True, ThreatLevel.NONE
 
-    def analyze(self, content: str, context: dict[str, Any] | None = None) -> GuardianResult:
+    def analyze(self, content: str, context: dict[str, Any] | None = None) -> ThreatReport:
         """Analyze content for contextual patterns.
 
         Args:
@@ -119,33 +124,31 @@ class PatternGuardian(BaseGuardian):
             context: Optional context for enhanced analysis.
 
         Returns:
-            GuardianResult with threat assessment.
+            ThreatReport with threat assessment.
         """
         detections = self._analyze_patterns(content)
         is_safe, threat_level = self._calculate_overall_threat(detections)
 
+        threats_detected = []
         if not is_safe:
-            # Build message from detections
+            # Build threats list from detections
             descriptions = list({d["description"] for d in detections})
-            message = f"Detected patterns: {', '.join(descriptions)}"
+            threats_detected = descriptions
+            reasoning = f"Detected patterns: {', '.join(descriptions)}"
         else:
-            message = "Content passed contextual pattern analysis"
+            reasoning = "Content passed contextual pattern analysis"
 
-        details: dict[str, Any] | None = None
-        if detections:
-            details = {
-                "detections": detections,
-                "count": len(detections),
-            }
-            if context:
-                details["analysis_context"] = context
+        # Calculate confidence based on number of detections
+        confidence = 1.0 if not detections else min(0.9, 0.6 + len(detections) * 0.1)
 
-        return GuardianResult(
+        return ThreatReport(
             guardian_id=self.guardian_id,
-            is_safe=is_safe,
+            guardian_type=self.guardian_type,
+            should_block=not is_safe,
             threat_level=threat_level,
-            message=message,
-            details=details,
+            confidence=confidence,
+            threats_detected=threats_detected,
+            reasoning=reasoning,
         )
 
     def get_style_description(self) -> str:

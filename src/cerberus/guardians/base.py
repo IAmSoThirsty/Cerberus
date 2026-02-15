@@ -17,22 +17,31 @@ class ThreatLevel(IntEnum):
 
 
 @dataclass
-class GuardianResult:
-    """Result of a guardian analysis."""
+class ThreatReport:
+    """Result of a guardian threat analysis."""
 
     guardian_id: str
-    is_safe: bool
+    guardian_type: str
+    should_block: bool
     threat_level: ThreatLevel
-    message: str
-    details: dict[str, Any] | None = None
+    confidence: float
+    threats_detected: list[str]
+    reasoning: str
+    timestamp: float | None = None
 
     def __post_init__(self) -> None:
         """Validate result consistency."""
-        if self.is_safe and self.threat_level != ThreatLevel.NONE:
-            raise ValueError("Safe result cannot have non-zero threat level")
+        if not self.should_block and self.threat_level in (ThreatLevel.HIGH, ThreatLevel.CRITICAL):
+            raise ValueError("Non-blocking result cannot have HIGH or CRITICAL threat level")
+        if self.confidence < 0.0 or self.confidence > 1.0:
+            raise ValueError("Confidence must be between 0.0 and 1.0")
 
 
-class BaseGuardian(ABC):
+# Legacy alias for backwards compatibility
+GuardianResult = ThreatReport
+
+
+class Guardian(ABC):
     """Abstract base class for all guardian agents.
 
     Each guardian implements a unique analysis style to detect threats.
@@ -40,13 +49,15 @@ class BaseGuardian(ABC):
     various attack vectors including jailbreaks, injections, and bot attacks.
     """
 
-    def __init__(self, guardian_id: str) -> None:
+    def __init__(self, guardian_id: str | None = None) -> None:
         """Initialize the guardian.
 
         Args:
-            guardian_id: Unique identifier for this guardian instance.
+            guardian_id: Optional unique identifier for this guardian instance.
+                        If not provided, one will be auto-generated.
         """
-        self.guardian_id = guardian_id
+        import uuid
+        self.guardian_id = guardian_id or str(uuid.uuid4())[:8]
         self._active = True
 
     @property
@@ -58,8 +69,13 @@ class BaseGuardian(ABC):
         """Deactivate this guardian."""
         self._active = False
 
+    @property
     @abstractmethod
-    def analyze(self, content: str, context: dict[str, Any] | None = None) -> GuardianResult:
+    def guardian_type(self) -> str:
+        """Return the type/name of this guardian."""
+
+    @abstractmethod
+    def analyze(self, content: str, context: dict[str, Any] | None = None) -> ThreatReport:
         """Analyze content for potential threats.
 
         Args:
@@ -67,7 +83,7 @@ class BaseGuardian(ABC):
             context: Optional context information for analysis.
 
         Returns:
-            GuardianResult containing the analysis outcome.
+            ThreatReport containing the analysis outcome.
         """
 
     @abstractmethod
@@ -77,3 +93,7 @@ class BaseGuardian(ABC):
         Returns:
             Human-readable description of the guardian's approach.
         """
+
+
+# Legacy alias for backwards compatibility
+BaseGuardian = Guardian
