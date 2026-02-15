@@ -10,7 +10,7 @@ from typing import Any
 import structlog
 
 from cerberus.config import settings
-from cerberus.guardians.base import BaseGuardian, GuardianResult, ThreatLevel
+from cerberus.guardians.base import BaseGuardian, ThreatReport, ThreatLevel
 from cerberus.guardians.heuristic import HeuristicGuardian
 from cerberus.guardians.pattern import PatternGuardian
 from cerberus.guardians.strict import StrictGuardian
@@ -284,7 +284,7 @@ class HubCoordinator:
             results.append(result)
 
             # Check for potential bypass attempt
-            if not result.is_safe and result.threat_level in (
+            if result.should_block and result.threat_level in (
                 ThreatLevel.HIGH,
                 ThreatLevel.CRITICAL,
             ):
@@ -293,7 +293,7 @@ class HubCoordinator:
                     "threat_detected",
                     guardian_id=guardian.guardian_id,
                     threat_level=result.threat_level.name.lower(),
-                    message=result.message,
+                    reasoning=result.reasoning,
                     source_id=source_id,
                 )
 
@@ -302,7 +302,7 @@ class HubCoordinator:
             self._spawn_new_guardians(source_id)
 
         # Aggregate results
-        all_safe = all(r.is_safe for r in results)
+        all_safe = all(not r.should_block for r in results)
         highest_threat = ThreatLevel.NONE
         for result in results:
             if result.threat_level > highest_threat:
@@ -316,9 +316,9 @@ class HubCoordinator:
             "results": [
                 {
                     "guardian_id": r.guardian_id,
-                    "is_safe": r.is_safe,
+                    "is_safe": not r.should_block,
                     "threat_level": r.threat_level.name.lower(),
-                    "message": r.message,
+                    "message": r.reasoning,
                 }
                 for r in results
             ],

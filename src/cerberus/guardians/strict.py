@@ -8,7 +8,7 @@ analysis style.
 import re
 from typing import Any
 
-from cerberus.guardians.base import BaseGuardian, GuardianResult, ThreatLevel
+from cerberus.guardians.base import BaseGuardian, ThreatReport, ThreatLevel
 
 
 class StrictGuardian(BaseGuardian):
@@ -53,7 +53,7 @@ class StrictGuardian(BaseGuardian):
         """Return the type identifier for this guardian."""
         return "strict"
 
-    def analyze(self, content: str, context: dict[str, Any] | None = None) -> GuardianResult:
+    def analyze(self, content: str, context: dict[str, Any] | None = None) -> ThreatReport:
         """Analyze content using strict pattern matching rules.
 
         Args:
@@ -61,38 +61,45 @@ class StrictGuardian(BaseGuardian):
             context: Optional context (unused in strict analysis).
 
         Returns:
-            GuardianResult with threat assessment.
+            ThreatReport with threat assessment.
         """
         _ = context  # Strict guardian doesn't use context
 
         # Check for blocked patterns
         for pattern in self.BLOCKED_PATTERNS:
             if pattern.search(content):
-                return GuardianResult(
+                return ThreatReport(
                     guardian_id=self.guardian_id,
-                    is_safe=False,
+                    guardian_type=self.guardian_type,
+                    should_block=True,
                     threat_level=ThreatLevel.CRITICAL,
-                    message=f"Blocked pattern detected: {pattern.pattern}",
-                    details={"matched_pattern": pattern.pattern},
+                    confidence=1.0,
+                    threats_detected=[f"Blocked pattern: {pattern.pattern}"],
+                    reasoning=f"Blocked pattern detected: {pattern.pattern}",
                 )
 
         # Check for suspicious keywords
         content_lower = content.lower()
         found_keywords = [kw for kw in self.SUSPICIOUS_KEYWORDS if kw in content_lower]
         if found_keywords:
-            return GuardianResult(
+            return ThreatReport(
                 guardian_id=self.guardian_id,
-                is_safe=False,
+                guardian_type=self.guardian_type,
+                should_block=True,
                 threat_level=ThreatLevel.HIGH,
-                message=f"Suspicious keywords detected: {', '.join(found_keywords)}",
-                details={"keywords": found_keywords},
+                confidence=0.8,
+                threats_detected=[f"Suspicious keyword: {kw}" for kw in found_keywords],
+                reasoning=f"Suspicious keywords detected: {', '.join(found_keywords)}",
             )
 
-        return GuardianResult(
+        return ThreatReport(
             guardian_id=self.guardian_id,
-            is_safe=True,
+            guardian_type=self.guardian_type,
+            should_block=False,
             threat_level=ThreatLevel.NONE,
-            message="Content passed strict rule-based analysis",
+            confidence=1.0,
+            threats_detected=[],
+            reasoning="Content passed strict rule-based analysis",
         )
 
     def get_style_description(self) -> str:
