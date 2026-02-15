@@ -48,6 +48,11 @@ class StrictGuardian(BaseGuardian):
         """
         super().__init__(guardian_id or "strict-guardian")
 
+    @property
+    def guardian_type(self) -> str:
+        """Return the type identifier for this guardian."""
+        return "strict"
+
     def analyze(self, content: str, context: dict[str, Any] | None = None) -> GuardianResult:
         """Analyze content using strict pattern matching rules.
 

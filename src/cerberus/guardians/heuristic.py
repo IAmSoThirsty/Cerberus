@@ -38,6 +38,11 @@ class HeuristicGuardian(BaseGuardian):
         """
         super().__init__(guardian_id or "heuristic-guardian")
 
+    @property
+    def guardian_type(self) -> str:
+        """Return the type identifier for this guardian."""
+        return "heuristic"
+
     def _calculate_threat_score(self, content: str) -> tuple[float, dict[str, float]]:
         """Calculate a threat score based on multiple heuristics.
 

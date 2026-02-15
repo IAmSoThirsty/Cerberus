@@ -39,6 +39,11 @@ class PatternGuardian(BaseGuardian):
         """
         super().__init__(guardian_id or "pattern-guardian")
 
+    @property
+    def guardian_type(self) -> str:
+        """Return the type identifier for this guardian."""
+        return "pattern"
+
     def _find_context_window(self, content: str, position: int, window: int = 50) -> str:
         """Extract context around a position in the content.
 
