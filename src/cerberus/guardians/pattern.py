@@ -7,7 +7,7 @@ than simple keyword matching.
 
 from typing import Any
 
-from cerberus.guardians.base import BaseGuardian, ThreatReport, ThreatLevel
+from cerberus.guardians.base import BaseGuardian, ThreatLevel, ThreatReport
 
 
 class PatternGuardian(BaseGuardian):
@@ -44,7 +44,9 @@ class PatternGuardian(BaseGuardian):
         """Return the type identifier for this guardian."""
         return "pattern"
 
-    def _find_context_window(self, content: str, position: int, window: int = 50) -> str:
+    def _find_context_window(
+        self, content: str, position: int, window: int = 50
+    ) -> str:
         """Extract context around a position in the content.
 
         Args:
@@ -116,7 +118,9 @@ class PatternGuardian(BaseGuardian):
 
         return True, ThreatLevel.NONE
 
-    def analyze(self, content: str, context: dict[str, Any] | None = None) -> ThreatReport:
+    def analyze(
+        self, content: str, context: dict[str, Any] | None = None
+    ) -> ThreatReport:
         """Analyze content for contextual patterns.
 
         Args:

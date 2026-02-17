@@ -72,9 +72,11 @@ class KeyManager:
                         key_id=key_data["key_id"],
                         key_data=base64.b64decode(key_data["key_data"]),
                         created_at=datetime.fromisoformat(key_data["created_at"]),
-                        expires_at=datetime.fromisoformat(key_data["expires_at"])
-                        if key_data.get("expires_at")
-                        else None,
+                        expires_at=(
+                            datetime.fromisoformat(key_data["expires_at"])
+                            if key_data.get("expires_at")
+                            else None
+                        ),
                         is_active=key_data.get("is_active", True),
                     )
                     self.keys[key.key_id] = key
@@ -88,9 +90,9 @@ class KeyManager:
                     "key_id": key.key_id,
                     "key_data": base64.b64encode(key.key_data).decode("utf-8"),
                     "created_at": key.created_at.isoformat(),
-                    "expires_at": key.expires_at.isoformat()
-                    if key.expires_at
-                    else None,
+                    "expires_at": (
+                        key.expires_at.isoformat() if key.expires_at else None
+                    ),
                     "is_active": key.is_active,
                 }
                 for key in self.keys.values()
@@ -118,7 +120,9 @@ class KeyManager:
             Generated encryption key
         """
         if key_id is None:
-            key_id = f"key_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{secrets.token_hex(4)}"
+            key_id = (
+                f"key_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{secrets.token_hex(4)}"
+            )
 
         # Generate Fernet key
         key_data = Fernet.generate_key()

@@ -172,9 +172,7 @@ class RateLimiter:
         # Global limiter (optional)
         self.global_limiter = self._create_limiter(self.default_config)
 
-    def _create_limiter(
-        self, config: RateLimitConfig
-    ) -> object:
+    def _create_limiter(self, config: RateLimitConfig) -> object:
         """Create a limiter based on configuration"""
         if self.use_token_bucket:
             rate = config.max_requests / config.window_seconds

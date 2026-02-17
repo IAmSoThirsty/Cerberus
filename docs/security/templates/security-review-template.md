@@ -26,6 +26,7 @@ Describe the purpose and scope of this security review.
 > This security code and design review evaluated the Authentication Guardian module within the Cerberus framework. The review focused on cryptographic implementations, input validation mechanisms, inter-Guardian communication protocols, and integration with the central Hub.
 
 **Component Overview:**
+
 - **Name:** [COMPONENT NAME]
 - **Type:** [GUARDIAN / HUB / MODULE / UTILITY / OTHER]
 - **Current Version:** [VERSION]
@@ -38,6 +39,7 @@ Describe the purpose and scope of this security review.
 **Overall Security Rating:** [EXCELLENT / GOOD / ACCEPTABLE / NEEDS IMPROVEMENT / CRITICAL]
 
 **Key Findings:**
+
 - Number of Critical Issues: [NUMBER]
 - Number of High Issues: [NUMBER]
 - Number of Medium Issues: [NUMBER]
@@ -45,6 +47,7 @@ Describe the purpose and scope of this security review.
 - Number of Informational Notes: [NUMBER]
 
 **Risk Assessment:**
+
 - Residual Risk Level: [LOW / MEDIUM / HIGH / CRITICAL]
 - Recommendation: [APPROVE / APPROVE WITH CONDITIONS / RECOMMEND REWORK / REJECT]
 
@@ -67,6 +70,7 @@ Describe the purpose and scope of this security review.
 ### 2.1 Review Scope
 
 **In-Scope Items:**
+
 - Component: [COMPONENT NAME]
 - Modules: [MODULE 1], [MODULE 2], [MODULE 3]
 - File count: [NUMBER]
@@ -74,11 +78,13 @@ Describe the purpose and scope of this security review.
 - Duration: [DAYS/HOURS]
 
 **Out-of-Scope Items:**
+
 - [ITEM 1] - Reason: [REASON]
 - [ITEM 2] - Reason: [REASON]
 - [ITEM 3] - Reason: [REASON]
 
 **Review Constraints:**
+
 - Time limitations: [LIMITATION]
 - Resource constraints: [LIMITATION]
 - Access restrictions: [LIMITATION]
@@ -117,6 +123,7 @@ Describe the purpose and scope of this security review.
 ### 2.3 Tools & Techniques
 
 **Tools Used:**
+
 - [TOOL 1]: [PURPOSE]
 - [TOOL 2]: [PURPOSE]
 - [TOOL 3]: [PURPOSE]
@@ -124,6 +131,7 @@ Describe the purpose and scope of this security review.
 - [DYNAMIC ANALYSIS TOOL]: [PURPOSE]
 
 **Techniques Applied:**
+
 - Code inspection checklist
 - Security pattern analysis
 - Cryptographic review
@@ -166,6 +174,7 @@ Describe the purpose and scope of this security review.
 ```
 
 **Design Principles Applied:**
+
 - [PRINCIPLE 1]: [ASSESSMENT]
 - [PRINCIPLE 2]: [ASSESSMENT]
 - [PRINCIPLE 3]: [ASSESSMENT]
@@ -173,6 +182,7 @@ Describe the purpose and scope of this security review.
 ### 3.2 Security Architecture Evaluation
 
 **Defense in Depth:**
+
 - Layer 1: [LAYER DESCRIPTION] - Status: [EFFECTIVE / WEAK]
 - Layer 2: [LAYER DESCRIPTION] - Status: [EFFECTIVE / WEAK]
 - Layer 3: [LAYER DESCRIPTION] - Status: [EFFECTIVE / WEAK]
@@ -188,17 +198,20 @@ Describe the purpose and scope of this security review.
 | Guardian-Hub Communication | [HIGH/MEDIUM/LOW] | [CONTROLS] | [ASSESSMENT] |
 
 **Privilege Escalation Vectors:**
+
 - Vector 1: [DESCRIPTION] - Mitigation: [MITIGATION] - Status: [EFFECTIVE / WEAK]
 - Vector 2: [DESCRIPTION] - Mitigation: [MITIGATION] - Status: [EFFECTIVE / WEAK]
 
 ### 3.3 Guardian-Specific Design Review
 
 **Guardian Architecture:**
+
 - Guardian Type: [TYPE - e.g., Authentication, Authorization, Encryption]
 - Responsibilities: [LIST RESPONSIBILITIES]
 - Deployment Model: [DEPLOYMENT MODEL]
 
 **Guardian Integration Points:**
+
 1. Hub Integration
    - Communication Protocol: [PROTOCOL]
    - Authentication: [METHOD]
@@ -217,6 +230,7 @@ Describe the purpose and scope of this security review.
    - Status: [✓ SECURE / ✗ NEEDS IMPROVEMENT]
 
 **Guardian State Management:**
+
 - State Storage: [METHOD]
 - State Synchronization: [METHOD]
 - Failure Recovery: [METHOD]
@@ -229,6 +243,7 @@ Describe the purpose and scope of this security review.
 ### 4.1 Threat Model Assessment
 
 **Threat Model Status:**
+
 - Exists: [YES / NO / PARTIAL]
 - Up to Date: [YES / NO]
 - Comprehensive: [YES / NO]
@@ -247,6 +262,7 @@ Describe the purpose and scope of this security review.
 ### 4.2 Guardian-Specific Threat Analysis
 
 **Threats to Guardian Integrity:**
+
 - Threat 1: [THREAT DESCRIPTION]
   - Attack Vector: [VECTOR]
   - Likelihood: [HIGH/MEDIUM/LOW]
@@ -255,6 +271,7 @@ Describe the purpose and scope of this security review.
   - Assessment: [EFFECTIVE/NEEDS IMPROVEMENT]
 
 **Threats to Guardian-Hub Communication:**
+
 - Threat 1: Man-in-the-Middle Attack
   - Vector: [VECTOR]
   - Likelihood: [HIGH/MEDIUM/LOW]
@@ -263,37 +280,44 @@ Describe the purpose and scope of this security review.
   - Assessment: [EFFECTIVE/NEEDS IMPROVEMENT]
 
 **Threats to Inter-Guardian Communication:**
+
 - Threat 1: [THREAT]
   - Assessment: [ASSESSMENT]
 
 ### 4.3 STRIDE Analysis
 
 **Spoofing:**
+
 - Threat: [THREAT]
 - Guardian Impact: [IMPACT]
 - Mitigation: [MITIGATION]
 
 **Tampering:**
+
 - Threat: [THREAT]
 - Guardian Impact: [IMPACT]
 - Mitigation: [MITIGATION]
 
 **Repudiation:**
+
 - Threat: [THREAT]
 - Guardian Impact: [IMPACT]
 - Mitigation: [MITIGATION]
 
 **Information Disclosure:**
+
 - Threat: [THREAT]
 - Guardian Impact: [IMPACT]
 - Mitigation: [MITIGATION]
 
 **Denial of Service:**
+
 - Threat: [THREAT]
 - Guardian Impact: [IMPACT]
 - Mitigation: [MITIGATION]
 
 **Elevation of Privilege:**
+
 - Threat: [THREAT]
 - Guardian Impact: [IMPACT]
 - Mitigation: [MITIGATION]
@@ -319,14 +343,19 @@ Describe the purpose and scope of this security review.
 
 **Code Snippet:**
 ```python
+
 # VULNERABLE CODE
+
 def authenticate(username, password):
+
     # Issue: Using weak hashing algorithm
+
     hash = md5(password)
     return check_hash(username, hash)
 ```
 
 **Impact:**
+
 - Security Impact: [DESCRIPTION]
 - Guardian Impact: [DESCRIPTION]
 - Business Impact: [DESCRIPTION]
@@ -336,18 +365,23 @@ def authenticate(username, password):
 
 **Remediation:**
 ```python
+
 # FIXED CODE
+
 import hashlib
 from argon2 import PasswordHasher
 
 def authenticate(username, password):
+
     # Use strong hashing with Argon2
+
     ph = PasswordHasher()
     hash = ph.hash(password)
     return check_hash(username, hash)
 ```
 
 **Verification:**
+
 - Unit Test: [TEST NAME]
 - Integration Test: [TEST NAME]
 - Security Test: [TEST NAME]
@@ -387,11 +421,13 @@ def authenticate(username, password):
 ### 5.4 Low Priority Issues & Recommendations
 
 **Issue 7: [LOW PRIORITY ISSUE]**
+
 - Location: [FILE:LINE]
 - Description: [DESCRIPTION]
 - Recommendation: [RECOMMENDATION]
 
 **Issue 8: [LOW PRIORITY ISSUE]**
+
 - Location: [FILE:LINE]
 - Description: [DESCRIPTION]
 - Recommendation: [RECOMMENDATION]
@@ -401,11 +437,13 @@ def authenticate(username, password):
 ### 5.5 Code Quality Findings
 
 **Strengths:**
+
 1. [STRENGTH 1]
 2. [STRENGTH 2]
 3. [STRENGTH 3]
 
 **Areas for Improvement:**
+
 1. [IMPROVEMENT AREA 1]
 2. [IMPROVEMENT AREA 2]
 3. [IMPROVEMENT AREA 3]
@@ -436,6 +474,7 @@ def authenticate(username, password):
 **RNG Implementation:** [IMPLEMENTATION DETAILS]
 
 **Assessment:**
+
 - Using cryptographically secure RNG: [YES / NO]
 - Seed management: [ASSESSMENT]
 - Entropy source: [ASSESSMENT]
@@ -444,6 +483,7 @@ def authenticate(username, password):
 ### 6.3 Encryption Implementation
 
 **Data in Transit:**
+
 - Protocol: [PROTOCOL]
 - TLS Version: [VERSION]
 - Cipher Suites: [SUITES]
@@ -451,6 +491,7 @@ def authenticate(username, password):
 - Assessment: [ASSESSMENT]
 
 **Data at Rest:**
+
 - Algorithm: [ALGORITHM]
 - Key Management: [METHOD]
 - Access Control: [METHOD]
@@ -459,17 +500,20 @@ def authenticate(username, password):
 ### 6.4 Key Management Review
 
 **Key Generation:**
+
 - Method: [METHOD]
 - Entropy: [ENTROPY SOURCE]
 - Assessment: [ASSESSMENT]
 
 **Key Storage:**
+
 - Storage Method: [METHOD]
 - Access Control: [CONTROL]
 - Rotation: [ROTATION POLICY]
 - Assessment: [ASSESSMENT]
 
 **Key Lifecycle:**
+
 - Generation: [PROCESS]
 - Distribution: [PROCESS]
 - Usage: [PROCESS]
@@ -490,6 +534,7 @@ def authenticate(username, password):
 | [VECTOR 3] | [YES/NO] | [METHOD] | [✓/✗] |
 
 **Findings:**
+
 - Issue: [VALIDATION BYPASS POSSIBLE]
 - Remediation: [RECOMMENDATION]
 
@@ -539,6 +584,7 @@ def authenticate(username, password):
 ### 8.1 Test Coverage Analysis
 
 **Code Coverage:**
+
 - Line Coverage: [%]
 - Branch Coverage: [%]
 - Function Coverage: [%]
@@ -576,6 +622,7 @@ def authenticate(username, password):
 ### 8.3 Security Testing
 
 **Vulnerability Scanning:**
+
 - Tool: [TOOL NAME]
 - Vulnerabilities Found: [NUMBER]
 - Critical/High: [NUMBER]
@@ -584,6 +631,7 @@ def authenticate(username, password):
 - Result: [PASS / NEEDS REMEDIATION]
 
 **Penetration Testing (if performed):**
+
 - Scope: [SCOPE]
 - Vulnerabilities Found: [NUMBER]
 - Result: [RESULT]
@@ -591,6 +639,7 @@ def authenticate(username, password):
 ### 8.4 Performance Testing
 
 **Guardian Performance Impact:**
+
 - Latency Impact: [MEASUREMENT]
 - Throughput Impact: [MEASUREMENT]
 - Resource Usage: [MEASUREMENT]
@@ -611,6 +660,7 @@ def authenticate(username, password):
 ### 9.2 Vulnerability Assessment
 
 **CVE Scan Results:**
+
 - Critical CVEs: [NUMBER]
 - High CVEs: [NUMBER]
 - Medium CVEs: [NUMBER]
@@ -619,6 +669,7 @@ def authenticate(username, password):
 **Remediation Required:** [YES / NO]
 
 **Update Recommendations:**
+
 - [RECOMMENDATION 1]
 - [RECOMMENDATION 2]
 
@@ -639,6 +690,7 @@ def authenticate(username, password):
 ### 10.2 Code Comments & Clarity
 
 **Security-Critical Code Comments:**
+
 - Presence: [ADEQUATE / INADEQUATE]
 - Quality: [GOOD / ACCEPTABLE / POOR]
 - Assessment: [ASSESSMENT]
@@ -676,6 +728,7 @@ def authenticate(username, password):
 ### 11.4 Guardian Enhancement Recommendations
 
 **Guardian-Specific Enhancements:**
+
 1. [ENHANCEMENT 1]
 2. [ENHANCEMENT 2]
 3. [ENHANCEMENT 3]
@@ -713,12 +766,14 @@ def authenticate(username, password):
 [Executive summary of findings and overall security posture]
 
 **Recommendation:**
+
 - [ ] APPROVE - Code/design is ready for production
 - [ ] APPROVE WITH CONDITIONS - Approve pending specific fixes
 - [ ] RECOMMEND REWORK - Significant issues must be addressed before approval
 - [ ] REJECT - Critical issues prevent approval
 
 **Conditions for Approval (if applicable):**
+
 1. [CONDITION 1]
 2. [CONDITION 2]
 3. [CONDITION 3]
@@ -755,6 +810,7 @@ def authenticate(username, password):
 **Follow-up Required:** [YES / NO]
 
 **Follow-up Schedule:**
+
 - Interim Review: [DATE]
 - Final Verification: [DATE]
 - Re-review if: [CONDITIONS]

@@ -1,6 +1,7 @@
 # Threat Awareness Training
 
 ## Table of Contents
+
 1. [Learning Objectives](#learning-objectives)
 2. [Threat Landscape](#threat-landscape)
 3. [Attack Scenarios](#attack-scenarios)
@@ -91,7 +92,7 @@ class ThreatActorAnalysis:
         self.threat_profiler = ThreatProfiler()
         self.threat_intelligence = ThreatIntelligence()
         self.threat_guardian = ThreatGuardian()
-    
+
     def analyze_threat_actor_profile(self, actor_type, motivations):
         """
         Analyze threat actor profile and characteristics.
@@ -126,14 +127,15 @@ class ThreatActorAnalysis:
                 'attack_patterns': ['data_theft', 'sabotage', 'privilege_escalation']
             }
         }
-        
+
         profile = profiles.get(actor_type, {})
-        
+
         # Log threat actor analysis
+
         self.threat_guardian.log_threat_actor_analysis(actor_type, profile)
-        
+
         return profile
-    
+
     def assess_attack_sophistication(self, attack_characteristics):
         """
         Assess sophistication level of attack.
@@ -166,8 +168,9 @@ class ThreatActorAnalysis:
                 'weak_password_guessing'
             ]
         }
-        
+
         # Determine sophistication level
+
         for level, indicators_list in indicators.items():
             if any(char in attack_characteristics for char in indicators_list):
                 self.threat_guardian.log_sophistication_assessment(
@@ -175,7 +178,7 @@ class ThreatActorAnalysis:
                     attack_characteristics
                 )
                 return level
-        
+
         return 'unknown'
 ```
 
@@ -256,7 +259,7 @@ class APTDetection:
         self.apt_guardian = APTGuardian()
         self.anomaly_guardian = AnomalyDetectionGuardian()
         self.behavioral_analysis = BehavioralAnalysis()
-    
+
     def detect_apt_indicators(self, network_events):
         """
         Detect indicators of advanced persistent threat.
@@ -269,30 +272,32 @@ class APTDetection:
             'data_exfiltration_pattern': False,
             'command_control_communication': False
         }
-        
+
         # Analyze network events
+
         for event in network_events:
             if self.apt_guardian.is_suspicious_attachment(event):
                 apt_indicators['suspicious_email_attachment'] = True
-            
+
             if self.apt_guardian.is_unusual_login(event):
                 apt_indicators['unusual_login_pattern'] = True
-            
+
             if self.apt_guardian.is_privilege_escalation(event):
                 apt_indicators['privilege_escalation_attempt'] = True
-            
+
             if self.apt_guardian.is_lateral_movement(event):
                 apt_indicators['lateral_movement_detected'] = True
-            
+
             if self.apt_guardian.is_data_exfiltration(event):
                 apt_indicators['data_exfiltration_pattern'] = True
-            
+
             if self.apt_guardian.is_c2_communication(event):
                 apt_indicators['command_control_communication'] = True
-        
+
         # Calculate threat score
+
         threat_score = sum(1 for v in apt_indicators.values() if v) / len(apt_indicators)
-        
+
         if threat_score >= 0.5:
             self.apt_guardian.raise_apt_alert(apt_indicators, threat_score)
             return 'HIGH_APT_RISK'
@@ -301,33 +306,40 @@ class APTDetection:
             return 'POTENTIAL_APT_RISK'
         else:
             return 'LOW_APT_RISK'
-    
+
     def respond_to_apt(self, incident_indicators):
         """
         Respond to detected APT activity.
         """
+
         # Step 1: Isolate affected systems
+
         self.apt_guardian.isolate_compromised_systems()
-        
+
         # Step 2: Preserve evidence
+
         self.apt_guardian.preserve_forensic_evidence()
-        
+
         # Step 3: Conduct forensic analysis
+
         forensic_report = self.apt_guardian.conduct_forensic_analysis()
-        
+
         # Step 4: Identify compromised accounts
+
         compromised_accounts = self.apt_guardian.identify_compromised_accounts()
-        
+
         # Step 5: Reset credentials
+
         for account in compromised_accounts:
             self.apt_guardian.force_password_reset(account)
             self.apt_guardian.revoke_all_sessions(account)
-        
+
         # Step 6: Patch vulnerabilities
+
         vulnerabilities = self.apt_guardian.identify_exploitation_vulnerabilities()
         for vuln in vulnerabilities:
             self.apt_guardian.prioritize_patch(vuln)
-        
+
         return forensic_report
 ```
 
@@ -363,7 +375,7 @@ class RansomwareIncidentResponse:
         self.ransomware_guardian = RansomwareGuardian()
         self.backup_guardian = BackupGuardian()
         self.recovery_manager = RecoveryManager()
-    
+
     def detect_ransomware_activity(self, file_system_events):
         """
         Detect ransomware indicators in file system activity.
@@ -375,28 +387,30 @@ class RansomwareIncidentResponse:
             'backup_file_deletion': False,
             'file_metadata_changes': False
         }
-        
+
         # Analyze file operations
+
         for event in file_system_events:
             if self.ransomware_guardian.is_rapid_encryption(event):
                 ransomware_indicators['rapid_file_encryption'] = True
-            
+
             if self.ransomware_guardian.has_unusual_extension(event):
                 ransomware_indicators['unusual_file_extensions'] = True
-            
+
             if self.ransomware_guardian.is_ransom_note(event):
                 ransomware_indicators['ransom_note_creation'] = True
-            
+
             if self.ransomware_guardian.is_backup_deletion(event):
                 ransomware_indicators['backup_file_deletion'] = True
-        
+
         # Alert if multiple indicators present
+
         if sum(ransomware_indicators.values()) >= 2:
             self.ransomware_guardian.raise_ransomware_alert(ransomware_indicators)
             return True
-        
+
         return False
-    
+
     def respond_to_ransomware(self, encryption_start_time):
         """
         Respond to ransomware incident.
@@ -406,8 +420,9 @@ class RansomwareIncidentResponse:
             'short_term': [],
             'long_term': []
         }
-        
+
         # Immediate actions (0-1 hour)
+
         response_plan['immediate'].extend([
             'Isolate all infected systems from network',
             'Disable affected user accounts',
@@ -415,13 +430,15 @@ class RansomwareIncidentResponse:
             'Preserve logs and forensic evidence',
             'Notify incident response team'
         ])
-        
+
         # Execute immediate actions
+
         self.ransomware_guardian.isolate_infected_systems()
         self.ransomware_guardian.disable_user_accounts()
         self.ransomware_guardian.block_c2_domains()
-        
+
         # Short-term actions (1-24 hours)
+
         response_plan['short_term'].extend([
             'Assess backup integrity',
             'Identify infection entry point',
@@ -429,10 +446,11 @@ class RansomwareIncidentResponse:
             'Calculate recovery time and data loss',
             'Notify management and legal'
         ])
-        
+
         # Check backup integrity
+
         backup_status = self.backup_guardian.verify_backup_integrity()
-        
+
         if backup_status['is_intact']:
             response_plan['short_term'].append('Initiate recovery from clean backups')
             recovery_time = self.recovery_manager.estimate_recovery_time(
@@ -443,8 +461,9 @@ class RansomwareIncidentResponse:
                 'WARNING: Backups corrupted - contact forensics team'
             )
             recovery_time = 'UNKNOWN'
-        
+
         # Long-term actions (1+ weeks)
+
         response_plan['long_term'].extend([
             'Conduct root cause analysis',
             'Identify network vulnerabilities exploited',
@@ -452,9 +471,9 @@ class RansomwareIncidentResponse:
             'Update incident response procedures',
             'Conduct security awareness training'
         ])
-        
+
         return response_plan
-    
+
     def decide_ransom_payment(self, ransom_amount, incident_data):
         """
         Guidelines for deciding on ransom payment.
@@ -466,9 +485,9 @@ class RansomwareIncidentResponse:
             'law_enforcement_advice': self.ransomware_guardian.get_law_enforcement_recommendation(),
             'ransom_tracking': self.ransomware_guardian.can_track_ransom()
         }
-        
+
         recommendation = "DO NOT PAY RANSOM"
-        
+
         reasoning = [
             "Paying ransom encourages future attacks",
             "No guarantee attacker will provide decryption key",
@@ -476,13 +495,14 @@ class RansomwareIncidentResponse:
             "Ransom payments may violate regulations",
             "Law enforcement can assist with recovery"
         ]
-        
+
         # Only exception: critical business systems, no backups, severe impact
-        if (decision_factors['backups_available'] is False and 
+
+        if (decision_factors['backups_available'] is False and
             incident_data.get('business_impact') == 'CRITICAL' and
             recovery_time == 'EXTENDED'):
             recommendation = "CONSULT LAW ENFORCEMENT AND LEGAL"
-        
+
         return {
             'recommendation': recommendation,
             'reasoning': reasoning,
@@ -522,7 +542,7 @@ class DataBreachPrevention:
         self.encryption_guardian = EncryptionGuardian()
         self.data_inventory = DataInventory()
         self.sensitive_data_detector = SensitiveDataDetector()
-    
+
     def classify_sensitive_data(self):
         """
         Classify all data by sensitivity level.
@@ -553,39 +573,47 @@ class DataBreachPrevention:
                 'examples': ['medical records', 'payment card data', 'PII']
             }
         }
-        
+
         # Scan all data stores
+
         data_inventory = self.data_inventory.get_all_data_locations()
-        
+
         for data_location in data_inventory:
+
             # Detect sensitive data automatically
+
             detected_data = self.sensitive_data_detector.scan(data_location)
-            
+
             for data_item in detected_data:
+
                 # Classify sensitivity
+
                 classification = self.data_classification.classify(data_item)
-                
+
                 # Apply protection requirements
+
                 protection_config = classification_levels[classification]
-                
+
                 # Ensure encryption
+
                 if protection_config['encryption_required']:
                     self.encryption_guardian.ensure_encryption(
                         data_item,
                         encryption_algorithm='AES-256'
                     )
-                
+
                 # Restrict access
+
                 self.data_classification.apply_access_restrictions(
                     data_item,
                     access_level=protection_config['access_control']
                 )
-                
+
                 self.data_classification.log_classification(
                     data_item,
                     classification
                 )
-    
+
     def prevent_data_exposure(self):
         """
         Prevent common data exposure scenarios.
@@ -620,7 +648,7 @@ class DataBreachPrevention:
                 'prevention': 'Redact sensitive data from all logs'
             }
         ]
-        
+
         for measure in prevention_measures:
             self.data_classification.implement_prevention(measure)
 ```
@@ -678,7 +706,7 @@ class PhishingDetection:
         self.email_security = EmailSecurityGuardian()
         self.url_analyzer = URLAnalyzer()
         self.attachment_scanner = AttachmentScanner()
-    
+
     def analyze_email_for_phishing(self, email_message):
         """
         Analyze email for phishing indicators.
@@ -692,24 +720,28 @@ class PhishingDetection:
             'grammar_spelling_errors': False,
             'mismatched_domains': False
         }
-        
+
         # Check sender reputation
+
         if not self.phishing_guardian.is_trusted_sender(email_message['from']):
             phishing_indicators['sender_spoofing'] = True
-        
+
         # Analyze links
+
         for link in self.email_security.extract_links(email_message):
             if self.url_analyzer.is_phishing_url(link):
                 phishing_indicators['suspicious_links'].append(link)
-        
+
         # Scan attachments
+
         for attachment in email_message.get('attachments', []):
             if self.attachment_scanner.is_malicious(attachment):
                 phishing_indicators['malicious_attachments'].append(
                     attachment['name']
                 )
-        
+
         # Detect urgency language
+
         urgent_phrases = [
             'immediate action required',
             'verify account',
@@ -718,15 +750,16 @@ class PhishingDetection:
             'click here now',
             'limited time'
         ]
-        
+
         email_body = email_message['body'].lower()
-        
+
         for phrase in urgent_phrases:
             if phrase in email_body:
                 phishing_indicators['urgency_language'] = True
                 break
-        
+
         # Detect requests for sensitive information
+
         sensitive_requests = [
             'password',
             'credit card',
@@ -734,26 +767,29 @@ class PhishingDetection:
             'account number',
             'verification code'
         ]
-        
+
         for request in sensitive_requests:
             if request in email_body:
                 phishing_indicators['requests_sensitive_info'] = True
                 break
-        
+
         # Check for grammar/spelling errors
+
         if self.phishing_guardian.has_grammar_errors(email_body):
             phishing_indicators['grammar_spelling_errors'] = True
-        
+
         # Check domain mismatches
+
         if self.phishing_guardian.has_domain_mismatch(
             email_message['from'],
             phishing_indicators['suspicious_links']
         ):
             phishing_indicators['mismatched_domains'] = True
-        
+
         # Calculate phishing score
+
         phishing_score = self.calculate_phishing_score(phishing_indicators)
-        
+
         if phishing_score >= 0.8:
             self.phishing_guardian.quarantine_email(email_message)
             self.phishing_guardian.alert_user('PHISHING DETECTED')
@@ -763,7 +799,7 @@ class PhishingDetection:
             return 'SUSPICIOUS'
         else:
             return 'LEGITIMATE'
-    
+
     def calculate_phishing_score(self, indicators):
         """
         Calculate overall phishing score (0-1).
@@ -777,30 +813,30 @@ class PhishingDetection:
             'grammar_spelling_errors': 0.05,
             'mismatched_domains': 0.2
         }
-        
+
         score = 0.0
-        
+
         if indicators['sender_spoofing']:
             score += weights['sender_spoofing']
-        
+
         if indicators['suspicious_links']:
             score += min(0.25, len(indicators['suspicious_links']) * 0.1)
-        
+
         if indicators['malicious_attachments']:
             score += weights['malicious_attachments']
-        
+
         if indicators['urgency_language']:
             score += weights['urgency_language']
-        
+
         if indicators['requests_sensitive_info']:
             score += weights['requests_sensitive_info']
-        
+
         if indicators['grammar_spelling_errors']:
             score += weights['grammar_spelling_errors']
-        
+
         if indicators['mismatched_domains']:
             score += weights['mismatched_domains']
-        
+
         return min(1.0, score)
 ```
 
@@ -813,7 +849,7 @@ class SpearPhishingDetection:
     def __init__(self):
         self.phishing_guardian = PhishingGuardian()
         self.threat_intelligence = ThreatIntelligence()
-    
+
     def detect_spear_phishing(self, email_message, recipient_profile):
         """
         Detect spear phishing targeted at specific individual.
@@ -824,35 +860,40 @@ class SpearPhishingDetection:
             'organization_references': False,
             'recent_event_references': False
         }
-        
+
         # Check if email references personal details
+
         personal_terms = recipient_profile.get('personal_interests', [])
         email_body = email_message['body'].lower()
-        
+
         for term in personal_terms:
             if term in email_body:
                 indicators['personal_details'] = True
-        
+
         # Check for role-specific content
+
         role = recipient_profile.get('job_role')
         if role and role.lower() in email_body:
             indicators['role_specific_content'] = True
-        
+
         # Check for organization references
+
         org_name = recipient_profile.get('organization')
         if org_name and org_name.lower() in email_body:
             indicators['organization_references'] = True
-        
+
         # Check if email references recent events
+
         recent_events = self.threat_intelligence.get_recent_organization_events(
             recipient_profile['organization']
         )
-        
+
         for event in recent_events:
             if event['description'].lower() in email_body:
                 indicators['recent_event_references'] = True
-        
+
         # Spear phishing likely if multiple indicators present
+
         if sum(indicators.values()) >= 2:
             self.phishing_guardian.raise_spear_phishing_alert(
                 email_message,
@@ -860,7 +901,7 @@ class SpearPhishingDetection:
                 indicators
             )
             return True
-        
+
         return False
 ```
 
@@ -934,7 +975,7 @@ class InsiderThreatDetection:
         self.behavioral_analytics = BehavioralAnalyticsGuardian()
         self.employee_profiler = EmployeeProfiler()
         self.access_analyzer = AccessPatternAnalyzer()
-    
+
     def analyze_insider_threat_indicators(self, employee_id):
         """
         Analyze behavioral and access indicators for insider threat.
@@ -945,12 +986,14 @@ class InsiderThreatDetection:
             'data_access': [],
             'system_activity': []
         }
-        
+
         # Get employee profile and access patterns
+
         employee = self.employee_profiler.get_profile(employee_id)
         access_history = self.access_analyzer.get_access_history(employee_id)
-        
+
         # BEHAVIORAL INDICATORS
+
         behavioral_red_flags = [
             'recently_disciplined',
             'pending_termination',
@@ -961,34 +1004,38 @@ class InsiderThreatDetection:
             'excessive_after_hours_access',
             'frequent_access_denial_incidents'
         ]
-        
+
         for flag in behavioral_red_flags:
             if self.insider_guardian.has_behavioral_flag(employee_id, flag):
                 risk_indicators['behavioral'].append(flag)
-        
+
         # ACCESS PATTERN INDICATORS
+
         # Compare to baseline behavior
+
         normal_patterns = self.access_analyzer.get_normal_access_patterns(
             employee_id
         )
         current_patterns = self.access_analyzer.get_current_access_patterns(
             employee_id
         )
-        
+
         anomalies = self.access_analyzer.detect_anomalies(
             normal_patterns,
             current_patterns
         )
-        
+
         for anomaly in anomalies:
             risk_indicators['access_pattern'].append(anomaly)
-        
+
         # DATA ACCESS INDICATORS
+
         # Unusual access to sensitive data
+
         sensitive_data_access = self.insider_guardian.analyze_sensitive_data_access(
             employee_id
         )
-        
+
         if sensitive_data_access.get('unusual_access'):
             risk_indicators['data_access'].extend([
                 'accessing_unrelated_data',
@@ -996,12 +1043,13 @@ class InsiderThreatDetection:
                 'accessing_large_data_volumes',
                 'accessing_data_before_leaving'
             ])
-        
+
         # SYSTEM ACTIVITY INDICATORS
+
         system_activities = self.insider_guardian.analyze_system_activities(
             employee_id
         )
-        
+
         suspicious_activities = [
             'attempted_privilege_escalation',
             'disabling_security_tools',
@@ -1011,14 +1059,15 @@ class InsiderThreatDetection:
             'uploading_to_personal_cloud',
             'printing_sensitive_documents'
         ]
-        
+
         for activity in suspicious_activities:
             if system_activities.get(activity):
                 risk_indicators['system_activity'].append(activity)
-        
+
         # Calculate insider threat risk score
+
         risk_score = self.calculate_insider_threat_score(risk_indicators)
-        
+
         if risk_score >= 0.8:
             self.insider_guardian.escalate_to_management(
                 employee_id,
@@ -1031,7 +1080,7 @@ class InsiderThreatDetection:
             return 'MEDIUM_RISK'
         else:
             return 'LOW_RISK'
-    
+
     def calculate_insider_threat_score(self, indicators):
         """
         Calculate insider threat risk score (0-1).
@@ -1042,15 +1091,17 @@ class InsiderThreatDetection:
             'data_access': 0.3,
             'system_activity': 0.15
         }
-        
+
         score = 0.0
-        
+
         for category, weight in weights.items():
             if indicators[category]:
+
                 # Score increases based on number of indicators
+
                 category_score = min(1.0, len(indicators[category]) * 0.2)
                 score += weight * category_score
-        
+
         return min(1.0, score)
 ```
 
@@ -1103,56 +1154,66 @@ class CerberusUnifiedThreatDetection:
         self.threat_detection = ThreatDetectionGuardian()
         self.incident_response = IncidentResponseGuardian()
         self.forensics = ForensicsGuardian()
-    
+
     def unified_threat_detection_workflow(self, security_event):
         """
         Cerberus unified workflow for detecting and responding to threats.
         """
+
         # Step 1: Event Detection & Collection
+
         detection = self.threat_detection.detect_event(security_event)
-        
+
         if not detection['is_threat']:
             return 'benign_event'
-        
+
         # Step 2: Threat Analysis & Classification
+
         threat_analysis = self.threat_detection.analyze_threat(detection)
         threat_type = threat_analysis['threat_type']  # APT, malware, etc.
         severity = threat_analysis['severity']  # critical, high, medium, low
-        
+
         # Step 3: Incident Creation & Tracking
+
         incident = self.incident_response.create_incident(
             threat_type=threat_type,
             severity=severity,
             initial_event=security_event,
             threat_analysis=threat_analysis
         )
-        
+
         # Step 4: Containment
+
         self.incident_response.execute_containment(incident)
-        
+
         # Step 5: Evidence Preservation
+
         self.forensics.preserve_evidence(incident)
-        
+
         # Step 6: Investigation & Attribution
+
         investigation = self.forensics.conduct_investigation(incident)
-        
+
         # Step 7: Response Execution
+
         response_actions = self.incident_response.determine_response_actions(
             threat_type,
             investigation
         )
-        
+
         self.incident_response.execute_response(incident, response_actions)
-        
+
         # Step 8: Recovery
+
         if severity == 'critical':
             self.incident_response.execute_recovery_plan(incident)
-        
+
         # Step 9: Post-Incident Analysis
+
         lessons_learned = self.incident_response.conduct_post_incident_review(
             incident
         )
-        
+
         return {
             'incident_id': incident['id'],
             'threat_type': threat_type,
@@ -1184,7 +1245,7 @@ July 2013: Attackers gain access via HVAC contractor
 October: Attackers deploy malware on Point of Sale (POS) systems
 
        : Data exfiltration begins - 40 million cards stolen
-       
+
        : Data published on underground forums
 
 December 15: Target discovers unauthorized activity
@@ -1220,6 +1281,7 @@ December 22: Target notifies public and law enforcement
 
 ```
 March 2017: Apache Struts vulnerability discovered and patched
+
            - Equifax didn't patch systems
 
 May 2017: Attacker discovers vulnerable Equifax system
@@ -1227,7 +1289,7 @@ May 2017: Attacker discovers vulnerable Equifax system
 
 July 29: Equifax discovers suspicious activity
         : Realizes massive data breach occurred
-        
+
 September 7: Breach announced publicly
              : Backlash and investigations begin
 ```
@@ -1268,7 +1330,7 @@ March 2020: Malicious updates distributed to 18,000+ customers
            : Malware installed on customer networks
 
              : Command and control (C2) communication established
-             
+
              : Lateral movement and privilege escalation begins
 
 December 8, 2020: FireEye discovers breach while investigating
@@ -1311,8 +1373,8 @@ Subject: URGENT: Verify Your Account
 
 Dear Valued Customer,
 
-We've detected unusual activity on your Amazon account from 
-an unrecognized location. To secure your account, please 
+We've detected unusual activity on your Amazon account from
+an unrecognized location. To secure your account, please
 verify your information immediately:
 
 Click here to verify: htt p://amazon-verify-account.com/login
@@ -1323,6 +1385,7 @@ Amazon Account Support Team
 ```
 
 Is this phishing? **YES** - Multiple indicators:
+
 - Domain misspelled (amaz0n, not amazon)
 - URL doesn't match sender domain
 - Urgency pressure language
@@ -1333,7 +1396,7 @@ Is this phishing? **YES** - Multiple indicators:
 
 You receive a call from someone claiming to be from IT:
 
-"Hi, we're doing emergency security updates and need to restart your computer. 
+"Hi, we're doing emergency security updates and need to restart your computer.
 Can you provide your network password so I can validate your account?"
 
 What should you do?
@@ -1350,6 +1413,7 @@ D) Tell them you're too busy right now
 **Scenario:**
 
 You notice the following:
+
 - Colleague's account has been sending unusual emails
 - Their email is accessing shared drives they don't normally use
 - They claim they didn't send those emails

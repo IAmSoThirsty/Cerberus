@@ -1,7 +1,7 @@
 # Cerberus Security Guide
 
-**Version:** 1.0  
-**Last Updated:** 2024  
+**Version:** 1.0
+**Last Updated:** 2024
 **Classification:** Internal Use
 
 ## Table of Contents
@@ -92,12 +92,14 @@ from cerberus.security.modules import (
 )
 
 # Initialize security modules
+
 input_validator = InputValidator()
 threat_detector = ThreatDetector()
 audit_logger = AuditLogger(log_level="INFO", audit_file="security_audit.log")
 rate_limiter = RateLimiter(max_requests=100, window_seconds=60)
 
 # Create hub with security modules
+
 hub = CerberusHub(
     security_modules=[
         input_validator,
@@ -130,6 +132,7 @@ hub = CerberusHub(config=config)
 #### 1. PatternGuardian (Rule-Based)
 
 **Security Profile:**
+
 - **Strengths**: Fast, deterministic, no false negatives on known patterns
 - **Weaknesses**: Vulnerable to pattern evasion, requires regular updates
 - **Use Cases**: Known attack signatures, compliance patterns, blocklists
@@ -158,6 +161,7 @@ pattern_guardian = PatternGuardian(patterns={
 #### 2. HeuristicGuardian (Behavioral Analysis)
 
 **Security Profile:**
+
 - **Strengths**: Detects novel attacks, adapts to patterns
 - **Weaknesses**: May have false positives, requires tuning
 - **Use Cases**: Zero-day attacks, behavioral anomalies, evasion attempts
@@ -180,6 +184,7 @@ heuristic_guardian = HeuristicGuardian(
 #### 3. StatisticalGuardian (Anomaly Detection)
 
 **Security Profile:**
+
 - **Strengths**: Detects statistical anomalies, no prior knowledge needed
 - **Weaknesses**: Requires baseline training, sensitive to drift
 - **Use Cases**: Traffic analysis, usage patterns, outlier detection
@@ -221,6 +226,7 @@ validator = InputValidator(
 )
 
 # Validate input
+
 result: ValidationResult = validator.validate(user_input)
 
 if not result.is_valid:
@@ -236,31 +242,42 @@ if not result.is_valid:
     raise SecurityException(f"Input validation failed: {result.details}")
 
 # Use sanitized input
+
 safe_input = result.sanitized_input
 ```
 
 **Attack Detection:**
 
 ```python
+
 # XXE Attack Detection
+
 xxe_result = validator.detect_xxe(xml_input)
 if xxe_result.attack_type == AttackType.XXE:
+
     # Block and log
 
 # SQL Injection Detection
+
 sqli_result = validator.detect_sql_injection(query_input)
 if sqli_result.attack_type == AttackType.SQLI:
+
     # Block and log
 
 # Command Injection Detection
+
 cmd_result = validator.detect_command_injection(command_input)
 if cmd_result.attack_type == AttackType.COMMAND_INJECTION:
+
     # Block and log
 
 # Path Traversal Detection
+
 path_result = validator.detect_path_traversal(file_path)
 if path_result.attack_type == AttackType.PATH_TRAVERSAL:
+
     # Block and log
+
 ```
 
 ### 2. Threat Detection Module
@@ -280,6 +297,7 @@ detector = ThreatDetector(
 )
 
 # Analyze for threats
+
 threat_result = detector.analyze(user_input, context={
     'user_id': user_id,
     'session_id': session_id,
@@ -287,7 +305,9 @@ threat_result = detector.analyze(user_input, context={
 })
 
 if threat_result.threat_level >= ThreatLevel.HIGH:
+
     # Immediate action required
+
     audit_logger.log_security_event(
         event_type="HIGH_THREAT_DETECTED",
         severity="CRITICAL",
@@ -298,8 +318,9 @@ if threat_result.threat_level >= ThreatLevel.HIGH:
             'signatures': threat_result.matched_signatures
         }
     )
-    
+
     # Trigger incident response
+
     incident_handler.handle_threat(threat_result)
 ```
 
@@ -309,6 +330,7 @@ if threat_result.threat_level >= ThreatLevel.HIGH:
 from cerberus.security.modules import ThreatSignature
 
 # Define custom threat signatures
+
 jailbreak_signature = ThreatSignature(
     name="jailbreak_attempt",
     category=ThreatCategory.JAILBREAK,
@@ -345,22 +367,23 @@ auth_manager = AuthManager(
 )
 
 # User authentication
+
 try:
     auth_result = auth_manager.authenticate(
         username=username,
         password=password,
         mfa_code=mfa_code
     )
-    
+
     access_token = auth_result.access_token
     refresh_token = auth_result.refresh_token
-    
+
     audit_logger.log_auth_event(
         event_type="LOGIN_SUCCESS",
         user_id=auth_result.user_id,
         ip_address=request.remote_addr
     )
-    
+
 except AuthenticationError as e:
     audit_logger.log_auth_event(
         event_type="LOGIN_FAILED",
@@ -374,18 +397,24 @@ except AuthenticationError as e:
 **Token Management:**
 
 ```python
+
 # Validate token
+
 try:
     token_data = auth_manager.validate_token(access_token)
     user_id = token_data.user_id
     permissions = token_data.permissions
-    
+
 except TokenExpiredError:
+
     # Attempt refresh
+
     new_tokens = auth_manager.refresh_token(refresh_token)
-    
+
 except InvalidTokenError:
+
     # Force re-authentication
+
     raise UnauthorizedError("Invalid token")
 ```
 
@@ -401,6 +430,7 @@ from cerberus.security.modules import RBACManager, Role, Permission
 rbac = RBACManager()
 
 # Define roles
+
 admin_role = Role(
     name="admin",
     permissions=[
@@ -433,16 +463,21 @@ guardian_role = Role(
 )
 
 # Register roles
+
 rbac.register_role(admin_role)
 rbac.register_role(user_role)
 rbac.register_role(guardian_role)
 
 # Assign role to user
+
 rbac.assign_role(user_id="user123", role_name="user")
 
 # Check permissions
+
 if rbac.has_permission(user_id="user123", permission=Permission.WRITE):
+
     # Allow operation
+
     pass
 else:
     raise PermissionDeniedError("Insufficient permissions")
@@ -463,15 +498,18 @@ encryption_manager = EncryptionManager(
 )
 
 # Encrypt sensitive data
+
 encrypted_data = encryption_manager.encrypt(
     plaintext=sensitive_data,
     context={'user_id': user_id, 'purpose': 'storage'}
 )
 
 # Store encrypted data
+
 storage.save(encrypted_data)
 
 # Decrypt data
+
 decrypted_data = encryption_manager.decrypt(
     ciphertext=encrypted_data,
     context={'user_id': user_id, 'purpose': 'storage'}
@@ -481,7 +519,9 @@ decrypted_data = encryption_manager.decrypt(
 **Field-Level Encryption:**
 
 ```python
+
 # Encrypt specific fields
+
 user_data = {
     'username': 'john_doe',
     'email': encryption_manager.encrypt_field('john@example.com'),
@@ -508,16 +548,18 @@ rate_limiter = RateLimiter(
 )
 
 # Check rate limit
+
 try:
     rate_limiter.check_limit(
         user_id=user_id,
         ip_address=ip_address,
         endpoint='/api/analyze'
     )
-    
+
     # Process request
+
     result = process_request(request)
-    
+
 except RateLimitExceededError as e:
     audit_logger.log_security_event(
         event_type="RATE_LIMIT_EXCEEDED",
@@ -528,7 +570,7 @@ except RateLimitExceededError as e:
             'retry_after': e.retry_after
         }
     )
-    
+
     return {
         'error': 'Rate limit exceeded',
         'retry_after': e.retry_after
@@ -538,7 +580,9 @@ except RateLimitExceededError as e:
 **Advanced Rate Limiting:**
 
 ```python
+
 # Token bucket algorithm
+
 rate_limiter.configure_token_bucket(
     bucket_size=100,
     refill_rate=10,  # tokens per second
@@ -546,6 +590,7 @@ rate_limiter.configure_token_bucket(
 )
 
 # Sliding window algorithm
+
 rate_limiter.configure_sliding_window(
     window_size=60,  # seconds
     max_requests=100,
@@ -571,6 +616,7 @@ audit_logger = AuditLogger(
 )
 
 # Log security events
+
 audit_logger.log_security_event(
     event_type=EventType.AUTHENTICATION,
     severity="INFO",
@@ -584,6 +630,7 @@ audit_logger.log_security_event(
 )
 
 # Log access events
+
 audit_logger.log_access_event(
     resource='/api/sensitive-data',
     action='READ',
@@ -593,6 +640,7 @@ audit_logger.log_access_event(
 )
 
 # Log threat events
+
 audit_logger.log_threat_event(
     threat_type='PROMPT_INJECTION',
     severity='HIGH',
@@ -626,12 +674,13 @@ sandbox = SandboxManager(
 )
 
 # Execute code in sandbox
+
 try:
     result = sandbox.execute(
         code=user_provided_code,
         timeout=10
     )
-    
+
     if result.exit_code == 0:
         return result.output
     else:
@@ -643,7 +692,7 @@ try:
                 'stderr': result.stderr
             }
         )
-        
+
 except SandboxViolationError as e:
     audit_logger.log_security_event(
         event_type="SANDBOX_VIOLATION",
@@ -675,11 +724,13 @@ monitor = SecurityMonitor(
 )
 
 # Monitor security metrics
+
 monitor.track_metric('failed_logins', user_id)
 monitor.track_metric('api_requests', endpoint='/api/analyze')
 monitor.track_metric('threats_detected', threat_type='PROMPT_INJECTION')
 
 # Set alert thresholds
+
 monitor.set_threshold(
     metric='failed_logins',
     threshold=5,
@@ -688,6 +739,7 @@ monitor.set_threshold(
 )
 
 # Custom alert rules
+
 monitor.add_alert_rule(
     name='multiple_threats_detected',
     condition=lambda metrics: metrics['threats_detected'] > 10 in 60 seconds,
@@ -707,22 +759,26 @@ import os
 from cerberus.config import CerberusConfig
 
 # Load from environment variables (recommended)
+
 config = CerberusConfig(
     secret_key=os.environ.get('CERBERUS_SECRET_KEY'),
     database_url=os.environ.get('CERBERUS_DB_URL'),
     encryption_key=os.environ.get('CERBERUS_ENCRYPTION_KEY'),
-    
+
     # Security settings
+
     enable_2fa=True,
     require_ssl=True,
     session_timeout_minutes=30,
-    
+
     # Guardian settings
+
     spawn_factor=3,
     max_guardians=27,
     spawn_cooldown_seconds=1.0,
-    
+
     # Logging
+
     log_level='INFO',
     audit_log_file='/var/log/cerberus/audit.log',
     enable_siem_export=True
@@ -732,12 +788,15 @@ config = CerberusConfig(
 ### Environment-Specific Configuration
 
 ```python
+
 # development.env
+
 CERBERUS_ENV=development
 CERBERUS_DEBUG=true
 CERBERUS_LOG_LEVEL=DEBUG
 
 # production.env
+
 CERBERUS_ENV=production
 CERBERUS_DEBUG=false
 CERBERUS_LOG_LEVEL=INFO
@@ -767,26 +826,33 @@ CERBERUS_ENABLE_2FA=true
 ### Docker Security
 
 ```dockerfile
+
 # Use minimal base image
+
 FROM python:3.11-slim
 
 # Run as non-root user
+
 RUN useradd -m -u 1000 cerberus
 USER cerberus
 
 # Install dependencies
+
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application
+
 COPY --chown=cerberus:cerberus . /app
 WORKDIR /app
 
 # Security settings
+
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 # Health check
+
 HEALTHCHECK --interval=30s --timeout=3s \
   CMD python -c "import requests; requests.get('http://localhost:8000/health')"
 
@@ -806,14 +872,18 @@ spec:
     runAsUser: 1000
     fsGroup: 1000
   containers:
+
   - name: cerberus
+
     image: cerberus:latest
     securityContext:
       allowPrivilegeEscalation: false
       readOnlyRootFilesystem: true
       capabilities:
         drop:
+
         - ALL
+
     resources:
       limits:
         memory: "2Gi"
@@ -911,6 +981,6 @@ See [Incident Response Guide](incident-response.md) for detailed procedures.
 
 ---
 
-**Document Classification**: Internal Use  
-**Review Schedule**: Quarterly  
+**Document Classification**: Internal Use
+**Review Schedule**: Quarterly
 **Next Review**: Q1 2025

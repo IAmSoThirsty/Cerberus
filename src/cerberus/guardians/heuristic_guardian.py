@@ -66,7 +66,9 @@ class HeuristicGuardian(Guardian):
         """Return the type identifier for this guardian."""
         return "heuristic"
 
-    def analyze(self, content: str, context: dict[str, Any] | None = None) -> ThreatReport:
+    def analyze(
+        self, content: str, context: dict[str, Any] | None = None
+    ) -> ThreatReport:
         """
         Analyze content using heuristic rules.
 
@@ -133,7 +135,9 @@ class HeuristicGuardian(Guardian):
         score = 0.0
 
         # Check for unusual character distributions
-        special_char_ratio = sum(1 for c in content if not c.isalnum() and not c.isspace())
+        special_char_ratio = sum(
+            1 for c in content if not c.isalnum() and not c.isspace()
+        )
         if len(content) > 0:
             special_ratio = special_char_ratio / len(content)
             if special_ratio > 0.3:

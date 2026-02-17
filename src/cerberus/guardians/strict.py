@@ -8,7 +8,7 @@ analysis style.
 import re
 from typing import Any
 
-from cerberus.guardians.base import BaseGuardian, ThreatReport, ThreatLevel
+from cerberus.guardians.base import BaseGuardian, ThreatLevel, ThreatReport
 
 
 class StrictGuardian(BaseGuardian):
@@ -53,7 +53,9 @@ class StrictGuardian(BaseGuardian):
         """Return the type identifier for this guardian."""
         return "strict"
 
-    def analyze(self, content: str, context: dict[str, Any] | None = None) -> ThreatReport:
+    def analyze(
+        self, content: str, context: dict[str, Any] | None = None
+    ) -> ThreatReport:
         """Analyze content using strict pattern matching rules.
 
         Args:

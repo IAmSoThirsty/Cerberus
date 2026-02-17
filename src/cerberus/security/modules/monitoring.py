@@ -374,9 +374,7 @@ class SecurityMonitor:
 
     def get_all_metrics(self) -> dict[str, dict]:
         """Get all metric statistics"""
-        return {
-            name: self.get_metric_stats(name) for name in self.metrics.keys()
-        }
+        return {name: self.get_metric_stats(name) for name in self.metrics.keys()}
 
     def export_prometheus_metrics(self) -> str:
         """
@@ -404,9 +402,7 @@ class SecurityMonitor:
                 # Add labels if present
                 labels = ""
                 if latest.labels:
-                    label_str = ",".join(
-                        f'{k}="{v}"' for k, v in latest.labels.items()
-                    )
+                    label_str = ",".join(f'{k}="{v}"' for k, v in latest.labels.items())
                     labels = f"{{{label_str}}}"
 
                 lines.append(f"cerberus_{safe_name}{labels} {latest.value}")
@@ -418,9 +414,13 @@ class SecurityMonitor:
         active_alerts = self.alert_manager.get_active_alerts()
 
         # Count by severity
-        critical = len([a for a in active_alerts if a.severity == AlertSeverity.CRITICAL])
+        critical = len(
+            [a for a in active_alerts if a.severity == AlertSeverity.CRITICAL]
+        )
         errors = len([a for a in active_alerts if a.severity == AlertSeverity.ERROR])
-        warnings = len([a for a in active_alerts if a.severity == AlertSeverity.WARNING])
+        warnings = len(
+            [a for a in active_alerts if a.severity == AlertSeverity.WARNING]
+        )
 
         # Determine health status
         if critical > 0:

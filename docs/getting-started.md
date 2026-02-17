@@ -10,25 +10,31 @@
 ### Development Setup
 
 1. Clone the repository:
+
    ```bash
    git clone https://github.com/IAmSoThirsty/Cerberus.git
    cd Cerberus
    ```
 
 2. Create a virtual environment:
+
    ```bash
    python -m venv .venv
    source .venv/bin/activate  # On Windows: .venv\Scripts\activate
    ```
 
 3. Install development dependencies:
+
    ```bash
    make dev-install
+
    # or
+
    pip install -e ".[dev]"
    ```
 
 4. Copy environment configuration:
+
    ```bash
    cp .env.example .env
    ```
@@ -45,9 +51,13 @@ pip install cerberus-guard-bot
 
 ```bash
 python -m cerberus.main
+
 # or
+
 make run
+
 # or (after installation)
+
 cerberus
 ```
 
@@ -57,9 +67,11 @@ cerberus
 from cerberus.hub import HubCoordinator
 
 # Initialize the hub
+
 hub = HubCoordinator()
 
 # Analyze content
+
 result = hub.analyze("User input to check")
 
 if result["is_safe"]:
@@ -74,7 +86,9 @@ else:
 
 ```bash
 make test
+
 # or
+
 pytest
 ```
 

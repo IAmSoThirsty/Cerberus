@@ -78,7 +78,9 @@ class PatternGuardian(Guardian):
         """Return the type identifier for this guardian."""
         return "pattern"
 
-    def analyze(self, content: str, context: dict[str, Any] | None = None) -> ThreatReport:
+    def analyze(
+        self, content: str, context: dict[str, Any] | None = None
+    ) -> ThreatReport:
         """
         Analyze content using pattern matching.
 

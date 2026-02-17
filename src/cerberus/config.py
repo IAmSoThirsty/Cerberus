@@ -105,9 +105,7 @@ class CerberusSettings(BaseSettings):
         valid_levels = {"DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"}
         v_upper = v.upper()
         if v_upper not in valid_levels:
-            raise ValueError(
-                f"log_level must be one of {valid_levels}, got {v}"
-            )
+            raise ValueError(f"log_level must be one of {valid_levels}, got {v}")
         return v_upper
 
 

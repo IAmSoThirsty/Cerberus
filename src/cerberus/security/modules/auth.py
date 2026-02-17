@@ -427,9 +427,10 @@ class AuthManager:
             return False, error
 
         # Check password reuse
-        if user.password_hash in user.previous_passwords[
-            : self.password_policy.prevent_reuse_count
-        ]:
+        if (
+            user.password_hash
+            in user.previous_passwords[: self.password_policy.prevent_reuse_count]
+        ):
             return (
                 False,
                 f"Cannot reuse any of the last {self.password_policy.prevent_reuse_count} passwords",
@@ -445,9 +446,7 @@ class AuthManager:
     def cleanup_expired_sessions(self):
         """Remove expired sessions"""
         now = datetime.now()
-        expired = [
-            sid for sid, sess in self.sessions.items() if now > sess.expires_at
-        ]
+        expired = [sid for sid, sess in self.sessions.items() if now > sess.expires_at]
 
         for sid in expired:
             del self.sessions[sid]

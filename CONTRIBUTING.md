@@ -50,7 +50,9 @@ mypy src
 
 ```bash
 git checkout -b feature/your-feature-name
+
 # or
+
 git checkout -b fix/your-bug-fix
 ```
 
@@ -64,26 +66,34 @@ git checkout -b fix/your-bug-fix
 ### 3. Run Tests
 
 ```bash
+
 # Run all tests
+
 pytest tests/
 
 # Run specific test file
+
 pytest tests/test_hub.py
 
 # Run with coverage
+
 pytest --cov=cerberus --cov-report=term-missing
 ```
 
 ### 4. Lint and Format
 
 ```bash
+
 # Check code style
+
 ruff check src tests
 
 # Auto-fix issues
+
 ruff check --fix src tests
 
 # Type check
+
 mypy src
 ```
 
@@ -92,11 +102,14 @@ mypy src
 ```bash
 git add .
 git commit -m "feat: add new feature"
+
 # or
+
 git commit -m "fix: resolve issue with spawn rate limiting"
 ```
 
 **Commit Message Format:**
+
 - `feat:` New feature
 - `fix:` Bug fix
 - `docs:` Documentation changes
@@ -162,10 +175,10 @@ Cerberus/
 ## Pull Request Process
 
 1. **Update documentation** for any changed functionality
-2. **Add tests** that demonstrate the fix or feature
-3. **Ensure all tests pass** locally
-4. **Update CHANGELOG.md** (if applicable)
-5. **Request review** from maintainers
+1. **Add tests** that demonstrate the fix or feature
+1. **Ensure all tests pass** locally
+1. **Update CHANGELOG.md** (if applicable)
+1. **Request review** from maintainers
 
 ### PR Requirements
 
@@ -179,9 +192,9 @@ Cerberus/
 If you're contributing security-related changes:
 
 1. Follow secure coding practices
-2. Never commit credentials or secrets
-3. Document security implications
-4. Consider edge cases and attack vectors
+1. Never commit credentials or secrets
+1. Document security implications
+1. Consider edge cases and attack vectors
 
 For security vulnerabilities, see [SECURITY.md](SECURITY.md).
 
@@ -190,28 +203,28 @@ For security vulnerabilities, see [SECURITY.md](SECURITY.md).
 When adding new configuration options:
 
 1. Add to `CerberusSettings` in `src/cerberus/config.py`
-2. Include validation and reasonable defaults
-3. Document the setting in code and README
-4. Add environment variable support with `CERBERUS_` prefix
+1. Include validation and reasonable defaults
+1. Document the setting in code and README
+1. Add environment variable support with `CERBERUS_` prefix
 
 ## Adding New Guardians
 
 To add a new guardian type:
 
 1. Create a new class inheriting from `BaseGuardian`
-2. Implement the `analyze` method
-3. Add tests in `tests/test_guardians.py`
-4. Update documentation
+1. Implement the `analyze` method
+1. Add tests in `tests/test_guardians.py`
+1. Update documentation
 
 ## Release Process
 
 (For maintainers)
 
 1. Update version in `pyproject.toml`
-2. Update CHANGELOG.md
-3. Create git tag: `git tag -a v0.1.0 -m "Release 0.1.0"`
-4. Push tag: `git push origin v0.1.0`
-5. Create GitHub release
+1. Update CHANGELOG.md
+1. Create git tag: `git tag -a v0.1.0 -m "Release 0.1.0"`
+1. Push tag: `git push origin v0.1.0`
+1. Create GitHub release
 
 ## Getting Help
 
@@ -223,6 +236,6 @@ To add a new guardian type:
 
 By contributing, you agree that your contributions will be licensed under the MIT License.
 
----
+______________________________________________________________________
 
 Thank you for contributing to Cerberus! 🐺

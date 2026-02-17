@@ -29,10 +29,13 @@ Is there a:
 ### 2. Copy Template
 
 ```bash
+
 # Example: Creating a vulnerability report
+
 cp vulnerability-report-template.md VUL-2024-0001-SQLi.md
 
 # Or: Creating an incident report
+
 cp incident-report-template.md INC-2024-0001-UnauthorizedAccess.md
 ```
 
@@ -40,9 +43,13 @@ cp incident-report-template.md INC-2024-0001-UnauthorizedAccess.md
 
 Every template has this structure:
 ```
+
 1. Document Information (Metadata)
+
    ↓
+
 2. Executive Summary (Key findings)
+
    ↓
 3-N. Detailed Sections (Specific content)
    ↓
@@ -60,9 +67,11 @@ Final. Sign-off & Approvals
 ## 📝 Template Quick Reference
 
 ### Vulnerability Report Template
+
 **When to use:** A security flaw is discovered
 
 **Key sections:**
+
 1. **CVSS Scoring** - Quantify severity (0.0-10.0 scale)
 2. **Reproduction Steps** - How to trigger the vulnerability
 3. **Proof of Concept** - Working code demonstration
@@ -71,6 +80,7 @@ Final. Sign-off & Approvals
 6. **Guardian Analysis** - Which Cerberus Guardians are affected
 
 **Critical fields to fill:**
+
 - [ ] CVSS Vector: `CVSS:3.1/AV:*/AC:*/PR:*/UI:*/S:*/C:*/I:*/A:*`
 - [ ] Severity: CRITICAL / HIGH / MEDIUM / LOW / INFO
 - [ ] Affected Guardian: [GUARDIAN_NAME]
@@ -82,9 +92,11 @@ Final. Sign-off & Approvals
 ---
 
 ### Audit Report Template
+
 **When to use:** Security audit or compliance assessment
 
 **Key sections:**
+
 1. **Scope & Objectives** - What is being audited
 2. **Methodology** - How the audit is conducted
 3. **Findings** - Issues organized by severity
@@ -93,6 +105,7 @@ Final. Sign-off & Approvals
 6. **Guardian Coverage** - Audit of Guardian modules
 
 **Critical fields to fill:**
+
 - [ ] Audit scope and exclusions
 - [ ] Findings with severity levels
 - [ ] Compliance percentage by standard
@@ -104,9 +117,11 @@ Final. Sign-off & Approvals
 ---
 
 ### Incident Report Template
+
 **When to use:** Security incident investigation
 
 **Key sections:**
+
 1. **Detection & Classification** - How/when incident was found
 2. **Timeline** - Detailed chronology of events
 3. **Guardian Response** - How Guardian modules responded
@@ -116,6 +131,7 @@ Final. Sign-off & Approvals
 7. **Follow-up Items** - Actions to prevent recurrence
 
 **Critical fields to fill:**
+
 - [ ] Complete timeline from detection to resolution
 - [ ] Guardian alert logs and responses
 - [ ] Root cause identification
@@ -127,9 +143,11 @@ Final. Sign-off & Approvals
 ---
 
 ### Security Review Template
+
 **When to use:** Code or design security assessment
 
 **Key sections:**
+
 1. **Architecture Review** - Design security validation
 2. **Threat Model Review** - Threat assessment and mitigations
 3. **Code Review** - Security code issues found
@@ -139,6 +157,7 @@ Final. Sign-off & Approvals
 7. **Recommendations** - Priority improvement actions
 
 **Critical fields to fill:**
+
 - [ ] Overall security rating (Excellent/Good/Acceptable/Needs Improvement/Critical)
 - [ ] Issues found organized by severity
 - [ ] CVSS scores or equivalent severity for code issues
@@ -154,47 +173,75 @@ Final. Sign-off & Approvals
 ### Workflow 1: Report a Vulnerability
 
 ```
+
 1. Discovery
+
    ↓
+
 2. Copy vulnerability-report-template.md
+
    ↓
+
 3. Fill Executive Summary (2 min)
+
    ↓
+
 4. Add CVSS Scoring (10 min)
+
    ↓
+
 5. Document reproduction steps (30 min)
+
    ↓
+
 6. Create PoC code (30 min)
+
    ↓
+
 7. Analyze Guardian impact (15 min)
+
    ↓
+
 8. Recommend fixes (30 min)
+
    ↓
+
 9. Get security team review (varies)
+
    ↓
+
 10. Distribute to stakeholders
+
 ```
 
 ### Workflow 2: Conduct Security Audit
 
 ```
+
 1. Planning
+
    └─ Copy audit-report-template.md
    └─ Define scope
    └─ Schedule audit
    ↓
+
 2. Execution (Weeks 1-2)
+
    └─ Document review
    └─ System testing
    └─ Interviews
    └─ Fill in findings
    ↓
+
 3. Analysis (Week 3)
+
    └─ Compile findings
    └─ Calculate compliance scores
    └─ Develop recommendations
    ↓
+
 4. Reporting (Week 4)
+
    └─ Complete executive summary
    └─ Obtain approvals
    └─ Distribute report
@@ -204,28 +251,38 @@ Final. Sign-off & Approvals
 ### Workflow 3: Respond to Incident
 
 ```
+
 1. Incident Detected (T+0)
+
    └─ Copy incident-report-template.md
    └─ Begin logging timeline
    ↓
+
 2. Immediate Response (T+0 to T+4 hours)
+
    └─ Fill: Detection & Classification
    └─ Fill: Timeline (start)
    └─ Fill: Guardian Response
    └─ Fill: Immediate Actions
    ↓
+
 3. Investigation (T+4 to T+72 hours)
+
    └─ Complete: Timeline
    └─ Complete: Root Cause Analysis
    └─ Complete: Affected Systems
    └─ Complete: Forensic findings
    ↓
+
 4. Recovery (T+72 hours+)
+
    └─ Complete: Response Actions
    └─ Complete: Lessons Learned
    └─ Complete: Follow-up Items
    ↓
+
 5. Closure
+
    └─ Get management sign-off
    └─ Distribute final report
    └─ Track remediation actions
@@ -234,33 +291,45 @@ Final. Sign-off & Approvals
 ### Workflow 4: Perform Security Review
 
 ```
+
 1. Setup (Day 1)
+
    └─ Copy security-review-template.md
    └─ Define scope
    └─ Assemble review team
    ↓
+
 2. Architecture Review (Days 2-3)
+
    └─ Study design documentation
    └─ Fill: Architecture section
    └─ Create threat model
    ↓
+
 3. Code Review (Days 4-6)
+
    └─ Static analysis
    └─ Manual code inspection
    └─ Fill: Code Review Findings
    └─ Cryptography validation
    ↓
+
 4. Testing (Days 7-8)
+
    └─ Security testing
    └─ Guardian integration testing
    └─ Fill: Integration Testing results
    ↓
+
 5. Recommendations (Days 9)
+
    └─ Prioritize findings
    └─ Fill: Recommendations
    └─ Determine approval status
    ↓
+
 6. Sign-off (Days 10+)
+
    └─ Get team approval
    └─ Management authorization
    └─ Distribute for action
@@ -392,6 +461,7 @@ SECURITY REVIEW:
 ## 📞 Support
 
 **For questions about:**
+
 - **Specific templates** → See README.md
 - **CVSS scoring** → https://www.first.org/cvss/calculator/3.1
 - **Audit standards** → Review ISO 27001, NIST CSF

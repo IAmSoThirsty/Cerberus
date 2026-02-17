@@ -298,7 +298,9 @@ class ThreatDetector:
         # Check for rapid repeated requests (potential DoS)
         if len(history) > 10:
             recent = history[-10:]
-            time_span = (recent[-1]["timestamp"] - recent[0]["timestamp"]).total_seconds()
+            time_span = (
+                recent[-1]["timestamp"] - recent[0]["timestamp"]
+            ).total_seconds()
 
             if time_span < 5:  # 10 requests in 5 seconds
                 return ThreatDetectionResult(

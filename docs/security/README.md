@@ -1,7 +1,7 @@
 # Cerberus Security Documentation
 
-**Version:** 1.0  
-**Last Updated:** 2024  
+**Version:** 1.0
+**Last Updated:** 2024
 **Classification:** Internal Use
 
 ## Overview
@@ -11,6 +11,7 @@ This directory contains comprehensive security documentation for the Cerberus AI
 ## 📚 Documentation Structure
 
 ### [📖 Main Guides](guides/)
+
 Core security procedures and operational guides
 
 - **[SECURITY_GUIDE.md](guides/SECURITY_GUIDE.md)** - Core defensive procedures and security architecture
@@ -19,6 +20,7 @@ Core security procedures and operational guides
 - **[quick-reference.md](guides/quick-reference.md)** - Quick reference guide for common security tasks
 
 ### [🎯 Threat Models](threat-models/)
+
 Team-based threat modeling and security operations
 
 - **[threat-model.md](threat-models/threat-model.md)** - Overall threat model analysis for Cerberus
@@ -29,6 +31,7 @@ Team-based threat modeling and security operations
 - **[blue-team.md](threat-models/blue-team.md)** - Blue team defensive tactics and response
 
 ### [✅ Compliance](compliance/)
+
 Security compliance checklists and frameworks
 
 - **[owasp-checklist.md](compliance/owasp-checklist.md)** - OWASP Top 10 compliance (60+ items)
@@ -38,6 +41,7 @@ Security compliance checklists and frameworks
 - **[security-assessment-checklist.md](compliance/security-assessment-checklist.md)** - General security assessment (80+ items)
 
 ### [🎓 Training](training/)
+
 Security training materials and exercises
 
 - **[security-training.md](training/security-training.md)** - Comprehensive security training (75+ examples)
@@ -46,6 +50,7 @@ Security training materials and exercises
 - **[incident-drills.md](training/incident-drills.md)** - Incident response drills (44+ scenarios)
 
 ### [🔧 CI/CD](ci-cd/)
+
 Security automation and pipeline security
 
 - **[security-automation.md](ci-cd/security-automation.md)** - Security automation procedures (22 workflows)
@@ -53,6 +58,7 @@ Security automation and pipeline security
 - **[pipeline-security.md](ci-cd/pipeline-security.md)** - CI/CD pipeline security (21 examples)
 
 ### [📝 Templates](templates/)
+
 Professional security documentation templates
 
 - **[vulnerability-report-template.md](templates/vulnerability-report-template.md)** - Vulnerability reporting
@@ -63,24 +69,28 @@ Professional security documentation templates
 ## 🚀 Quick Start
 
 ### For Developers
+
 1. Read the [Security Guide](guides/SECURITY_GUIDE.md) for core concepts
 2. Review [Secure Coding Practices](training/secure-coding.md)
 3. Reference [Quick Reference Guide](guides/quick-reference.md) during development
 4. Check [OWASP Checklist](compliance/owasp-checklist.md) before deployment
 
 ### For Security Teams
+
 1. Review [Threat Model](threat-models/threat-model.md) for system understanding
 2. Set up [Incident Response](guides/incident-response.md) procedures
 3. Implement [Audit Framework](guides/audit-framework.md)
 4. Configure [Security Automation](ci-cd/security-automation.md)
 
 ### For Operations
+
 1. Deploy using [Pipeline Security](ci-cd/pipeline-security.md) guide
 2. Run [Security Scanning](ci-cd/scan-procedures.md) procedures
 3. Monitor using [Audit Framework](guides/audit-framework.md)
 4. Conduct [Incident Drills](training/incident-drills.md) quarterly
 
 ### For Compliance
+
 1. Complete [NIST Checklist](compliance/nist-checklist.md)
 2. Verify [OWASP Compliance](compliance/owasp-checklist.md)
 3. Assess [AI Security](compliance/ai-security-checklist.md)
@@ -89,36 +99,48 @@ Professional security documentation templates
 ## 🎯 Use Cases
 
 ### 🔒 Secure a New Deployment
+
 ```bash
+
 1. Review Security Guide → guides/SECURITY_GUIDE.md
 2. Complete Security Assessment → compliance/security-assessment-checklist.md
 3. Configure Pipeline Security → ci-cd/pipeline-security.md
 4. Enable Security Automation → ci-cd/security-automation.md
 5. Set up Monitoring → guides/audit-framework.md
+
 ```
 
 ### 🚨 Respond to an Incident
+
 ```bash
+
 1. Follow Incident Response → guides/incident-response.md
 2. Use Incident Report Template → templates/incident-report-template.md
 3. Review Threat Model → threat-models/threat-model.md
 4. Document Lessons Learned → guides/incident-response.md#post-incident
+
 ```
 
 ### 🎓 Train New Team Members
+
 ```bash
+
 1. Security Training → training/security-training.md
 2. Threat Awareness → training/threat-awareness.md
 3. Secure Coding → training/secure-coding.md
 4. Practice Drills → training/incident-drills.md
+
 ```
 
 ### ✅ Achieve Compliance
+
 ```bash
+
 1. OWASP Top 10 → compliance/owasp-checklist.md
 2. NIST Framework → compliance/nist-checklist.md
 3. AI/LLM Security → compliance/ai-security-checklist.md + llm-security-checklist.md
 4. Regular Assessment → compliance/security-assessment-checklist.md
+
 ```
 
 ## 🏗️ Cerberus Architecture Reference
@@ -126,11 +148,13 @@ Professional security documentation templates
 All documentation integrates with Cerberus security modules:
 
 ### Core Components
+
 - **CerberusHub** - Central coordination and decision aggregation
 - **Guardians** - Pattern, Heuristic, and Statistical detection agents
 - **Security Modules** - Input validation, authentication, encryption, etc.
 
 ### Security Modules
+
 1. **InputValidator** - Input validation and sanitization
 2. **AuthManager** - Authentication and session management
 3. **RBACManager** - Role-based access control
@@ -142,6 +166,7 @@ All documentation integrates with Cerberus security modules:
 9. **SandboxManager** - Secure code execution isolation
 
 ### Guardian Types
+
 - **PatternGuardian** - Rule-based pattern matching
 - **HeuristicGuardian** - Behavioral heuristics
 - **StatisticalGuardian** - Statistical anomaly detection
@@ -159,6 +184,7 @@ All documentation integrates with Cerberus security modules:
 | **TOTAL** | **32** | **25,156** | **~764 KB** |
 
 ### Content Breakdown
+
 - **Code Examples**: 500+
 - **Checkboxes**: 550+
 - **GitHub Actions Workflows**: 22
@@ -168,12 +194,14 @@ All documentation integrates with Cerberus security modules:
 ## 🔗 Related Resources
 
 ### External Documentation
+
 - [OWASP Top 10](https://owasp.org/www-project-top-ten/)
 - [NIST Cybersecurity Framework](https://www.nist.gov/cyberframework)
 - [OWASP LLM Top 10](https://owasp.org/www-project-top-10-for-large-language-model-applications/)
 - [CWE Top 25](https://cwe.mitre.org/top25/)
 
 ### Internal Links
+
 - [Main README](../../README.md)
 - [Contributing Guidelines](../../CONTRIBUTING.md)
 - [Code of Conduct](../../CODE_OF_CONDUCT.md)
@@ -181,7 +209,7 @@ All documentation integrates with Cerberus security modules:
 ## 📞 Security Contacts
 
 - **Security Team**: security@cerberus.example.com
-- **Incident Response**: incident@cerberus.example.com  
+- **Incident Response**: incident@cerberus.example.com
 - **24/7 Hotline**: +1-XXX-XXX-XXXX
 - **Slack**: #security-team
 
@@ -200,10 +228,13 @@ All documentation integrates with Cerberus security modules:
 ## 📝 Document Maintenance
 
 ### Version Control
+
 All documentation is version controlled in Git. See commit history for changes.
 
 ### Contributing
+
 To contribute to security documentation:
+
 1. Create a branch from `main`
 2. Make your changes
 3. Submit a pull request
@@ -211,7 +242,9 @@ To contribute to security documentation:
 5. Update CHANGELOG after merge
 
 ### Feedback
+
 For documentation feedback or suggestions:
+
 - Open an issue on GitHub
 - Email security@cerberus.example.com
 - Message #security-team on Slack
@@ -228,6 +261,7 @@ For documentation feedback or suggestions:
 ## 🎯 Success Criteria
 
 This documentation helps you:
+
 - ✅ Understand Cerberus security architecture
 - ✅ Implement security controls correctly
 - ✅ Respond to security incidents effectively
@@ -238,11 +272,11 @@ This documentation helps you:
 
 ---
 
-**Last Updated**: 2024  
-**Maintained by**: Cerberus Security Team  
+**Last Updated**: 2024
+**Maintained by**: Cerberus Security Team
 **Contact**: security@cerberus.example.com
 
 ---
 
-**🎉 Comprehensive Security Documentation Suite**  
+**🎉 Comprehensive Security Documentation Suite**
 *Everything you need to secure your Cerberus deployment*

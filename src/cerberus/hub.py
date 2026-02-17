@@ -27,7 +27,9 @@ class HubDecision(BaseModel):
     """Final decision from the Cerberus Hub after aggregating guardian reports."""
 
     should_block: bool = Field(default=False, description="Whether to block the input")
-    threat_level: ThreatLevel = Field(default=ThreatLevel.NONE, description="Overall threat level")
+    threat_level: ThreatLevel = Field(
+        default=ThreatLevel.NONE, description="Overall threat level"
+    )
     confidence: float = Field(
         default=0.0, ge=0.0, le=1.0, description="Aggregated confidence score"
     )
@@ -41,7 +43,9 @@ class HubDecision(BaseModel):
     shutdown_triggered: bool = Field(
         default=False, description="Whether total shutdown was triggered"
     )
-    summary: str = Field(default="", description="Human-readable summary of the decision")
+    summary: str = Field(
+        default="", description="Human-readable summary of the decision"
+    )
 
 
 class CerberusHub:
@@ -228,7 +232,10 @@ class CerberusHub:
         return self._bypass_attempts
 
     def analyze(
-        self, content: str, context: dict[str, Any] | None = None, source_id: str | None = None
+        self,
+        content: str,
+        context: dict[str, Any] | None = None,
+        source_id: str | None = None,
     ) -> HubDecision:
         """
         Analyze content through all active guardians.
@@ -342,7 +349,9 @@ class CerberusHub:
             return False
 
         high_crit_count = sum(
-            1 for r in reports if r.threat_level in (ThreatLevel.HIGH, ThreatLevel.CRITICAL)
+            1
+            for r in reports
+            if r.threat_level in (ThreatLevel.HIGH, ThreatLevel.CRITICAL)
         )
         low_none_count = sum(
             1 for r in reports if r.threat_level in (ThreatLevel.NONE, ThreatLevel.LOW)
@@ -425,7 +434,6 @@ class CerberusHub:
                 }
             },
         )
-
 
     def add_guardian(self, guardian: Guardian) -> bool:
         """

@@ -53,9 +53,7 @@ class AgentSandbox:
         """
         self.config = config or SandboxConfig()
 
-    def execute(
-        self, func: Callable, *args, **kwargs
-    ) -> Any:
+    def execute(self, func: Callable, *args, **kwargs) -> Any:
         """
         Execute function in sandbox
 
@@ -88,9 +86,7 @@ class AgentSandbox:
         if sys.platform != "win32":  # Resource limits not supported on Windows
             # Set memory limit
             max_memory_bytes = self.config.max_memory_mb * 1024 * 1024
-            resource.setrlimit(
-                resource.RLIMIT_AS, (max_memory_bytes, max_memory_bytes)
-            )
+            resource.setrlimit(resource.RLIMIT_AS, (max_memory_bytes, max_memory_bytes))
 
             # Set CPU time limit
             resource.setrlimit(
@@ -100,9 +96,7 @@ class AgentSandbox:
 
             # Set file size limit
             max_file_bytes = self.config.max_file_size_mb * 1024 * 1024
-            resource.setrlimit(
-                resource.RLIMIT_FSIZE, (max_file_bytes, max_file_bytes)
-            )
+            resource.setrlimit(resource.RLIMIT_FSIZE, (max_file_bytes, max_file_bytes))
 
             # Set process limit
             resource.setrlimit(
@@ -348,9 +342,7 @@ class ContainerSandbox:
         ] + command
 
         try:
-            result = subprocess.run(
-                docker_cmd, capture_output=True, timeout=timeout
-            )
+            result = subprocess.run(docker_cmd, capture_output=True, timeout=timeout)
 
             return {
                 "stdout": result.stdout.decode("utf-8"),

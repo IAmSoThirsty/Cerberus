@@ -1,6 +1,6 @@
 """Guardian agents package - contains different guardian implementations."""
 
-from cerberus.guardians.base import BaseGuardian, ThreatReport, GuardianResult
+from cerberus.guardians.base import BaseGuardian, GuardianResult, ThreatReport
 from cerberus.guardians.heuristic import HeuristicGuardian
 from cerberus.guardians.pattern import PatternGuardian
 from cerberus.guardians.strict import StrictGuardian

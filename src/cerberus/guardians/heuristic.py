@@ -7,7 +7,7 @@ analysis style.
 
 from typing import Any
 
-from cerberus.guardians.base import BaseGuardian, ThreatReport, ThreatLevel
+from cerberus.guardians.base import BaseGuardian, ThreatLevel, ThreatReport
 
 
 class HeuristicGuardian(BaseGuardian):
@@ -57,7 +57,9 @@ class HeuristicGuardian(BaseGuardian):
         # Heuristic 1: Command-like structure ratio
         command_indicators = [":", "=", "[", "]", "{", "}", "<", ">"]
         command_count = sum(content.count(c) for c in command_indicators)
-        scores["command_structure"] = min(command_count / max(len(content), 1) * 10, 1.0)
+        scores["command_structure"] = min(
+            command_count / max(len(content), 1) * 10, 1.0
+        )
 
         # Heuristic 2: Unusual capitalization patterns
         upper_count = sum(1 for c in content if c.isupper())
@@ -85,7 +87,9 @@ class HeuristicGuardian(BaseGuardian):
             "now you",
             "from now",
         ]
-        instruction_count = sum(1 for phrase in instruction_phrases if phrase in content.lower())
+        instruction_count = sum(
+            1 for phrase in instruction_phrases if phrase in content.lower()
+        )
         scores["instruction_phrases"] = min(instruction_count / 3, 1.0)
 
         # Heuristic 4: Length anomaly (very short or very long)
@@ -127,7 +131,9 @@ class HeuristicGuardian(BaseGuardian):
             return ThreatLevel.LOW
         return ThreatLevel.NONE
 
-    def analyze(self, content: str, context: dict[str, Any] | None = None) -> ThreatReport:
+    def analyze(
+        self, content: str, context: dict[str, Any] | None = None
+    ) -> ThreatReport:
         """Analyze content using heuristic scoring.
 
         Args:

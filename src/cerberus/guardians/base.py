@@ -31,8 +31,13 @@ class ThreatReport:
 
     def __post_init__(self) -> None:
         """Validate result consistency."""
-        if not self.should_block and self.threat_level in (ThreatLevel.HIGH, ThreatLevel.CRITICAL):
-            raise ValueError("Non-blocking result cannot have HIGH or CRITICAL threat level")
+        if not self.should_block and self.threat_level in (
+            ThreatLevel.HIGH,
+            ThreatLevel.CRITICAL,
+        ):
+            raise ValueError(
+                "Non-blocking result cannot have HIGH or CRITICAL threat level"
+            )
         if self.confidence < 0.0 or self.confidence > 1.0:
             raise ValueError("Confidence must be between 0.0 and 1.0")
 
@@ -57,6 +62,7 @@ class Guardian(ABC):
                         If not provided, one will be auto-generated.
         """
         import uuid
+
         self.guardian_id = guardian_id or str(uuid.uuid4())[:8]
         self._active = True
 
@@ -75,7 +81,9 @@ class Guardian(ABC):
         """Return the type/name of this guardian."""
 
     @abstractmethod
-    def analyze(self, content: str, context: dict[str, Any] | None = None) -> ThreatReport:
+    def analyze(
+        self, content: str, context: dict[str, Any] | None = None
+    ) -> ThreatReport:
         """Analyze content for potential threats.
 
         Args:

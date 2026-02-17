@@ -246,9 +246,11 @@ class AuditLogger:
     ):
         """Log access attempt"""
         event = AuditEvent(
-            event_type=AuditEventType.ACCESS_GRANTED
-            if granted
-            else AuditEventType.ACCESS_DENIED,
+            event_type=(
+                AuditEventType.ACCESS_GRANTED
+                if granted
+                else AuditEventType.ACCESS_DENIED
+            ),
             severity=AuditSeverity.INFO if granted else AuditSeverity.WARNING,
             user_id=user_id,
             resource=resource,
@@ -266,9 +268,11 @@ class AuditLogger:
         """Log threat detection"""
         event = AuditEvent(
             event_type=AuditEventType.THREAT_DETECTED,
-            severity=AuditSeverity.CRITICAL
-            if threat_level in ["HIGH", "CRITICAL"]
-            else AuditSeverity.WARNING,
+            severity=(
+                AuditSeverity.CRITICAL
+                if threat_level in ["HIGH", "CRITICAL"]
+                else AuditSeverity.WARNING
+            ),
             threat_level=threat_level,
             guardian_id=guardian_id,
             details=details,
@@ -284,9 +288,9 @@ class AuditLogger:
     ):
         """Log authentication attempt"""
         event = AuditEvent(
-            event_type=AuditEventType.AUTH_SUCCESS
-            if success
-            else AuditEventType.AUTH_FAILURE,
+            event_type=(
+                AuditEventType.AUTH_SUCCESS if success else AuditEventType.AUTH_FAILURE
+            ),
             severity=AuditSeverity.INFO if success else AuditSeverity.WARNING,
             user_id=user_id,
             source_ip=source_ip,

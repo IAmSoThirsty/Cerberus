@@ -19,6 +19,7 @@ Please do not open a public GitHub issue if the bug is a security vulnerability.
 Send an email to: **security@cerberus-ai.org** (or create a private security advisory on GitHub)
 
 Include in your report:
+
 - Description of the vulnerability
 - Steps to reproduce
 - Potential impact
@@ -58,15 +59,15 @@ Cerberus includes comprehensive security features:
 When using Cerberus:
 
 1. **Always validate inputs** using the InputValidator
-2. **Enable audit logging** with tamper detection
-3. **Implement rate limiting** on all endpoints
-4. **Use RBAC** for access control
-5. **Encrypt sensitive data** at rest
-6. **Run untrusted code** in sandboxes only
-7. **Monitor security metrics** continuously
-8. **Rotate encryption keys** every 90 days
-9. **Review audit logs** weekly
-10. **Keep dependencies updated**
+1. **Enable audit logging** with tamper detection
+1. **Implement rate limiting** on all endpoints
+1. **Use RBAC** for access control
+1. **Encrypt sensitive data** at rest
+1. **Run untrusted code** in sandboxes only
+1. **Monitor security metrics** continuously
+1. **Rotate encryption keys** every 90 days
+1. **Review audit logs** weekly
+1. **Keep dependencies updated**
 
 ## Security Documentation
 

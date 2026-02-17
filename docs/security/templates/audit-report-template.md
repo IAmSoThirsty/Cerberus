@@ -29,6 +29,7 @@ Provide a brief summary of what was audited.
 From [DATE] to [DATE] - [NUMBER] days
 
 **Key Findings Summary:**
+
 - Number of High/Critical Issues: [NUMBER]
 - Number of Medium Issues: [NUMBER]
 - Number of Low Issues: [NUMBER]
@@ -51,6 +52,7 @@ From [DATE] to [DATE] - [NUMBER] days
 [2-3 sentence conclusion about overall security posture]
 
 **Recommended Priority Actions:**
+
 1. [ACTION 1] - Critical
 2. [ACTION 2] - High
 3. [ACTION 3] - High
@@ -88,6 +90,7 @@ From [DATE] to [DATE] - [NUMBER] days
 ### 2.2 Audit Objectives
 
 **Primary Objectives:**
+
 1. Verify compliance with security standards and regulations
 2. Assess effectiveness of Guardian security controls
 3. Identify security vulnerabilities and risks
@@ -95,6 +98,7 @@ From [DATE] to [DATE] - [NUMBER] days
 5. Verify incident response capabilities
 
 **Secondary Objectives:**
+
 1. Benchmark security performance
 2. Identify improvement opportunities
 3. Validate security policy implementation
@@ -104,17 +108,20 @@ From [DATE] to [DATE] - [NUMBER] days
 ### 2.3 Standards & Frameworks
 
 **Compliance Frameworks:**
+
 - NIST Cybersecurity Framework (CSF)
 - ISO/IEC 27001:2022
 - CIS Controls v8
 - [OTHER FRAMEWORK]
 
 **Industry Standards:**
+
 - [STANDARD 1]
 - [STANDARD 2]
 - [STANDARD 3]
 
 **Regulatory Requirements:**
+
 - [REGULATION 1]
 - [REGULATION 2]
 - [REGULATION 3]
@@ -142,6 +149,7 @@ The audit employed a risk-based methodology combining multiple assessment techni
 ### 3.2 Assessment Techniques
 
 **1. Document Review**
+
    - Security policies and procedures
    - Architecture documentation
    - Guardian configuration files
@@ -149,6 +157,7 @@ The audit employed a risk-based methodology combining multiple assessment techni
    - Incident reports
 
 **2. System Testing**
+
    - Vulnerability scanning
    - Penetration testing (where approved)
    - Configuration review
@@ -156,6 +165,7 @@ The audit employed a risk-based methodology combining multiple assessment techni
    - Guardian functionality verification
 
 **3. Interview & Inquiry**
+
    - Security team interviews
    - Development team interviews
    - Operations team interviews
@@ -163,6 +173,7 @@ The audit employed a risk-based methodology combining multiple assessment techni
    - Key stakeholder meetings
 
 **4. Observation**
+
    - Guardian operations monitoring
    - Access control enforcement
    - Incident response procedures
@@ -170,6 +181,7 @@ The audit employed a risk-based methodology combining multiple assessment techni
    - Logging and monitoring
 
 **5. Automated Tools & Scripts**
+
    - Tool: [TOOL 1] - Purpose: [PURPOSE]
    - Tool: [TOOL 2] - Purpose: [PURPOSE]
    - Tool: [TOOL 3] - Purpose: [PURPOSE]
@@ -180,6 +192,7 @@ The audit employed a risk-based methodology combining multiple assessment techni
 **Guardian Verification Process:**
 
 For each active Guardian module, the audit verified:
+
 - Correct initialization and startup
 - Configuration validation
 - Policy enforcement effectiveness
@@ -190,6 +203,7 @@ For each active Guardian module, the audit verified:
 - Failover and recovery mechanisms
 
 **Test Scenarios:**
+
 - Scenario 1: Guardian detects unauthorized access attempt
 - Scenario 2: Guardian blocks policy violation
 - Scenario 3: Guardian communicates with Hub
@@ -228,6 +242,7 @@ Risk Rating = (Impact × Likelihood × Control Effectiveness)
 [Detailed description of the finding - what was observed that should not be, or what should exist but does not]
 
 **Affected Components:**
+
 - Guardian: [GUARDIAN NAME]
 - Module: [MODULE NAME]
 - Systems: [SYSTEM LIST]
@@ -242,17 +257,20 @@ Risk Rating = (Impact × Likelihood × Control Effectiveness)
 ```
 
 **Business Impact:**
+
 - Confidentiality: [Impact Description]
 - Integrity: [Impact Description]
 - Availability: [Impact Description]
 - Regulatory: [Impact Description]
 
 **Audit Criteria Not Met:**
+
 - Standard: [STANDARD / POLICY]
 - Requirement: [SPECIFIC REQUIREMENT]
 - Section: [SECTION REFERENCE]
 
 **Remediation Recommendation:**
+
 1. [IMMEDIATE ACTION - Timeline: 24 hours]
 2. [SHORT-TERM FIX - Timeline: 7 days]
 3. [LONG-TERM SOLUTION - Timeline: 30 days]
@@ -310,18 +328,21 @@ Risk Rating = (Impact × Likelihood × Control Effectiveness)
 ### 4.5 Positive Findings (Strengths)
 
 **Strength 1: [POSITIVE FINDING]**
+
 - Description: [What is working well]
 - Benefit: [Why this is beneficial]
 - Guardian Impact: [Which Guardians/systems benefit]
 - Recommendation: Continue current practice and share best practices across teams
 
 **Strength 2: [POSITIVE FINDING]**
+
 - Description: [What is working well]
 - Benefit: [Why this is beneficial]
 - Guardian Impact: [Which Guardians/systems benefit]
 - Recommendation: Continue current practice and share best practices across teams
 
 **Strength 3: [POSITIVE FINDING]**
+
 - Description: [What is working well]
 - Benefit: [Why this is beneficial]
 - Guardian Impact: [Which Guardians/systems benefit]
@@ -371,24 +392,28 @@ Risk Rating = (Impact × Likelihood × Control Effectiveness)
 ### 5.3 Guardian Module Security Compliance
 
 **Authentication Guardian:**
+
 - Policy Compliance: [%]
 - Configuration Compliance: [%]
 - Operational Compliance: [%]
 - Overall Score: [SCORE/10]
 
 **Authorization Guardian:**
+
 - Policy Compliance: [%]
 - Configuration Compliance: [%]
 - Operational Compliance: [%]
 - Overall Score: [SCORE/10]
 
 **Encryption Guardian:**
+
 - Policy Compliance: [%]
 - Configuration Compliance: [%]
 - Operational Compliance: [%]
 - Overall Score: [SCORE/10]
 
 **Audit Guardian:**
+
 - Policy Compliance: [%]
 - Configuration Compliance: [%]
 - Operational Compliance: [%]
@@ -425,12 +450,14 @@ Low     │  1       1       1        0
 ### 6.3 Guardian Coverage Analysis
 
 **Covered by Current Guardians:**
+
 - Authentication Guardian protects against: [THREATS]
 - Authorization Guardian protects against: [THREATS]
 - Encryption Guardian protects against: [THREATS]
 - Audit Guardian protects against: [THREATS]
 
 **Gaps in Guardian Coverage:**
+
 - [GAP 1]: Could be addressed by [SOLUTION]
 - [GAP 2]: Could be addressed by [SOLUTION]
 - [GAP 3]: Could be addressed by [SOLUTION]
@@ -484,12 +511,14 @@ Low     │  1       1       1        0
 ### 7.4 Guardian Enhancement Recommendations
 
 **Guardian Architecture Improvements:**
+
 1. Enhanced Guardian-to-Hub communication protocol
 2. Improved inter-Guardian coordination mechanism
 3. Enhanced monitoring and telemetry collection
 4. Better Guardian failover and recovery
 
 **New Guardian Capabilities:**
+
 - Capability 1: [DESCRIPTION]
 - Capability 2: [DESCRIPTION]
 - Capability 3: [DESCRIPTION]
@@ -504,6 +533,7 @@ Low     │  1       1       1        0
 [Executive acknowledgment of findings and commitment to remediation]
 
 **Resource Allocation:**
+
 - Personnel: [ALLOCATION]
 - Budget: [AMOUNT]
 - Tools/Technology: [TOOLS REQUIRED]
@@ -542,16 +572,19 @@ Month 4    │ ██░░░░░░░░ Strategic initiatives 20% underway
 ### 9.2 Audit Resources
 
 **Tools & Utilities:**
+
 - [TOOL 1]: [PURPOSE]
 - [TOOL 2]: [PURPOSE]
 - [TOOL 3]: [PURPOSE]
 
 **Documentation Reviewed:**
+
 - [DOC 1]
 - [DOC 2]
 - [DOC 3]
 
 **Interviews Conducted:**
+
 - [PERSON 1] - [ROLE]
 - [PERSON 2] - [ROLE]
 - [PERSON 3] - [ROLE]
@@ -565,6 +598,7 @@ Month 4    │ ██░░░░░░░░ Strategic initiatives 20% underway
 **Follow-up Audit Scheduled:** [DATE]
 **Follow-up Scope:** [SCOPE DESCRIPTION]
 **Focus Areas:**
+
 1. Verification of remediation for critical findings
 2. Effectiveness of implemented controls
 3. Progress on strategic improvements
@@ -572,11 +606,13 @@ Month 4    │ ██░░░░░░░░ Strategic initiatives 20% underway
 ### 10.2 Continuous Monitoring Recommendations
 
 **Quarterly Reviews:**
+
 - Guardian performance metrics
 - Security incident trends
 - Compliance status updates
 
 **Annual Assessment:**
+
 - Full security audit
 - External penetration test
 - Regulatory compliance verification

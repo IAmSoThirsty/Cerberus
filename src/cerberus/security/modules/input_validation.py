@@ -158,9 +158,7 @@ class InputValidator:
             re.compile(p, re.IGNORECASE) for p in self.PATH_TRAVERSAL_PATTERNS
         ]
         self.compiled_xxe = [re.compile(p, re.IGNORECASE) for p in self.XXE_PATTERNS]
-        self.compiled_ldap = [
-            re.compile(p, re.IGNORECASE) for p in self.LDAP_PATTERNS
-        ]
+        self.compiled_ldap = [re.compile(p, re.IGNORECASE) for p in self.LDAP_PATTERNS]
         self.compiled_nosql = [
             re.compile(p, re.IGNORECASE) for p in self.NOSQL_PATTERNS
         ]

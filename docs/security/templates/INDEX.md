@@ -15,7 +15,8 @@ This directory contains **6 comprehensive security documentation templates** tot
 
 ### Core Templates (4 files)
 
-#### 1. **Vulnerability Report Template** 
+#### 1. **Vulnerability Report Template**
+
 - **File:** `vulnerability-report-template.md`
 - **Lines:** 597 | **Size:** 15K
 - **Purpose:** Document and track security vulnerabilities
@@ -29,6 +30,7 @@ This directory contains **6 comprehensive security documentation templates** tot
   - Regression testing procedures
 
 **Use When:**
+
 - A security vulnerability is discovered
 - Formal vulnerability documentation is required
 - CVSS severity scoring needed
@@ -38,6 +40,7 @@ This directory contains **6 comprehensive security documentation templates** tot
 ---
 
 #### 2. **Audit Report Template**
+
 - **File:** `audit-report-template.md`
 - **Lines:** 677 | **Size:** 18K
 - **Purpose:** Comprehensive security audit documentation
@@ -52,6 +55,7 @@ This directory contains **6 comprehensive security documentation templates** tot
   - Guardian security compliance scoring
 
 **Use When:**
+
 - Conducting internal or external security audits
 - Compliance assessments are required
 - Regulatory verification needed
@@ -61,6 +65,7 @@ This directory contains **6 comprehensive security documentation templates** tot
 ---
 
 #### 3. **Incident Report Template**
+
 - **File:** `incident-report-template.md`
 - **Lines:** 625 | **Size:** 19K
 - **Purpose:** Detailed security incident investigation and documentation
@@ -77,6 +82,7 @@ This directory contains **6 comprehensive security documentation templates** tot
   - Incident metrics collection
 
 **Use When:**
+
 - Security incident occurs
 - Root cause analysis required
 - Forensic investigation needed
@@ -86,6 +92,7 @@ This directory contains **6 comprehensive security documentation templates** tot
 ---
 
 #### 4. **Security Review Template**
+
 - **File:** `security-review-template.md`
 - **Lines:** 800 | **Size:** 21K
 - **Purpose:** Code and design security review documentation
@@ -102,6 +109,7 @@ This directory contains **6 comprehensive security documentation templates** tot
   - Code coverage analysis
 
 **Use When:**
+
 - New components require security review
 - Code changes need security validation
 - Design architecture security assessment
@@ -113,6 +121,7 @@ This directory contains **6 comprehensive security documentation templates** tot
 ### Reference Documentation (2 files)
 
 #### 5. **README Guide**
+
 - **File:** `README.md`
 - **Lines:** 466 | **Size:** 16K
 - **Purpose:** Complete template documentation and usage guide
@@ -132,6 +141,7 @@ This directory contains **6 comprehensive security documentation templates** tot
 ---
 
 #### 6. **Quick Start Guide**
+
 - **File:** `QUICK-START.md`
 - **Lines:** 423 | **Size:** 12K
 - **Purpose:** Fast-track introduction to templates
@@ -202,6 +212,7 @@ What's your security task?
 ### Universal Features
 
 ✅ **Professional Formatting**
+
 - Clear section headings
 - Table-based data presentation
 - Fillable placeholders [LIKE_THIS]
@@ -209,6 +220,7 @@ What's your security task?
 - Consistent structure
 
 ✅ **Metadata Management**
+
 - Document identification numbers
 - Date and time tracking
 - Author and reviewer fields
@@ -217,6 +229,7 @@ What's your security task?
 - Revision history
 
 ✅ **Severity/Priority Classifications**
+
 - CRITICAL (24-hour response)
 - HIGH (7-day response)
 - MEDIUM (30-day response)
@@ -224,6 +237,7 @@ What's your security task?
 - INFORMATIONAL (no timeline)
 
 ✅ **Sign-Off & Approval Workflows**
+
 - Author sign-off
 - Reviewer approval
 - Management authorization
@@ -231,6 +245,7 @@ What's your security task?
 - Approval tracking
 
 ✅ **Cerberus Framework Integration**
+
 - Guardian module identification
 - Guardian impact analysis
 - Hub communication assessment
@@ -239,6 +254,7 @@ What's your security task?
 - Guardian failover and recovery assessment
 
 ✅ **Evidence & Documentation**
+
 - Appendices for supporting evidence
 - Log excerpts and examples
 - Code snippets and configurations
@@ -250,6 +266,7 @@ What's your security task?
 ## 🚀 Getting Started (3 Steps)
 
 ### Step 1: Choose Your Template (1 minute)
+
 ```
 Vulnerability? → Use vulnerability-report-template.md
 Audit? → Use audit-report-template.md
@@ -258,11 +275,13 @@ Review? → Use security-review-template.md
 ```
 
 ### Step 2: Copy the Template (1 minute)
+
 ```bash
 cp vulnerability-report-template.md VUL-2024-0001-report.md
 ```
 
 ### Step 3: Fill It In (2-80 hours depending on type)
+
 - Complete document information section
 - Fill in each section with specific details
 - Gather required signatures
@@ -273,9 +292,11 @@ cp vulnerability-report-template.md VUL-2024-0001-report.md
 ## 📋 Common Use Cases
 
 ### 1. Security Vulnerability Discovery
+
 **Timeline:** 2-4 hours
 **Template:** vulnerability-report-template.md
 **Process:**
+
 1. Vulnerability discovered and verified
 2. CVSS score calculated
 3. PoC code developed
@@ -285,9 +306,11 @@ cp vulnerability-report-template.md VUL-2024-0001-report.md
 7. Submitted to development team
 
 ### 2. Annual Security Audit
+
 **Timeline:** 40-80 hours
 **Template:** audit-report-template.md
 **Process:**
+
 1. Audit scope defined
 2. Methodology selected
 3. Testing conducted over 2 weeks
@@ -297,9 +320,11 @@ cp vulnerability-report-template.md VUL-2024-0001-report.md
 7. Approved by leadership
 
 ### 3. Security Incident Response
+
 **Timeline:** 16-40 hours
 **Template:** incident-report-template.md
 **Process:**
+
 1. Incident detected and reported (4 hours)
 2. Initial containment and investigation (12 hours)
 3. Root cause analysis (24 hours)
@@ -307,9 +332,11 @@ cp vulnerability-report-template.md VUL-2024-0001-report.md
 5. Follow-up actions tracked
 
 ### 4. Pre-Deployment Security Review
+
 **Timeline:** 24-48 hours
 **Template:** security-review-template.md
 **Process:**
+
 1. Code review with security focus
 2. Architecture validation
 3. Threat modeling
@@ -362,17 +389,20 @@ cp vulnerability-report-template.md VUL-2024-0001-report.md
 ## 📞 Template Support
 
 ### Documentation
+
 - **Quick Reference:** See QUICK-START.md
 - **Detailed Guide:** See README.md
 - **Template-Specific:** See comments in each template
 
 ### External Resources
+
 - **CVSS Scoring:** https://www.first.org/cvss/calculator/3.1
 - **Threat Modeling:** Microsoft Threat Modeling Tool, OWASP TD
 - **Audit Standards:** ISO 27001, NIST CSF, CIS Controls
 - **Incident Response:** NIST SP 800-61, ISO 27035
 
 ### Organization Resources
+
 - **Guardian Architecture:** See ../guides/guardian-architecture.md
 - **Security Policies:** See ../guides/security-policies.md
 - **Incident Response:** See ../guides/incident-response.md
@@ -413,6 +443,7 @@ Before using any template:
 ## 🔗 Related Documentation
 
 **In this directory:**
+
 - README.md - Complete template reference
 - QUICK-START.md - Fast-track introduction
 - vulnerability-report-template.md - Vulnerability documentation
@@ -421,12 +452,14 @@ Before using any template:
 - security-review-template.md - Code/design review template
 
 **In ../guides/:**
+
 - guardian-architecture.md - Guardian framework overview
 - security-policies.md - Security policy framework
 - incident-response.md - Incident response procedures
 - security-controls.md - Security controls framework
 
 **In ../training/:**
+
 - Role-specific security training
 - Vulnerability assessment techniques
 - Audit procedures
@@ -449,12 +482,14 @@ Before using any template:
 ## 🎬 Quick Actions
 
 ### Immediate Tasks
+
 - [ ] Copy appropriate template
 - [ ] Rename with document ID
 - [ ] Fill in metadata section
 - [ ] Start with executive summary
 
 ### Before Submission
+
 - [ ] Complete all required sections
 - [ ] Verify all data accuracy
 - [ ] Obtain required signatures
@@ -462,6 +497,7 @@ Before using any template:
 - [ ] Review pre-submission checklist
 
 ### After Completion
+
 - [ ] Archive securely
 - [ ] Track follow-up items
 - [ ] Schedule next review/audit

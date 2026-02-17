@@ -57,7 +57,9 @@ class StatisticalGuardian(Guardian):
         """Return the type identifier for this guardian."""
         return "statistical"
 
-    def analyze(self, content: str, context: dict[str, Any] | None = None) -> ThreatReport:
+    def analyze(
+        self, content: str, context: dict[str, Any] | None = None
+    ) -> ThreatReport:
         """
         Analyze content using statistical methods.
 
@@ -80,9 +82,13 @@ class StatisticalGuardian(Guardian):
         anomalies = self._detect_anomalies(stats, threats)
 
         # Calculate overall anomaly score
-        max_z_score = max(abs(a["z_score"]) for a in anomalies.values()) if anomalies else 0.0
+        max_z_score = (
+            max(abs(a["z_score"]) for a in anomalies.values()) if anomalies else 0.0
+        )
         if anomalies:
-            avg_z_score = sum(abs(a["z_score"]) for a in anomalies.values()) / len(anomalies)
+            avg_z_score = sum(abs(a["z_score"]) for a in anomalies.values()) / len(
+                anomalies
+            )
         else:
             avg_z_score = 0.0
 
@@ -119,10 +125,13 @@ class StatisticalGuardian(Guardian):
         # Character type ratios
         total_chars = len(content)
         if total_chars > 0:
-            stats["uppercase_ratio"] = sum(1 for c in content if c.isupper()) / total_chars
+            stats["uppercase_ratio"] = (
+                sum(1 for c in content if c.isupper()) / total_chars
+            )
             stats["digit_ratio"] = sum(1 for c in content if c.isdigit()) / total_chars
             stats["punctuation_ratio"] = (
-                sum(1 for c in content if c in "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~") / total_chars
+                sum(1 for c in content if c in "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~")
+                / total_chars
             )
         else:
             stats["uppercase_ratio"] = 0.0

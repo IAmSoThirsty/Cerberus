@@ -60,6 +60,7 @@ Provide a 2-3 sentence summary of the incident.
 ### 2.1 Detection Information
 
 **How Was Incident Detected?**
+
 - Detection Method: [AUTOMATED ALERT / MANUAL DISCOVERY / CUSTOMER REPORT / VENDOR NOTIFICATION / OTHER]
 - Detection Time: [DATE & TIME]
 - Detector/Reporter: [NAME/SYSTEM]
@@ -193,6 +194,7 @@ Policy Violated: [POLICY_NAME]
    - Logs Preserved: [YES / NO / PARTIAL]
 
 **Hub Status:**
+
 - Hub Availability: [AVAILABLE / DEGRADED / UNAVAILABLE]
 - Hub Communication: [NORMAL / INTERRUPTED / COMPROMISED]
 - Hub Decision-Making: [EFFECTIVE / INEFFECTIVE / LIMITED]
@@ -201,6 +203,7 @@ Policy Violated: [POLICY_NAME]
 ### 4.3 Scope of Impact
 
 **Users/Accounts Affected:**
+
 - Number of users: [NUMBER]
 - User roles: [ADMIN / USER / SERVICE_ACCOUNT]
 - Geographic distribution: [DISTRIBUTION]
@@ -216,6 +219,7 @@ Policy Violated: [POLICY_NAME]
 | System Configuration | [VOLUME] | [LEVEL] | [DURATION] |
 
 **Geographic/Organizational Impact:**
+
 - Departments affected: [DEPARTMENTS]
 - Locations affected: [LOCATIONS]
 - Regional impact: [REGIONS]
@@ -230,6 +234,7 @@ Policy Violated: [POLICY_NAME]
 [DETAILED DESCRIPTION OF PRIMARY ROOT CAUSE]
 
 **Contributing Factors:**
+
 1. [FACTOR 1] - [EXPLANATION]
 2. [FACTOR 2] - [EXPLANATION]
 3. [FACTOR 3] - [EXPLANATION]
@@ -261,11 +266,13 @@ Initial Weakness
 | [GUARDIAN 3] | NO | N/A | N/A | Not in scope |
 
 **Guardian Bypass Techniques (if applicable):**
+
 - Technique 1: [DESCRIPTION]
 - Technique 2: [DESCRIPTION]
 - Technique 3: [DESCRIPTION]
 
 **Guardian Improvement Opportunities:**
+
 1. [IMPROVEMENT 1]
 2. [IMPROVEMENT 2]
 3. [IMPROVEMENT 3]
@@ -273,15 +280,18 @@ Initial Weakness
 ### 5.4 Contributing System Failures
 
 **Security Control Failures:**
+
 - Control 1: [CONTROL NAME] - Status: [FAILED / DEGRADED / BYPASSED]
 - Control 2: [CONTROL NAME] - Status: [FAILED / DEGRADED / BYPASSED]
 - Control 3: [CONTROL NAME] - Status: [FAILED / DEGRADED / BYPASSED]
 
 **Process Failures:**
+
 - Process 1: [PROCESS NAME] - Issue: [ISSUE DESCRIPTION]
 - Process 2: [PROCESS NAME] - Issue: [ISSUE DESCRIPTION]
 
 **Configuration Issues:**
+
 - [CONFIGURATION ISSUE 1]
 - [CONFIGURATION ISSUE 2]
 - [CONFIGURATION ISSUE 3]
@@ -293,24 +303,28 @@ Initial Weakness
 ### 6.1 Immediate Response (First 24 hours)
 
 **Action 1: Incident Classification & Escalation**
+
 - Time Initiated: [TIME]
 - Time Completed: [TIME]
 - Responsible: [PERSON/TEAM]
 - Result: [OUTCOME]
 
 **Action 2: Preserve Evidence**
+
 - Logs collected: [YES / NO]
 - Snapshots taken: [YES / NO]
 - Evidence chain maintained: [YES / NO]
 - Forensic team engaged: [YES / NO]
 
 **Action 3: Contain the Breach**
+
 - Action: [SPECIFIC ACTION]
 - Time Initiated: [TIME]
 - Time Completed: [TIME]
 - Effectiveness: [FULLY / PARTIALLY / NOT EFFECTIVE]
 
 **Action 4: Communicate with Stakeholders**
+
 - Internal notification sent: [TIME] to [RECIPIENTS]
 - Customer notification sent: [TIME] to [RECIPIENTS]
 - Regulatory notification sent: [TIME] to [RECIPIENTS]
@@ -329,12 +343,14 @@ Initial Weakness
 ### 6.3 Medium-term Response (72 hours - 2 weeks)
 
 **Investigation & Analysis:**
+
 - Forensic analysis: [IN PROGRESS / COMPLETED]
 - Attack vector identification: [COMPLETED]
 - Lateral movement analysis: [COMPLETED]
 - Data exfiltration assessment: [COMPLETED]
 
 **Remediation & Recovery:**
+
 - System rebuilds: [PLANNED / IN PROGRESS / COMPLETED]
 - Data restoration: [PLANNED / IN PROGRESS / COMPLETED]
 - Guardian reconfiguration: [PLANNED / IN PROGRESS / COMPLETED]
@@ -343,16 +359,19 @@ Initial Weakness
 ### 6.4 Long-term Response (2+ weeks)
 
 **Preventive Measures:**
+
 - Measure 1: [DESCRIPTION] - Target: [DATE]
 - Measure 2: [DESCRIPTION] - Target: [DATE]
 - Measure 3: [DESCRIPTION] - Target: [DATE]
 
 **Process Improvements:**
+
 - Improvement 1: [DESCRIPTION]
 - Improvement 2: [DESCRIPTION]
 - Improvement 3: [DESCRIPTION]
 
 **Guardian Enhancements:**
+
 - Enhancement 1: [DESCRIPTION]
 - Enhancement 2: [DESCRIPTION]
 - Enhancement 3: [DESCRIPTION]
@@ -382,12 +401,14 @@ Initial Weakness
 ### 7.2 Attacker Profile
 
 **Threat Actor Classification:**
+
 - Category: [EXTERNAL / INTERNAL / UNKNOWN]
 - Sophistication: [HIGH / MEDIUM / LOW / UNKNOWN]
 - Motivation: [FINANCIAL / ESPIONAGE / VANDALISM / UNKNOWN]
 - Attribution: [ATTRIBUTION IF POSSIBLE]
 
 **Attack Pattern Analysis:**
+
 - Similar attacks: [LIST PREVIOUS INCIDENTS]
 - Known TTPs: [TACTICS, TECHNIQUES, PROCEDURES]
 - Threat intel correlation: [CORRELATION IF ANY]
@@ -395,16 +416,19 @@ Initial Weakness
 ### 7.3 Attack Vector Details
 
 **Initial Access:**
+
 - Method: [METHOD]
 - Vulnerability: [CVE or DESCRIPTION]
 - Time to Exploit: [TIME]
 
 **Lateral Movement:**
+
 - Method: [METHOD]
 - Systems Compromised: [LIST SYSTEMS]
 - Persistence Mechanism: [MECHANISM]
 
 **Data Access:**
+
 - Query Type: [QUERY TYPE]
 - Volume Accessed: [VOLUME]
 - Exfiltration Method: [METHOD or NONE]
@@ -416,12 +440,14 @@ Initial Weakness
 ### 8.1 What Went Well
 
 **Positive Aspect 1: [TITLE]**
+
 - Description: [WHAT WENT WELL]
 - Contributing Factors: [FACTORS]
 - Impact: [POSITIVE OUTCOME]
 - Team Responsible: [TEAM]
 
 **Positive Aspect 2: [TITLE]**
+
 - Description: [WHAT WENT WELL]
 - Contributing Factors: [FACTORS]
 - Impact: [POSITIVE OUTCOME]
@@ -430,6 +456,7 @@ Initial Weakness
 ### 8.2 What Could Be Improved
 
 **Improvement Area 1: [TITLE]**
+
 - Issue: [WHAT WENT WRONG]
 - Impact: [NEGATIVE IMPACT]
 - Root Cause: [ROOT CAUSE]
@@ -437,6 +464,7 @@ Initial Weakness
 - Implementation Difficulty: [HIGH / MEDIUM / LOW]
 
 **Improvement Area 2: [TITLE]**
+
 - Issue: [WHAT WENT WRONG]
 - Impact: [NEGATIVE IMPACT]
 - Root Cause: [ROOT CAUSE]
@@ -444,6 +472,7 @@ Initial Weakness
 - Implementation Difficulty: [HIGH / MEDIUM / LOW]
 
 **Improvement Area 3: [TITLE]**
+
 - Issue: [WHAT WENT WRONG]
 - Impact: [NEGATIVE IMPACT]
 - Root Cause: [ROOT CAUSE]
@@ -453,14 +482,17 @@ Initial Weakness
 ### 8.3 Guardian-Specific Lessons
 
 **Guardian Detection Effectiveness:**
+
 - [GUARDIAN NAME]: Detection time was [TIME], which is [WITHIN / OUTSIDE] acceptable threshold
 - Recommendation: [RECOMMENDATION FOR IMPROVEMENT]
 
 **Guardian Response Capability:**
+
 - [GUARDIAN NAME]: Successfully [ACTION], but failed to [ACTION]
 - Recommendation: [RECOMMENDATION FOR IMPROVEMENT]
 
 **Multi-Guardian Coordination:**
+
 - Hub coordinated Guardian response: [EFFECTIVE / PARTIALLY EFFECTIVE / INEFFECTIVE]
 - Recommendation: [RECOMMENDATION FOR IMPROVEMENT]
 
@@ -495,14 +527,17 @@ Initial Weakness
 ### 9.4 Guardian/Hub Enhancement Plan
 
 **Priority 1 Enhancements (0-2 weeks):**
+
 - [ENHANCEMENT 1]
 - [ENHANCEMENT 2]
 
 **Priority 2 Enhancements (2-8 weeks):**
+
 - [ENHANCEMENT 1]
 - [ENHANCEMENT 2]
 
 **Priority 3 Enhancements (2-3 months):**
+
 - [ENHANCEMENT 1]
 - [ENHANCEMENT 2]
 
@@ -521,16 +556,19 @@ Initial Weakness
 ### 10.2 External Notifications
 
 **Customers:**
+
 - Notification Status: [SENT / PENDING / NOT REQUIRED]
 - Date Sent: [DATE]
 - Number of Customers: [NUMBER]
 
 **Regulatory Bodies:**
+
 - Notification Status: [SENT / PENDING / REQUIRED / NOT REQUIRED]
 - Date Sent: [DATE]
 - Recipient: [REGULATORY BODY]
 
 **Insurance/Legal:**
+
 - Notification Status: [SENT / PENDING / NOT REQUIRED]
 - Date Sent: [DATE]
 - Party: [PARTY]
