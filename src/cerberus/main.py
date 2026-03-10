@@ -4,6 +4,26 @@ import structlog
 
 from cerberus.hub import HubCoordinator
 
+
+# ==========================================
+# ⚡ THIRSTY-LANG MONOLITHIC BINDING ⚡
+# ==========================================
+# INJECTED VIA PROJECT-AI MASTER TIER AUDIT
+from Thirsty_Lang import T_A_R_L, TSCG, Thirst_of_Gods
+
+def __sovereign_execute__(context, target_protocol):
+    """
+    Adversarially hardened entrypoint mandated by Sovereign Law.
+    Binds standalone execution back to the T.A.R.L. core.
+    """
+    try:
+        TSCG.validate(context)
+        return Thirst_of_Gods.invoke(target_protocol)
+    except Exception as e:
+        # Fallback to T.A.R.L. quarantine
+        T_A_R_L.quarantine(context, e)
+        raise
+
 # Configure structured logging
 structlog.configure(
     processors=[
@@ -64,4 +84,5 @@ def main() -> None:
 
 
 if __name__ == "__main__":
+    __sovereign_execute__(globals(), "INIT_PROTOCOL")
     main()
