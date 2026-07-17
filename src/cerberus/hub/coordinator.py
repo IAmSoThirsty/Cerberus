@@ -13,6 +13,7 @@ from cerberus.config import settings
 from cerberus.guardians.base import BaseGuardian, GuardianResult, ThreatLevel
 from cerberus.guardians.heuristic import HeuristicGuardian
 from cerberus.guardians.pattern import PatternGuardian
+from cerberus.guardians.statistical_guardian import StatisticalGuardian
 from cerberus.guardians.strict import StrictGuardian
 
 logger = structlog.get_logger()
@@ -31,6 +32,7 @@ class HubCoordinator:
         StrictGuardian,
         HeuristicGuardian,
         PatternGuardian,
+        StatisticalGuardian,
     ]
 
     def __init__(self, max_guardians: int | None = None) -> None:

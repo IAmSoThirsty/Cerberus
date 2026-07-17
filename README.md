@@ -27,7 +27,7 @@ Cerberus is a hardened security framework that deploys multiple specialized guar
 ## ✨ Key Features
 
 ### 🔰 Multi-Agent Guardian System
-- **3 Initial Guardians**: Pattern, Heuristic, and Statistical detection strategies
+- **4 Initial Guardians**: Strict, Pattern, Heuristic, and Statistical detection strategies
 - **Exponential Defense Growth**: Spawns 3 new guardians per bypass attempt (configurable)
 - **Dynamic Scaling**: Automatically adapts to threat level with up to 27 guardians
 - **Coordinated Decision Making**: Central hub aggregates reports for intelligent blocking
@@ -84,7 +84,7 @@ Cerberus is a hardened security framework that deploys multiple specialized guar
 
 ## 🎭 Guardian Types
 
-Cerberus employs three specialized guardian types, each with unique detection strategies:
+Cerberus employs four specialized guardian types, each with unique detection strategies:
 
 ### 1. 🎯 PatternGuardian
 **Rule-based pattern matching for known attack vectors**
@@ -102,7 +102,10 @@ Cerberus employs three specialized guardian types, each with unique detection st
 - Catches novel attack variations
 - Statistical confidence scoring
 
-### 3. 📊 StatisticalGuardian
+### 3. 🛡️ StrictGuardian
+**Strict rule-based guardian using explicit patterns**
+
+### 4. 📊 StatisticalGuardian
 **Statistical anomaly detection for unusual inputs**
 - Baseline behavior modeling
 - Deviation detection algorithms
@@ -185,7 +188,7 @@ python demo_security.py
 ```python
 from cerberus.hub import HubCoordinator
 
-# Initialize the hub (starts with 3 guardians)
+# Initialize the hub (starts with 4 guardians)
 hub = HubCoordinator()
 
 # Analyze potentially malicious input

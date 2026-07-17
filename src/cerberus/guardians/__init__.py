@@ -3,6 +3,7 @@
 from cerberus.guardians.base import BaseGuardian, GuardianResult, ThreatReport
 from cerberus.guardians.heuristic import HeuristicGuardian
 from cerberus.guardians.pattern import PatternGuardian
+from cerberus.guardians.statistical_guardian import StatisticalGuardian
 from cerberus.guardians.strict import StrictGuardian
 
 __all__ = [
@@ -12,4 +13,5 @@ __all__ = [
     "StrictGuardian",
     "HeuristicGuardian",
     "PatternGuardian",
+    "StatisticalGuardian",
 ]

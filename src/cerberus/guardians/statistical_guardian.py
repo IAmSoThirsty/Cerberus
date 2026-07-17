@@ -57,6 +57,14 @@ class StatisticalGuardian(Guardian):
         """Return the type identifier for this guardian."""
         return "statistical"
 
+    def get_style_description(self) -> str:
+        """Return description of statistical analysis style."""
+        return (
+            "Statistical anomaly detection using entropy, character-type "
+            "ratios, and z-score deviation from baseline distributions to "
+            "flag unusual or adversarial inputs."
+        )
+
     def analyze(self, content: str, context: dict[str, Any] | None = None) -> ThreatReport:
         """
         Analyze content using statistical methods.
