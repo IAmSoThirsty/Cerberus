@@ -165,9 +165,7 @@ class DomainSubsystemBase(BaseSubsystem, ICommandable, IMonitorable, IObservable
                 return response
 
             return SubsystemResponse(
-                command.command_id,
-                False,
-                error=f"Unknown command: {command.command_type}"
+                command.command_id, False, error=f"Unknown command: {command.command_type}"
             )
         except Exception as error:
             self.logger.error(f"Command execution failed: {error}")
@@ -175,7 +173,7 @@ class DomainSubsystemBase(BaseSubsystem, ICommandable, IMonitorable, IObservable
                 command.command_id,
                 False,
                 error=str(error),
-                execution_time_ms=(time.time() - start_time) * 1000
+                execution_time_ms=(time.time() - start_time) * 1000,
             )
 
     # IMonitorable implementation
@@ -253,7 +251,7 @@ class DomainSubsystemBase(BaseSubsystem, ICommandable, IMonitorable, IObservable
         state_file = self.data_path / "state.json"
         if state_file.exists():
             try:
-                with open(state_file, 'r') as file:
+                with open(state_file) as file:
                     state = json.load(file)
                     self._restore_state(state)
                     self.logger.debug(f"State loaded from {state_file}")
@@ -265,7 +263,7 @@ class DomainSubsystemBase(BaseSubsystem, ICommandable, IMonitorable, IObservable
         state_file = self.data_path / "state.json"
         try:
             state = self._get_state_for_persistence()
-            with open(state_file, 'w') as file:
+            with open(state_file, "w") as file:
                 json.dump(state, file, indent=2, default=str)
             self.logger.debug(f"State saved to {state_file}")
         except Exception as error:
@@ -317,10 +315,7 @@ class DomainSubsystemBase(BaseSubsystem, ICommandable, IMonitorable, IObservable
 
     def _get_state_for_persistence(self) -> dict[str, Any]:
         """Override to provide domain-specific state for persistence."""
-        return {
-            "metrics": self._metrics,
-            "initialized": self._initialized
-        }
+        return {"metrics": self._metrics, "initialized": self._initialized}
 
     def _process_iteration(self):
         """Override to define one iteration of the processing loop."""

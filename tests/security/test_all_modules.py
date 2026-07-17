@@ -71,8 +71,7 @@ class TestAuditLogging:
         with tempfile.TemporaryDirectory() as tmpdir:
             logger = AuditLogger(log_dir=tmpdir, enable_tamper_detection=True)
             event = AuditEvent(
-                event_type=AuditEventType.ACCESS_GRANTED,
-                severity=AuditSeverity.INFO
+                event_type=AuditEventType.ACCESS_GRANTED, severity=AuditSeverity.INFO
             )
             logger.log(event)
             assert logger.verify_log_integrity()
@@ -239,7 +238,7 @@ class TestThreatDetection:
             detector.detect(f"request {i}", "attacker_ip")
 
         # Should detect DoS pattern
-        result = detector.detect("another request", "attacker_ip")
+        detector.detect("another request", "attacker_ip")
         # Behavioral detection may or may not trigger depending on timing
 
 
@@ -252,7 +251,7 @@ class TestMonitoring:
             severity=AlertSeverity.WARNING,
             title="Test Alert",
             description="Test description",
-            category="test"
+            category="test",
         )
 
         assert alert.alert_id in alert_mgr.alerts
@@ -288,7 +287,7 @@ class TestAdversarialScenarios:
     def test_encoded_attack(self):
         """Test URL-encoded attack"""
         validator = InputValidator()
-        result = validator.validate("%3Cscript%3Ealert(1)%3C/script%3E")
+        validator.validate("%3Cscript%3Ealert(1)%3C/script%3E")
         # Note: This test may need URL decoding in production
 
     def test_privilege_escalation_attempt(self):
@@ -311,7 +310,7 @@ class TestFuzzing:
 
         for _ in range(100):
             length = random.randint(1, 1000)
-            fuzz_input = ''.join(random.choices(string.printable, k=length))
+            fuzz_input = "".join(random.choices(string.printable, k=length))
 
             # Should not crash
             try:
@@ -336,11 +335,13 @@ class TestIntegration:
             # 2. Log the attempt
             with tempfile.TemporaryDirectory() as tmpdir:
                 logger = AuditLogger(log_dir=tmpdir)
-                logger.log(AuditEvent(
-                    event_type=AuditEventType.VALIDATION_FAILED,
-                    severity=AuditSeverity.WARNING,
-                    details={"attack_type": validation_result.attack_type.value}
-                ))
+                logger.log(
+                    AuditEvent(
+                        event_type=AuditEventType.VALIDATION_FAILED,
+                        severity=AuditSeverity.WARNING,
+                        details={"attack_type": validation_result.attack_type.value},
+                    )
+                )
 
                 # 3. Check rate limiting
                 limiter = RateLimiter()

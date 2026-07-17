@@ -28,6 +28,7 @@ class ThreatReport:
     threats_detected: list[str]
     reasoning: str
     timestamp: float | None = None
+    metadata: dict[str, Any] | None = None
 
     def __post_init__(self) -> None:
         """Validate result consistency."""
@@ -57,6 +58,7 @@ class Guardian(ABC):
                         If not provided, one will be auto-generated.
         """
         import uuid
+
         self.guardian_id = guardian_id or str(uuid.uuid4())[:8]
         self._active = True
 

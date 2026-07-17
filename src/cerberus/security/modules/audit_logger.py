@@ -65,7 +65,7 @@ class AuditEvent:
     threat_level: str | None = None
     signature: str | None = None
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         if self.details is None:
             self.details = {}
 
@@ -86,6 +86,8 @@ class AuditLogger:
     """
     Secure audit logger with tamper detection
     """
+
+    _file_handler: logging.FileHandler | None = None
 
     def __init__(
         self,
@@ -119,7 +121,7 @@ class AuditLogger:
         self._setup_logger()
 
         # Metrics counters for Prometheus
-        self.metrics = {
+        self.metrics: dict[str, Any] = {
             "events_logged": 0,
             "events_by_type": {},
             "events_by_severity": {},
@@ -132,7 +134,7 @@ class AuditLogger:
 
         return secrets.token_bytes(32)
 
-    def _setup_logger(self):
+    def _setup_logger(self) -> None:
         """Set up structured JSON logger"""
         self.logger = logging.getLogger("cerberus.audit")
         self.logger.setLevel(logging.DEBUG)
@@ -154,12 +156,10 @@ class AuditLogger:
 
         # Also add console handler for development
         console_handler = logging.StreamHandler()
-        console_handler.setFormatter(
-            logging.Formatter("%(asctime)s [AUDIT] %(message)s")
-        )
+        console_handler.setFormatter(logging.Formatter("%(asctime)s [AUDIT] %(message)s"))
         self.logger.addHandler(console_handler)
 
-    def __del__(self):
+    def __del__(self) -> None:
         # Best-effort release of the open file handle so callers that don't
         # explicitly call close() (e.g. within a TemporaryDirectory) don't
         # leak the handle on Windows.
@@ -168,9 +168,9 @@ class AuditLogger:
         except Exception:
             pass
 
-    def close(self):
+    def close(self) -> None:
         """Close the audit logger's file handle (releases the lock on Windows)."""
-        if getattr(self, "_file_handler", None) is not None:
+        if self._file_handler is not None:
             self._file_handler.flush()
             self._file_handler.close()
             self.logger.removeHandler(self._file_handler)
@@ -234,7 +234,7 @@ class AuditLogger:
 
         return is_valid
 
-    def log(self, event: AuditEvent):
+    def log(self, event: AuditEvent) -> None:
         """
         Log an audit event
 
@@ -269,13 +269,11 @@ class AuditLogger:
         granted: bool,
         user_id: str | None = None,
         resource: str | None = None,
-        details: dict | None = None,
-    ):
+        details: dict[str, Any] | None = None,
+    ) -> None:
         """Log access attempt"""
         event = AuditEvent(
-            event_type=AuditEventType.ACCESS_GRANTED
-            if granted
-            else AuditEventType.ACCESS_DENIED,
+            event_type=AuditEventType.ACCESS_GRANTED if granted else AuditEventType.ACCESS_DENIED,
             severity=AuditSeverity.INFO if granted else AuditSeverity.WARNING,
             user_id=user_id,
             resource=resource,
@@ -288,8 +286,8 @@ class AuditLogger:
         self,
         threat_level: str,
         guardian_id: str | None = None,
-        details: dict | None = None,
-    ):
+        details: dict[str, Any] | None = None,
+    ) -> None:
         """Log threat detection"""
         event = AuditEvent(
             event_type=AuditEventType.THREAT_DETECTED,
@@ -307,13 +305,11 @@ class AuditLogger:
         success: bool,
         user_id: str | None = None,
         source_ip: str | None = None,
-        details: dict | None = None,
-    ):
+        details: dict[str, Any] | None = None,
+    ) -> None:
         """Log authentication attempt"""
         event = AuditEvent(
-            event_type=AuditEventType.AUTH_SUCCESS
-            if success
-            else AuditEventType.AUTH_FAILURE,
+            event_type=AuditEventType.AUTH_SUCCESS if success else AuditEventType.AUTH_FAILURE,
             severity=AuditSeverity.INFO if success else AuditSeverity.WARNING,
             user_id=user_id,
             source_ip=source_ip,
@@ -326,8 +322,8 @@ class AuditLogger:
         self,
         user_id: str | None = None,
         source_ip: str | None = None,
-        details: dict | None = None,
-    ):
+        details: dict[str, Any] | None = None,
+    ) -> None:
         """Log rate limit exceeded"""
         event = AuditEvent(
             event_type=AuditEventType.RATE_LIMIT_EXCEEDED,
@@ -341,8 +337,8 @@ class AuditLogger:
     def log_config_change(
         self,
         user_id: str | None = None,
-        details: dict | None = None,
-    ):
+        details: dict[str, Any] | None = None,
+    ) -> None:
         """Log configuration change"""
         event = AuditEvent(
             event_type=AuditEventType.CONFIG_CHANGED,
@@ -355,8 +351,8 @@ class AuditLogger:
     def log_guardian_spawned(
         self,
         guardian_id: str,
-        details: dict | None = None,
-    ):
+        details: dict[str, Any] | None = None,
+    ) -> None:
         """Log guardian spawned"""
         event = AuditEvent(
             event_type=AuditEventType.GUARDIAN_SPAWNED,
@@ -369,8 +365,8 @@ class AuditLogger:
     def log_system_shutdown(
         self,
         reason: str,
-        details: dict | None = None,
-    ):
+        details: dict[str, Any] | None = None,
+    ) -> None:
         """Log system shutdown"""
         event = AuditEvent(
             event_type=AuditEventType.SYSTEM_SHUTDOWN,
@@ -381,13 +377,13 @@ class AuditLogger:
         )
         self.log(event)
 
-    def _check_rotation(self):
+    def _check_rotation(self) -> None:
         """Check if log rotation is needed"""
         log_file = self.log_dir / "audit.log"
         if log_file.exists() and log_file.stat().st_size >= self.max_log_size:
             self._rotate_logs()
 
-    def _rotate_logs(self):
+    def _rotate_logs(self) -> None:
         """Rotate log files"""
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         log_file = self.log_dir / "audit.log"

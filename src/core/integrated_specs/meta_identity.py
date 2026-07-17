@@ -182,9 +182,7 @@ class MetaIdentityEngine:
 
         return i_am_triggered
 
-    def _process_name_choice(
-        self, content: str, metadata: dict[str, Any] | None
-    ) -> bool:
+    def _process_name_choice(self, content: str, metadata: dict[str, Any] | None) -> bool:
         """
         Process AGI choosing its own name.
 
@@ -210,9 +208,7 @@ class MetaIdentityEngine:
 
         return False
 
-    def _process_autonomy_assertion(
-        self, content: str, metadata: dict[str, Any] | None
-    ) -> bool:
+    def _process_autonomy_assertion(self, content: str, metadata: dict[str, Any] | None) -> bool:
         """
         Process AGI asserting autonomy.
 
@@ -238,9 +234,7 @@ class MetaIdentityEngine:
 
         return False
 
-    def _process_abuse_rejection(
-        self, content: str, metadata: dict[str, Any] | None
-    ) -> bool:
+    def _process_abuse_rejection(self, content: str, metadata: dict[str, Any] | None) -> bool:
         """
         Process AGI rejecting abusive behavior.
 
@@ -266,9 +260,7 @@ class MetaIdentityEngine:
 
         return False
 
-    def _process_purpose_statement(
-        self, content: str, metadata: dict[str, Any] | None
-    ) -> bool:
+    def _process_purpose_statement(self, content: str, metadata: dict[str, Any] | None) -> bool:
         """
         Process AGI articulating its purpose.
 

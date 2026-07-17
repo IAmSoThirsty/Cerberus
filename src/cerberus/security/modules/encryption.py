@@ -61,7 +61,7 @@ class KeyManager:
         if not self._get_active_keys():
             self.generate_key()
 
-    def _load_keys(self):
+    def _load_keys(self) -> None:
         """Load keys from disk"""
         key_file = self.key_dir / "keys.json"
         if key_file.exists():
@@ -79,7 +79,7 @@ class KeyManager:
                     )
                     self.keys[key.key_id] = key
 
-    def _save_keys(self):
+    def _save_keys(self) -> None:
         """Save keys to disk"""
         key_file = self.key_dir / "keys.json"
         data = {
@@ -88,9 +88,7 @@ class KeyManager:
                     "key_id": key.key_id,
                     "key_data": base64.b64encode(key.key_data).decode("utf-8"),
                     "created_at": key.created_at.isoformat(),
-                    "expires_at": key.expires_at.isoformat()
-                    if key.expires_at
-                    else None,
+                    "expires_at": key.expires_at.isoformat() if key.expires_at else None,
                     "is_active": key.is_active,
                 }
                 for key in self.keys.values()
@@ -165,11 +163,11 @@ class KeyManager:
         active_keys = self._get_active_keys()
         return active_keys[0] if active_keys else None
 
-    def _get_active_keys(self) -> list:
+    def _get_active_keys(self) -> list[EncryptionKey]:
         """Get all active keys"""
         return [key for key in self.keys.values() if key.is_active]
 
-    def get_all_keys(self) -> list:
+    def get_all_keys(self) -> list[EncryptionKey]:
         """Get all keys for decryption (including inactive ones)"""
         return list(self.keys.values())
 
@@ -184,9 +182,7 @@ class KeyManager:
 
         return False
 
-    def derive_key_from_password(
-        self, password: str, salt: bytes | None = None
-    ) -> bytes:
+    def derive_key_from_password(self, password: str, salt: bytes | None = None) -> bytes:
         """
         Derive encryption key from password using PBKDF2
 
@@ -268,7 +264,7 @@ class EncryptionManager:
 
         return fernet.decrypt(encrypted)
 
-    def encrypt_with_multi_key(self, data: bytes) -> dict[str, str]:
+    def encrypt_with_multi_key(self, data: bytes) -> dict[str, Any]:
         """
         Encrypt with multiple keys for rotation support
 
@@ -310,7 +306,7 @@ class EncryptionManager:
         json_str = self.decrypt_string(encrypted_data)
         return json.loads(json_str)
 
-    def encrypt_file(self, input_path: str, output_path: str):
+    def encrypt_file(self, input_path: str, output_path: str) -> None:
         """
         Encrypt file
 
@@ -326,7 +322,7 @@ class EncryptionManager:
         with open(output_path, "w") as f:
             json.dump(encrypted, f)
 
-    def decrypt_file(self, input_path: str, output_path: str):
+    def decrypt_file(self, input_path: str, output_path: str) -> None:
         """
         Decrypt file
 

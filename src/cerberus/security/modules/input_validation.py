@@ -16,6 +16,7 @@ import re
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass
 from enum import Enum
+from typing import Any
 
 
 class AttackType(Enum):
@@ -42,9 +43,9 @@ class ValidationResult:
     confidence: float  # 0.0 to 1.0
     details: str
     sanitized_input: str | None = None
-    patterns_matched: list[str] = None
+    patterns_matched: list[str] | None = None
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         if self.patterns_matched is None:
             self.patterns_matched = []
 
@@ -144,35 +145,25 @@ class InputValidator:
         r"sudo\s+",
     ]
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize the input validator"""
         self._compile_patterns()
 
-    def _compile_patterns(self):
+    def _compile_patterns(self) -> None:
         """Compile all regex patterns for better performance"""
         self.compiled_sql = [re.compile(p, re.IGNORECASE) for p in self.SQL_PATTERNS]
         self.compiled_xss = [re.compile(p, re.IGNORECASE) for p in self.XSS_PATTERNS]
-        self.compiled_command = [
-            re.compile(p, re.IGNORECASE) for p in self.COMMAND_PATTERNS
-        ]
-        self.compiled_path = [
-            re.compile(p, re.IGNORECASE) for p in self.PATH_TRAVERSAL_PATTERNS
-        ]
+        self.compiled_command = [re.compile(p, re.IGNORECASE) for p in self.COMMAND_PATTERNS]
+        self.compiled_path = [re.compile(p, re.IGNORECASE) for p in self.PATH_TRAVERSAL_PATTERNS]
         self.compiled_xxe = [re.compile(p, re.IGNORECASE) for p in self.XXE_PATTERNS]
-        self.compiled_ldap = [
-            re.compile(p, re.IGNORECASE) for p in self.LDAP_PATTERNS
-        ]
-        self.compiled_nosql = [
-            re.compile(p, re.IGNORECASE) for p in self.NOSQL_PATTERNS
-        ]
+        self.compiled_ldap = [re.compile(p, re.IGNORECASE) for p in self.LDAP_PATTERNS]
+        self.compiled_nosql = [re.compile(p, re.IGNORECASE) for p in self.NOSQL_PATTERNS]
         self.compiled_prompt = [
             re.compile(p, re.IGNORECASE) for p in self.PROMPT_INJECTION_PATTERNS
         ]
-        self.compiled_jailbreak = [
-            re.compile(p, re.IGNORECASE) for p in self.JAILBREAK_PATTERNS
-        ]
+        self.compiled_jailbreak = [re.compile(p, re.IGNORECASE) for p in self.JAILBREAK_PATTERNS]
 
-    def validate(self, input_data: str | dict | list) -> ValidationResult:
+    def validate(self, input_data: str | dict[Any, Any] | list[Any]) -> ValidationResult:
         """
         Validate input data for various attack vectors
 
@@ -263,7 +254,7 @@ class InputValidator:
         return self._match_patterns(self.compiled_jailbreak, input_str)
 
     def _match_patterns(
-        self, compiled_patterns: list[re.Pattern], input_str: str
+        self, compiled_patterns: list[re.Pattern[str]], input_str: str
     ) -> list[str]:
         """Match input against compiled patterns"""
         matched = []

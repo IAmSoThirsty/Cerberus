@@ -1,6 +1,5 @@
 """Tests for the base Guardian class and common types."""
 
-
 from cerberus.guardians.base import Guardian, ThreatLevel, ThreatReport
 
 

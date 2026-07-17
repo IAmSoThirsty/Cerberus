@@ -50,7 +50,7 @@ class Alert:
     resolved_at: datetime | None = None
     resolved_by: str | None = None
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary"""
         data = asdict(self)
         data["severity"] = self.severity.value
@@ -82,7 +82,7 @@ class Incident:
     created_at: datetime = field(default_factory=datetime.now)
     status: str = "open"
     related_alerts: list[str] = field(default_factory=list)
-    timeline: list[dict] = field(default_factory=list)
+    timeline: list[dict[str, Any]] = field(default_factory=list)
     assigned_to: str | None = None
     resolved_at: datetime | None = None
 
@@ -92,10 +92,10 @@ class AlertManager:
     Manages security alerts and notifications
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize alert manager"""
         self.alerts: dict[str, Alert] = {}
-        self.handlers: dict[AlertSeverity, list[Callable]] = defaultdict(list)
+        self.handlers: dict[AlertSeverity | None, list[Callable[..., Any]]] = defaultdict(list)
 
     def create_alert(
         self,
@@ -104,7 +104,7 @@ class AlertManager:
         description: str,
         category: str,
         source: str | None = None,
-        metadata: dict | None = None,
+        metadata: dict[str, Any] | None = None,
     ) -> Alert:
         """
         Create new alert
@@ -141,7 +141,7 @@ class AlertManager:
 
         return alert
 
-    def _trigger_handlers(self, alert: Alert):
+    def _trigger_handlers(self, alert: Alert) -> None:
         """Trigger registered handlers for alert"""
         # Trigger handlers for this severity
         for handler in self.handlers[alert.severity]:
@@ -159,8 +159,8 @@ class AlertManager:
                 pass
 
     def register_handler(
-        self, handler: Callable, severity: AlertSeverity | None = None
-    ):
+        self, handler: Callable[..., Any], severity: AlertSeverity | None = None
+    ) -> None:
         """
         Register alert handler
 
@@ -201,9 +201,9 @@ class AlertManager:
 
         return sorted(alerts, key=lambda a: a.created_at, reverse=True)
 
-    def get_statistics(self) -> dict:
+    def get_statistics(self) -> dict[str, Any]:
         """Get alert statistics"""
-        stats = {
+        stats: dict[str, Any] = {
             "total_alerts": len(self.alerts),
             "by_severity": {},
             "by_status": {},
@@ -260,9 +260,7 @@ class SecurityMonitor:
         # Counter metrics
         self.counters: dict[str, int] = defaultdict(int)
 
-    def record_metric(
-        self, name: str, value: float, labels: dict[str, str] | None = None
-    ):
+    def record_metric(self, name: str, value: float, labels: dict[str, str] | None = None) -> None:
         """
         Record security metric
 
@@ -278,7 +276,7 @@ class SecurityMonitor:
         # Check for anomalies
         self._check_anomaly(name)
 
-    def increment_counter(self, name: str, amount: int = 1):
+    def increment_counter(self, name: str, amount: int = 1) -> None:
         """Increment counter metric"""
         self.counters[name] += amount
 
@@ -286,7 +284,7 @@ class SecurityMonitor:
         """Get counter value"""
         return self.counters.get(name, 0)
 
-    def _check_anomaly(self, metric_name: str):
+    def _check_anomaly(self, metric_name: str) -> None:
         """Check for anomalies in metric"""
         metrics = list(self.metrics[metric_name])
 
@@ -308,7 +306,10 @@ class SecurityMonitor:
                 self.alert_manager.create_alert(
                     severity=AlertSeverity.WARNING,
                     title=f"Anomaly detected in {metric_name}",
-                    description=f"Value {latest:.2f} deviates {z_score:.2f} standard deviations from mean {mean:.2f}",
+                    description=(
+                        f"Value {latest:.2f} deviates {z_score:.2f} "
+                        f"standard deviations from mean {mean:.2f}"
+                    ),
                     category="anomaly",
                     source="security_monitor",
                     metadata={
@@ -354,7 +355,7 @@ class SecurityMonitor:
 
         return incident
 
-    def get_metric_stats(self, metric_name: str) -> dict | None:
+    def get_metric_stats(self, metric_name: str) -> dict[str, Any] | None:
         """Get statistics for metric"""
         metrics = list(self.metrics.get(metric_name, []))
 
@@ -372,11 +373,9 @@ class SecurityMonitor:
             "latest": values[-1],
         }
 
-    def get_all_metrics(self) -> dict[str, dict]:
+    def get_all_metrics(self) -> dict[str, dict[str, Any] | None]:
         """Get all metric statistics"""
-        return {
-            name: self.get_metric_stats(name) for name in self.metrics.keys()
-        }
+        return {name: self.get_metric_stats(name) for name in self.metrics.keys()}
 
     def export_prometheus_metrics(self) -> str:
         """
@@ -404,16 +403,14 @@ class SecurityMonitor:
                 # Add labels if present
                 labels = ""
                 if latest.labels:
-                    label_str = ",".join(
-                        f'{k}="{v}"' for k, v in latest.labels.items()
-                    )
+                    label_str = ",".join(f'{k}="{v}"' for k, v in latest.labels.items())
                     labels = f"{{{label_str}}}"
 
                 lines.append(f"cerberus_{safe_name}{labels} {latest.value}")
 
         return "\n".join(lines)
 
-    def get_system_health(self) -> dict:
+    def get_system_health(self) -> dict[str, Any]:
         """Get overall system health status"""
         active_alerts = self.alert_manager.get_active_alerts()
 
@@ -438,20 +435,17 @@ class SecurityMonitor:
             "critical_alerts": critical,
             "error_alerts": errors,
             "warning_alerts": warnings,
-            "open_incidents": len(
-                [i for i in self.incidents.values() if i.status == "open"]
-            ),
+            "open_incidents": len([i for i in self.incidents.values() if i.status == "open"]),
         }
 
-    def clear_old_data(self, days: int = 30):
+    def clear_old_data(self, days: int = 30) -> None:
         """Clear old metrics and alerts"""
         cutoff = datetime.now() - timedelta(days=days)
 
         # Clear old alerts
-        for alert_id in list(self.alerts.keys()):
+        for alert_id in list(self.alert_manager.alerts.keys()):
             alert = self.alert_manager.alerts[alert_id]
             if (
-                alert.status == AlertStatus.CLOSED
-                or alert.status == AlertStatus.RESOLVED
+                alert.status == AlertStatus.CLOSED or alert.status == AlertStatus.RESOLVED
             ) and alert.created_at < cutoff:
                 del self.alert_manager.alerts[alert_id]

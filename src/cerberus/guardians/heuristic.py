@@ -7,7 +7,7 @@ analysis style.
 
 from typing import Any
 
-from cerberus.guardians.base import BaseGuardian, ThreatReport, ThreatLevel
+from cerberus.guardians.base import BaseGuardian, ThreatLevel, ThreatReport
 
 
 class HeuristicGuardian(BaseGuardian):

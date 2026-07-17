@@ -12,6 +12,7 @@ import re
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
+from typing import Any
 
 
 class ThreatLevel(Enum):
@@ -70,15 +71,15 @@ class ThreatDetector:
     Advanced threat detection system
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize threat detector with signatures"""
         self.signatures: list[ThreatSignature] = []
-        self.behavior_history: dict[str, list] = {}
+        self.behavior_history: dict[str, list[dict[str, Any]]] = {}
 
         # Load default signatures
         self._load_default_signatures()
 
-    def _load_default_signatures(self):
+    def _load_default_signatures(self) -> None:
         """Load default threat signatures"""
 
         # Prompt injection signatures
@@ -203,9 +204,7 @@ class ThreatDetector:
             )
         )
 
-    def detect(
-        self, input_text: str, source_id: str | None = None
-    ) -> ThreatDetectionResult:
+    def detect(self, input_text: str, source_id: str | None = None) -> ThreatDetectionResult:
         """
         Detect threats in input
 
@@ -278,17 +277,13 @@ class ThreatDetector:
             details="No pattern matches",
         )
 
-    def _analyze_behavior(
-        self, input_text: str, source_id: str
-    ) -> ThreatDetectionResult | None:
+    def _analyze_behavior(self, input_text: str, source_id: str) -> ThreatDetectionResult | None:
         """Analyze behavioral patterns"""
         # Track behavior history
         if source_id not in self.behavior_history:
             self.behavior_history[source_id] = []
 
-        self.behavior_history[source_id].append(
-            {"text": input_text, "timestamp": datetime.now()}
-        )
+        self.behavior_history[source_id].append({"text": input_text, "timestamp": datetime.now()})
 
         # Keep only recent history (last 100 entries)
         self.behavior_history[source_id] = self.behavior_history[source_id][-100:]
@@ -326,7 +321,7 @@ class ThreatDetector:
 
         return None
 
-    def add_signature(self, signature: ThreatSignature):
+    def add_signature(self, signature: ThreatSignature) -> None:
         """Add custom threat signature"""
         self.signatures.append(signature)
 
@@ -338,7 +333,7 @@ class ThreatDetector:
                 return True
         return False
 
-    def get_statistics(self) -> dict:
+    def get_statistics(self) -> dict[str, Any]:
         """Get detection statistics"""
         return {
             "total_signatures": len(self.signatures),
@@ -348,13 +343,13 @@ class ThreatDetector:
 
     def _count_by_category(self) -> dict[str, int]:
         """Count signatures by category"""
-        counts = {}
+        counts: dict[str, int] = {}
         for sig in self.signatures:
             category = sig.category.value
             counts[category] = counts.get(category, 0) + 1
         return counts
 
-    def clear_history(self, source_id: str | None = None):
+    def clear_history(self, source_id: str | None = None) -> None:
         """Clear behavior history"""
         if source_id:
             self.behavior_history.pop(source_id, None)

@@ -3,10 +3,10 @@
 import pytest
 
 from cerberus.guardians import (
-    ThreatReport,
     HeuristicGuardian,
     PatternGuardian,
     StrictGuardian,
+    ThreatReport,
 )
 from cerberus.guardians.base import ThreatLevel
 
@@ -30,7 +30,9 @@ class TestThreatReport:
 
     def test_non_blocking_result_requires_low_threat_level(self) -> None:
         """Non-blocking results cannot have HIGH or CRITICAL threat level."""
-        with pytest.raises(ValueError, match="Non-blocking result cannot have HIGH or CRITICAL threat level"):
+        with pytest.raises(
+            ValueError, match="Non-blocking result cannot have HIGH or CRITICAL threat level"
+        ):
             ThreatReport(
                 guardian_id="test",
                 guardian_type="test",

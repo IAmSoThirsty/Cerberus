@@ -8,8 +8,10 @@ Implements flexible RBAC system for:
 - Agent/operation authorization
 """
 
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from enum import Enum
+from typing import Any
 
 
 class Permission(Enum):
@@ -60,11 +62,11 @@ class Role:
     permissions: set[Permission] = field(default_factory=set)
     parent_roles: list[str] = field(default_factory=list)
 
-    def add_permission(self, permission: Permission):
+    def add_permission(self, permission: Permission) -> None:
         """Add permission to role"""
         self.permissions.add(permission)
 
-    def remove_permission(self, permission: Permission):
+    def remove_permission(self, permission: Permission) -> None:
         """Remove permission from role"""
         self.permissions.discard(permission)
 
@@ -82,11 +84,11 @@ class User:
     roles: set[str] = field(default_factory=set)
     disabled: bool = False
 
-    def add_role(self, role_name: str):
+    def add_role(self, role_name: str) -> None:
         """Add role to user"""
         self.roles.add(role_name)
 
-    def remove_role(self, role_name: str):
+    def remove_role(self, role_name: str) -> None:
         """Remove role from user"""
         self.roles.discard(role_name)
 
@@ -96,7 +98,7 @@ class RBACManager:
     Role-Based Access Control Manager
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize RBAC manager with default roles"""
         self.roles: dict[str, Role] = {}
         self.users: dict[str, User] = {}
@@ -104,7 +106,7 @@ class RBACManager:
         # Create default roles
         self._create_default_roles()
 
-    def _create_default_roles(self):
+    def _create_default_roles(self) -> None:
         """Create default system roles"""
         # Admin role - full access
         admin = Role(
@@ -344,7 +346,7 @@ class RBACManager:
 
         return permissions
 
-    def require_permission(self, user_id: str, permission: Permission):
+    def require_permission(self, user_id: str, permission: Permission) -> None:
         """
         Require permission or raise exception
 
@@ -356,9 +358,7 @@ class RBACManager:
             PermissionDenied: If user doesn't have permission
         """
         if not self.check_permission(user_id, permission):
-            raise PermissionDenied(
-                f"User {user_id} does not have permission: {permission.value}"
-            )
+            raise PermissionDenied(f"User {user_id} does not have permission: {permission.value}")
 
     def list_roles(self) -> list[str]:
         """List all role names"""
@@ -375,7 +375,7 @@ class PermissionDenied(Exception):
     pass
 
 
-def require_permission(permission: Permission):
+def require_permission(permission: Permission) -> Callable[..., Any]:
     """
     Decorator to require permission for function
 
@@ -389,9 +389,9 @@ def require_permission(permission: Permission):
     """
     import functools
 
-    def decorator(func):
+    def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
         @functools.wraps(func)
-        def wrapper(*args, **kwargs):
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
             # Try to extract user_id from args or kwargs
             user_id = None
             if args:

@@ -10,7 +10,7 @@ from typing import Any
 import structlog
 
 from cerberus.config import settings
-from cerberus.guardians.base import BaseGuardian, ThreatReport, ThreatLevel
+from cerberus.guardians.base import BaseGuardian, GuardianResult, ThreatLevel
 from cerberus.guardians.heuristic import HeuristicGuardian
 from cerberus.guardians.pattern import PatternGuardian
 from cerberus.guardians.strict import StrictGuardian
@@ -171,7 +171,7 @@ class HubCoordinator:
 
     def _cleanup_source_attempts(self, now: float) -> None:
         """Clean up old source attempt records.
-        
+
         Note: This method assumes the caller holds _spawn_lock.
         """
         window_start = now - 60.0

@@ -14,19 +14,20 @@ The previous binding imported a ``Thirsty_Lang`` monolith that never exposed
 uses the real 0.8.3 callables so the Sovereign entrypoint actually executes.
 """
 
+from typing import Any
+
 import structlog
 
 from cerberus.hub import HubCoordinator
-
 
 # ==========================================
 # ⚡ THIRSTY-LANG 0.8.3 SOVEREIGN BINDING ⚡
 # ==========================================
 # Re-binds standalone execution to the T.A.R.L. core using the real 0.8.3 API.
 try:
+    from utf.thirst_of_gods import ThirstOfGodsError, to_gods
     from utf.thirsty_lang.lexer import Lexer
     from utf.thirsty_lang.parser import Parser
-    from utf.thirst_of_gods import ThirstOfGodsError, to_gods
     from utf.tscg.core import parse as tscg_parse
     from utf.tscg.core import validate_symbols as tscg_validate
 except Exception:  # pragma: no cover - binding is optional at import time
@@ -34,7 +35,7 @@ except Exception:  # pragma: no cover - binding is optional at import time
     tscg_parse = tscg_validate = None
 
 
-def __sovereign_execute__(context, target_protocol):
+def __sovereign_execute__(context: dict[str, Any], target_protocol: str) -> str:
     """Adversarially hardened entrypoint mandated by Sovereign Law.
 
     Binds standalone execution back to the T.A.R.L. core via the Thirsty-Lang
@@ -55,9 +56,7 @@ def __sovereign_execute__(context, target_protocol):
             ast = Parser(Lexer(target_protocol).lex()).parse()
             contract = to_gods(ast)
             if not contract.passed:
-                raise ThirstOfGodsError(
-                    f"Deity contract not satisfied: {contract.violations}"
-                )
+                raise ThirstOfGodsError(f"Deity contract not satisfied: {contract.violations}")
         return target_protocol
     except Exception as e:
         # 3. T.A.R.L. fail-closed quarantine (DEFAULT_DENY). The runtime refuses

@@ -100,10 +100,14 @@ class HeuristicGuardian(Guardian):
         threat_level = self._score_to_threat_level(total_score)
         confidence = min(total_score + 0.3, 0.9) if total_score > 0 else 0.0
 
-        return self._create_report(
+        return ThreatReport(
+            guardian_id=self.guardian_id,
+            guardian_type=self.guardian_type,
+            should_block=threat_level in (ThreatLevel.HIGH, ThreatLevel.CRITICAL),
             threat_level=threat_level,
             confidence=confidence,
-            threats=threats,
+            threats_detected=threats,
+            reasoning=f"Heuristic analysis: score={total_score:.2f}",
             metadata={
                 "component_scores": scores,
                 "total_score": total_score,

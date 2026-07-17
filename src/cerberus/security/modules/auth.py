@@ -12,6 +12,7 @@ import hashlib
 import secrets
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
+from typing import Any
 
 import bcrypt
 
@@ -86,7 +87,7 @@ class PasswordHasher:
         except Exception:
             return False
 
-    def hash_password_pbkdf2(self, password: str, salt: bytes | None = None) -> dict:
+    def hash_password_pbkdf2(self, password: str, salt: bytes | None = None) -> dict[str, Any]:
         """
         Hash password using PBKDF2
 
@@ -101,9 +102,7 @@ class PasswordHasher:
             salt = secrets.token_bytes(32)
 
         iterations = 100000
-        hashed = hashlib.pbkdf2_hmac(
-            "sha256", password.encode("utf-8"), salt, iterations
-        )
+        hashed = hashlib.pbkdf2_hmac("sha256", password.encode("utf-8"), salt, iterations)
 
         return {
             "hash": hashed.hex(),
@@ -112,7 +111,7 @@ class PasswordHasher:
             "algorithm": "pbkdf2_sha256",
         }
 
-    def verify_password_pbkdf2(self, password: str, hash_data: dict) -> bool:
+    def verify_password_pbkdf2(self, password: str, hash_data: dict[str, Any]) -> bool:
         """
         Verify password against PBKDF2 hash
 
@@ -127,11 +126,9 @@ class PasswordHasher:
             salt = bytes.fromhex(hash_data["salt"])
             iterations = hash_data["iterations"]
 
-            hashed = hashlib.pbkdf2_hmac(
-                "sha256", password.encode("utf-8"), salt, iterations
-            )
+            hashed = hashlib.pbkdf2_hmac("sha256", password.encode("utf-8"), salt, iterations)
 
-            return hashed.hex() == hash_data["hash"]
+            return bool(hashed.hex() == hash_data["hash"])
         except Exception:
             return False
 
@@ -162,9 +159,7 @@ class PasswordHasher:
         if policy.require_digit and not any(c.isdigit() for c in password):
             return False, "Password must contain at least one digit"
 
-        if policy.require_special and not any(
-            c in "!@#$%^&*()_+-=[]{}|;:,.<>?" for c in password
-        ):
+        if policy.require_special and not any(c in "!@#$%^&*()_+-=[]{}|;:,.<>?" for c in password):
             return False, "Password must contain at least one special character"
 
         return True, ""
@@ -183,7 +178,7 @@ class User:
     failed_login_attempts: int = 0
     locked_until: datetime | None = None
     password_changed_at: datetime = field(default_factory=datetime.now)
-    previous_passwords: list = field(default_factory=list)
+    previous_passwords: list[Any] = field(default_factory=list)
     is_active: bool = True
 
 
@@ -427,12 +422,14 @@ class AuthManager:
             return False, error
 
         # Check password reuse
-        if user.password_hash in user.previous_passwords[
-            : self.password_policy.prevent_reuse_count
-        ]:
+        if (
+            user.password_hash
+            in user.previous_passwords[: self.password_policy.prevent_reuse_count]
+        ):
             return (
                 False,
-                f"Cannot reuse any of the last {self.password_policy.prevent_reuse_count} passwords",
+                f"Cannot reuse any of the last "
+                f"{self.password_policy.prevent_reuse_count} passwords",
             )
 
         # Update password
@@ -442,12 +439,10 @@ class AuthManager:
 
         return True, "Password changed successfully"
 
-    def cleanup_expired_sessions(self):
+    def cleanup_expired_sessions(self) -> None:
         """Remove expired sessions"""
         now = datetime.now()
-        expired = [
-            sid for sid, sess in self.sessions.items() if now > sess.expires_at
-        ]
+        expired = [sid for sid, sess in self.sessions.items() if now > sess.expires_at]
 
         for sid in expired:
             del self.sessions[sid]

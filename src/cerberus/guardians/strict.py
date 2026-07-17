@@ -8,7 +8,7 @@ analysis style.
 import re
 from typing import Any
 
-from cerberus.guardians.base import BaseGuardian, ThreatReport, ThreatLevel
+from cerberus.guardians.base import BaseGuardian, ThreatLevel, ThreatReport
 
 
 class StrictGuardian(BaseGuardian):

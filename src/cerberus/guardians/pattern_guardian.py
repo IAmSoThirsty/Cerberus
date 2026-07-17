@@ -106,10 +106,14 @@ class PatternGuardian(Guardian):
         threat_level = self._assess_threat_level(matches_by_category)
         confidence = self._calculate_confidence(matches_by_category)
 
-        return self._create_report(
+        return ThreatReport(
+            guardian_id=self.guardian_id,
+            guardian_type=self.guardian_type,
+            should_block=threat_level in (ThreatLevel.HIGH, ThreatLevel.CRITICAL),
             threat_level=threat_level,
             confidence=confidence,
-            threats=threats,
+            threats_detected=threats,
+            reasoning=f"Pattern analysis: {len(threats)} match(es)",
             metadata={
                 "matches_by_category": matches_by_category,
                 "total_matches": len(threats),

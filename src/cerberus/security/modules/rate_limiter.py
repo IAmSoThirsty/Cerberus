@@ -13,6 +13,7 @@ import time
 from collections.abc import Callable
 from dataclasses import dataclass
 from threading import Lock
+from typing import Any
 
 
 @dataclass
@@ -59,7 +60,7 @@ class TokenBucket:
                 return True
             return False
 
-    def _refill(self):
+    def _refill(self) -> None:
         """Refill tokens based on elapsed time"""
         now = time.time()
         elapsed = now - self.last_refill
@@ -148,6 +149,9 @@ class RateLimiter:
     Rate limiter with support for per-source limits
     """
 
+    # Either a TokenBucket or a SlidingWindowCounter backs a source limiter
+    _Limiter = TokenBucket | SlidingWindowCounter
+
     def __init__(
         self,
         default_config: RateLimitConfig | None = None,
@@ -166,15 +170,13 @@ class RateLimiter:
         self.use_token_bucket = use_token_bucket
 
         # Storage for per-source limiters
-        self.limiters: dict[str, object] = {}
+        self.limiters: dict[str, TokenBucket | SlidingWindowCounter] = {}
         self.lock = Lock()
 
         # Global limiter (optional)
         self.global_limiter = self._create_limiter(self.default_config)
 
-    def _create_limiter(
-        self, config: RateLimitConfig
-    ) -> object:
+    def _create_limiter(self, config: RateLimitConfig) -> TokenBucket | SlidingWindowCounter:
         """Create a limiter based on configuration"""
         if self.use_token_bucket:
             rate = config.max_requests / config.window_seconds
@@ -184,7 +186,9 @@ class RateLimiter:
                 max_requests=config.max_requests, window_seconds=config.window_seconds
             )
 
-    def _get_limiter(self, source_id: str, config: RateLimitConfig) -> object:
+    def _get_limiter(
+        self, source_id: str, config: RateLimitConfig
+    ) -> TokenBucket | SlidingWindowCounter:
         """Get or create limiter for source"""
         with self.lock:
             if source_id not in self.limiters:
@@ -227,7 +231,7 @@ class RateLimiter:
 
         return allowed, retry_after
 
-    def get_stats(self, source_id: str | None = None) -> dict:
+    def get_stats(self, source_id: str | None = None) -> dict[str, object]:
         """
         Get rate limit statistics
 
@@ -242,7 +246,7 @@ class RateLimiter:
         else:
             limiter = self.global_limiter
 
-        stats = {"source_id": source_id or "global"}
+        stats: dict[str, object] = {"source_id": source_id or "global"}
 
         if isinstance(limiter, TokenBucket):
             limiter._refill()
@@ -266,7 +270,7 @@ class RateLimiter:
 
         return stats
 
-    def reset(self, source_id: str | None = None):
+    def reset(self, source_id: str | None = None) -> None:
         """
         Reset rate limit for source
 
@@ -282,7 +286,7 @@ class RateLimiter:
                 # Reset global limiter
                 self.global_limiter = self._create_limiter(self.default_config)
 
-    def cleanup_expired(self, max_age_seconds: int = 3600):
+    def cleanup_expired(self, max_age_seconds: int = 3600) -> None:
         """
         Clean up old limiters that haven't been used recently
 
@@ -299,8 +303,8 @@ def rate_limit(
     max_requests: int = 100,
     window_seconds: int = 60,
     per_source: bool = True,
-    get_source_id: Callable | None = None,
-):
+    get_source_id: Callable[..., Any] | None = None,
+) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
     """
     Decorator for rate limiting functions/methods
 
@@ -324,7 +328,7 @@ def rate_limit(
             pass
     """
 
-    def decorator(func: Callable) -> Callable:
+    def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
         config = RateLimitConfig(
             max_requests=max_requests,
             window_seconds=window_seconds,
@@ -335,9 +339,9 @@ def rate_limit(
         limiter = RateLimiter(default_config=config)
 
         @functools.wraps(func)
-        def wrapper(*args, **kwargs):
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
             # Extract source ID
-            source_id = None
+            source_id: str | None = None
             if get_source_id:
                 source_id = get_source_id(*args, **kwargs)
             elif per_source:
@@ -360,7 +364,7 @@ def rate_limit(
             return func(*args, **kwargs)
 
         # Add rate limiter to wrapper for inspection
-        wrapper._rate_limiter = limiter
+        wrapper._rate_limiter = limiter  # type: ignore[attr-defined]
 
         return wrapper
 
@@ -382,16 +386,22 @@ class RateLimitExceeded(Exception):
 
 
 # Convenience functions for common rate limits
-def rate_limit_per_minute(max_requests: int = 60):
+def rate_limit_per_minute(
+    max_requests: int = 60,
+) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
     """Rate limit per minute"""
     return rate_limit(max_requests=max_requests, window_seconds=60)
 
 
-def rate_limit_per_hour(max_requests: int = 1000):
+def rate_limit_per_hour(
+    max_requests: int = 1000,
+) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
     """Rate limit per hour"""
     return rate_limit(max_requests=max_requests, window_seconds=3600)
 
 
-def rate_limit_per_day(max_requests: int = 10000):
+def rate_limit_per_day(
+    max_requests: int = 10000,
+) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
     """Rate limit per day"""
     return rate_limit(max_requests=max_requests, window_seconds=86400)

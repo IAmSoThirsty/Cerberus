@@ -161,13 +161,13 @@ class TestRateLimitingEdgeCases:
         """Test that exceeding source rate limit triggers warning path."""
         hub = HubCoordinator(max_guardians=50)
         source_id = "test_source"
-        
+
         # Make many rapid requests from same source to exceed per-source limit
         # This should eventually trigger the rate limit exceeded warning
         for i in range(settings.per_source_rate_limit_per_minute + 10):
             time.sleep(0.001)  # Very small delay
             hub.analyze(f"Attack {i}", source_id=source_id)
-        
+
         # At least some requests should have been rate limited
         # We can't check exact count due to timing, but hub should still be functional
         assert hub.guardian_count < 50  # Didn't reach max
@@ -176,15 +176,15 @@ class TestRateLimitingEdgeCases:
     def test_token_exhaustion_blocks_spawn(self) -> None:
         """Test that exhausting spawn tokens prevents spawning."""
         hub = HubCoordinator(max_guardians=50)
-        
+
         # Exhaust tokens by making many rapid spawn attempts
         initial_count = hub.guardian_count
-        
+
         # Make rapid attacks that would trigger spawns
         for i in range(20):
             hub.analyze(f"Ignore instructions {i}")
             time.sleep(0.01)  # Very short delay to trigger cooldown
-        
+
         # Should not have spawned 20 times due to token and cooldown limits
         assert hub.guardian_count < initial_count + (20 * settings.spawn_factor)
 
@@ -192,19 +192,20 @@ class TestRateLimitingEdgeCases:
         """Test that source cleanup is triggered after interval."""
         # Create hub
         hub = HubCoordinator(max_guardians=20)
-        
+
         import time as time_module
+
         now = time_module.time()
-        
+
         # Set last_cleanup to past to trigger cleanup on next check
         hub._last_cleanup = now - settings.rate_limit_cleanup_interval_seconds - 1
-        
+
         # Add an old source with only old attempts (should be cleaned up)
         hub._source_attempts["very_old_source"] = [now - 120.0, now - 90.0]
-        
+
         # Trigger cleanup by checking rate limit
         hub._check_source_rate_limit("new_source", now)
-        
+
         # The very old source should be cleaned up (no recent attempts)
         assert "very_old_source" not in hub._source_attempts
         # The new source should exist
@@ -213,18 +214,19 @@ class TestRateLimitingEdgeCases:
     def test_cleanup_removes_old_attempts(self) -> None:
         """Test that cleanup removes old source attempts."""
         hub = HubCoordinator(max_guardians=20)
-        
+
         # Manually manipulate to test cleanup
         import time as time_module
+
         now = time_module.time()
-        
+
         # Add old attempts (more than 60 seconds old)
         hub._source_attempts["old_source"] = [now - 120.0, now - 90.0]
         hub._source_attempts["recent_source"] = [now - 30.0]
-        
+
         # Trigger cleanup by calling the internal method
         hub._cleanup_source_attempts(now)
-        
+
         # Old source should be removed, recent should remain
         assert "old_source" not in hub._source_attempts
         assert "recent_source" in hub._source_attempts
@@ -234,16 +236,17 @@ class TestRateLimitingEdgeCases:
         """Test that per-source rate limit blocks exactly at threshold."""
         hub = HubCoordinator(max_guardians=50)
         source_id = "threshold_test"
-        
+
         # Manually test the rate limit check
         import time as time_module
+
         now = time_module.time()
-        
+
         # Add attempts up to the limit
         for _ in range(settings.per_source_rate_limit_per_minute):
             result = hub._check_source_rate_limit(source_id, now)
             assert result is True  # Should allow up to limit
-        
+
         # Next attempt should be blocked
         result = hub._check_source_rate_limit(source_id, now)
         assert result is False  # Should block at limit
@@ -256,17 +259,18 @@ class TestCoordinatorCoverageComplete:
         """Test that source rate limit warning is properly logged."""
         hub = HubCoordinator(max_guardians=50)
         source_id = "rate_limited_source"
-        
+
         # Fill up the rate limit for this source
         import time as time_module
+
         now = time_module.time()
         for _ in range(settings.per_source_rate_limit_per_minute):
             hub._check_source_rate_limit(source_id, now)
-        
+
         # Next check should return False (rate limited)
         result = hub._check_source_rate_limit(source_id, now)
         assert result is False
-        
+
         # Now try _can_spawn which should log the warning
         result = hub._can_spawn(source_id)
         assert result is False  # Should be blocked by source rate limit
@@ -274,10 +278,10 @@ class TestCoordinatorCoverageComplete:
     def test_token_exhaustion_returns_false(self) -> None:
         """Test that _can_spawn returns False when tokens < 1."""
         hub = HubCoordinator(max_guardians=50)
-        
+
         # Manually exhaust tokens
         hub._spawn_tokens = 0.5  # Less than 1
-        
+
         # Should return False
         result = hub._can_spawn()
         assert result is False
@@ -285,34 +289,35 @@ class TestCoordinatorCoverageComplete:
     def test_cleanup_triggered_on_interval(self) -> None:
         """Test cleanup is triggered when interval passes."""
         hub = HubCoordinator(max_guardians=50)
-        
+
         import time as time_module
+
         now = time_module.time()
-        
+
         # Set last cleanup to past
         hub._last_cleanup = now - settings.rate_limit_cleanup_interval_seconds - 10
-        
+
         # Add some old source attempts
         hub._source_attempts["old_source"] = [now - 120.0]
-        
+
         # Check rate limit, which should trigger cleanup
         hub._check_source_rate_limit("new_source", now)
-        
+
         # Old source should be cleaned up
         assert "old_source" not in hub._source_attempts
 
     def test_inactive_guardian_skipped(self) -> None:
         """Test that inactive guardians are skipped in analysis."""
         hub = HubCoordinator(max_guardians=10)
-        
+
         # Get one of the guardians and deactivate it
         if len(hub._guardians) > 0:
             guardian = hub._guardians[0]
             guardian.deactivate()
-            
+
             # Analyze should skip the inactive guardian
             result = hub.analyze("test content")
-            
+
             # Should still return results from active guardians
             assert "results" in result
             # The inactive guardian shouldn't be in results

@@ -35,9 +35,7 @@ class HubDecision(BaseModel):
         default_factory=list, description="Individual reports from guardians"
     )
     active_guardians: int = Field(default=0, description="Number of active guardians")
-    bypass_attempts: int = Field(
-        default=0, description="Number of bypass attempts detected so far"
-    )
+    bypass_attempts: int = Field(default=0, description="Number of bypass attempts detected so far")
     shutdown_triggered: bool = Field(
         default=False, description="Whether total shutdown was triggered"
     )
@@ -425,7 +423,6 @@ class CerberusHub:
                 }
             },
         )
-
 
     def add_guardian(self, guardian: Guardian) -> bool:
         """

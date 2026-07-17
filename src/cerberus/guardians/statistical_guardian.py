@@ -69,9 +69,14 @@ class StatisticalGuardian(Guardian):
             ThreatReport with statistical analysis results
         """
         if not content or len(content) < 10:
-            return self._create_report(
+            return ThreatReport(
+                guardian_id=self.guardian_id,
+                guardian_type=self.guardian_type,
+                should_block=False,
                 threat_level=ThreatLevel.NONE,
                 confidence=0.0,
+                threats_detected=[],
+                reasoning="Content too short for statistical analysis",
                 metadata={"reason": "Content too short for statistical analysis"},
             )
 
@@ -90,10 +95,14 @@ class StatisticalGuardian(Guardian):
         threat_level = self._z_score_to_threat_level(max_z_score)
         confidence = self._calculate_confidence(anomalies)
 
-        return self._create_report(
+        return ThreatReport(
+            guardian_id=self.guardian_id,
+            guardian_type=self.guardian_type,
+            should_block=threat_level in (ThreatLevel.HIGH, ThreatLevel.CRITICAL),
             threat_level=threat_level,
             confidence=confidence,
-            threats=threats,
+            threats_detected=threats,
+            reasoning=f"Statistical analysis: {len(threats)} anomaly(ies), max_z={max_z_score:.2f}",
             metadata={
                 "computed_stats": stats,
                 "anomalies": anomalies,

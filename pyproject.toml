@@ -53,7 +53,15 @@ target-version = "py310"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "N", "W", "UP"]
-ignore = []
+ignore = ["N818", "N807"]
+
+[tool.ruff.lint.per-file-ignores]
+# Integrated sovereign spec bundles are machine-generated canonical data;
+# line-length discipline does not apply to their long literal lines.
+"src/core/integrated_specs/*.py" = ["E501"]
+# Test files may exceed line length for readable assertion messages.
+"tests/*.py" = ["E501"]
+"tests/**/*.py" = ["E501"]
 
 [tool.mypy]
 python_version = "3.10"
@@ -61,6 +69,18 @@ warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = true
 strict = true
+
+# The shippable Cerberus security library is strictly type-checked.
+# Machine-generated sovereign spec bundles (src/core/integrated_specs) are
+# canonical data, not hand-maintained code, and are excluded from strict
+# checking. The Thirsty-Lang 0.8.3 binding (utf.*) is an OPTIONAL dependency
+# loaded lazily inside a try/except, so it is not required for type-checking,
+# and defusedxml ships without stubs.
+exclude = ["src/core/integrated_specs/"]
+
+[[tool.mypy.overrides]]
+module = ["utf.*", "defusedxml", "defusedxml.*"]
+ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

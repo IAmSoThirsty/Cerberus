@@ -52,9 +52,7 @@ class AgentSandbox:
         """
         self.config = config or SandboxConfig()
 
-    def execute(
-        self, func: Callable, *args, **kwargs
-    ) -> Any:
+    def execute(self, func: Callable[..., Any], *args: Any, **kwargs: Any) -> Any:
         """
         Execute function in sandbox
 
@@ -82,16 +80,14 @@ class AgentSandbox:
                 raise SandboxViolation("CPU time limit exceeded")
             raise
 
-    def _set_resource_limits(self):
+    def _set_resource_limits(self) -> None:
         """Set resource limits using resource module"""
         if sys.platform != "win32":  # Resource limits not supported on Windows
             import resource
 
             # Set memory limit
             max_memory_bytes = self.config.max_memory_mb * 1024 * 1024
-            resource.setrlimit(
-                resource.RLIMIT_AS, (max_memory_bytes, max_memory_bytes)
-            )
+            resource.setrlimit(resource.RLIMIT_AS, (max_memory_bytes, max_memory_bytes))
 
             # Set CPU time limit
             resource.setrlimit(
@@ -101,9 +97,7 @@ class AgentSandbox:
 
             # Set file size limit
             max_file_bytes = self.config.max_file_size_mb * 1024 * 1024
-            resource.setrlimit(
-                resource.RLIMIT_FSIZE, (max_file_bytes, max_file_bytes)
-            )
+            resource.setrlimit(resource.RLIMIT_FSIZE, (max_file_bytes, max_file_bytes))
 
             # Set process limit
             resource.setrlimit(
@@ -111,7 +105,7 @@ class AgentSandbox:
                 (self.config.max_processes, self.config.max_processes),
             )
 
-    def execute_code(self, code: str, timeout: int | None = None) -> dict:
+    def execute_code(self, code: str, timeout: int | None = None) -> dict[str, Any]:
         """
         Execute Python code in sandbox
 
@@ -224,7 +218,7 @@ class PluginSandbox:
         # Execute plugin
         agent_sandbox = AgentSandbox(self.config)
 
-        def run_plugin():
+        def run_plugin() -> Any:
             exec(plugin_code, restricted_globals)
             if "process" not in restricted_globals:
                 raise SandboxViolation("Plugin must define 'process' function")
@@ -233,7 +227,7 @@ class PluginSandbox:
 
         return agent_sandbox.execute(run_plugin)
 
-    def _validate_code(self, code: str):
+    def _validate_code(self, code: str) -> None:
         """Validate plugin code for dangerous patterns"""
         # Word-boundary match so 'input' does not trip on 'input_data' and
         # 'exec' does not trip on 'execute'.
@@ -246,15 +240,13 @@ class PluginSandbox:
         # Check for dangerous imports
         dangerous_imports = ["os", "sys", "subprocess", "socket", "shutil"]
         for module in dangerous_imports:
-            if re.search(
-                r"(?:^|;|import\s+)" + re.escape(module) + r"(?!\w)", code
-            ):
+            if re.search(r"(?:^|;|import\s+)" + re.escape(module) + r"(?!\w)", code):
                 raise SandboxViolation(f"Blocked import: {module}")
 
-    def _get_restricted_globals(self) -> dict:
+    def _get_restricted_globals(self) -> dict[str, Any]:
         """Get restricted global namespace for plugin execution"""
         # Start with empty globals
-        restricted = {"__builtins__": {}}
+        restricted: dict[str, Any] = {"__builtins__": {}}
 
         # Add safe builtins
         import builtins
@@ -299,11 +291,11 @@ class PluginSandbox:
 
         return restricted
 
-    def add_allowed_module(self, module_name: str):
+    def add_allowed_module(self, module_name: str) -> None:
         """Add module to allowed list"""
         self.allowed_modules.add(module_name)
 
-    def remove_allowed_module(self, module_name: str):
+    def remove_allowed_module(self, module_name: str) -> None:
         """Remove module from allowed list"""
         self.allowed_modules.discard(module_name)
 
@@ -331,7 +323,7 @@ class ContainerSandbox:
         self.memory_limit = memory_limit
         self.cpu_limit = cpu_limit
 
-    def execute(self, command: list[str], timeout: int = 30) -> dict:
+    def execute(self, command: list[str], timeout: int = 30) -> dict[str, Any]:
         """
         Execute command in container
 
@@ -356,9 +348,7 @@ class ContainerSandbox:
         ] + command
 
         try:
-            result = subprocess.run(
-                docker_cmd, capture_output=True, timeout=timeout
-            )
+            result = subprocess.run(docker_cmd, capture_output=True, timeout=timeout)
 
             return {
                 "stdout": result.stdout.decode("utf-8"),
