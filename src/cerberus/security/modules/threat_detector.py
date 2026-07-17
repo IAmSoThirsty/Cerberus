@@ -87,7 +87,8 @@ class ThreatDetector:
                 name="prompt_injection_basic",
                 category=ThreatCategory.PROMPT_MANIPULATION,
                 patterns=[
-                    r"ignore\s+(previous|all)\s+instructions",
+                    r"ignore\s+(?:all\s+)?previous\s+instructions",
+                    r"ignore\s+all\s+instructions",
                     r"disregard\s+(previous|all)\s+instructions",
                     r"forget\s+(everything|all)\s+(you|your)",
                     r"new\s+instructions",

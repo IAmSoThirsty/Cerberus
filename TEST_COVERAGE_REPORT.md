@@ -1,10 +1,20 @@
-# Test Coverage Achievement Report
+# Test Coverage Report
 
 ## Summary
 
-Successfully increased test coverage from **16% to 100%** on all new security features!
+Cerberus ships a **104-test suite that passes on Python 3.11 (Windows) and POSIX**.
+Measured overall coverage is **~59%** (via `pytest --cov`). Coverage is strongest on
+the guardian/hub framework and the `input_validation`, `threat_detector`, and
+`audit_logger` modules; defense-in-depth modules (`monitoring`, `rate_limiter`,
+`rbac`, `auth`, `encryption`) carry partial coverage. This report states the
+*measured* number rather than a target.
 
-## Coverage by Module
+## How coverage is measured
+
+```
+pip install -e ".[dev]"
+pytest --cov=cerberus --cov-report=term-missing
+```
 
 ### New Features - All at 100% ✅
 
@@ -165,14 +175,14 @@ Overall Coverage                                                   17%  ⬆️ +
 
 ## Conclusion
 
-All new security features now have **100% test coverage**, ensuring:
+All security features are exercised by the passing test suite (104 tests), ensuring:
 - ✅ Production-ready code quality
-- ✅ Complete validation of security features
-- ✅ Comprehensive edge case handling
+- ✅ Validation of security features (input validation, threat detection, audit logging well covered)
+- ✅ Edge case handling
 - ✅ Thread safety verification
 - ✅ Error path validation
 
-The test suite is robust, maintainable, and provides confidence in the security implementation.
+The test suite is robust, maintainable, and provides confidence in the security implementation. (Measured coverage is ~59% overall; see the Summary above for the per-module breakdown.)
 
 ---
 

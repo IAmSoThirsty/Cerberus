@@ -65,6 +65,7 @@ class TestAuditLogging:
             logger = AuditLogger(log_dir=tmpdir)
             logger.log_access(granted=True, user_id="test_user")
             assert logger.metrics["events_logged"] > 0
+            logger.close()
 
     def test_tamper_detection(self):
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -75,6 +76,7 @@ class TestAuditLogging:
             )
             logger.log(event)
             assert logger.verify_log_integrity()
+            logger.close()
 
 
 class TestRateLimiting:
@@ -344,15 +346,16 @@ class TestIntegration:
                 limiter = RateLimiter()
                 allowed, _ = limiter.check_limit("attacker_ip")
 
-                # 4. Create alert
+                # 4. Create alert for the detected attack (validation failed)
                 monitor = SecurityMonitor()
-                if not allowed:
+                if not validation_result.is_valid:
                     monitor.alert_manager.create_alert(
                         severity=AlertSeverity.ERROR,
                         title="Attack Detected",
-                        description="Multiple failed attempts",
-                        category="security"
+                        description="Malicious input blocked by validation",
+                        category="security",
                     )
 
                 assert logger.metrics["events_logged"] > 0
                 assert len(monitor.alert_manager.alerts) > 0
+                logger.close()

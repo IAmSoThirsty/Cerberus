@@ -148,6 +148,9 @@ class AuditLogger:
         handler.setFormatter(formatter)
 
         self.logger.addHandler(handler)
+        # Keep a reference so we can close the file handle on rotation/teardown
+        # (on Windows an open handle blocks deletion of the log file).
+        self._file_handler = handler
 
         # Also add console handler for development
         console_handler = logging.StreamHandler()
@@ -155,6 +158,30 @@ class AuditLogger:
             logging.Formatter("%(asctime)s [AUDIT] %(message)s")
         )
         self.logger.addHandler(console_handler)
+
+    def __del__(self):
+        # Best-effort release of the open file handle so callers that don't
+        # explicitly call close() (e.g. within a TemporaryDirectory) don't
+        # leak the handle on Windows.
+        try:
+            self.close()
+        except Exception:
+            pass
+
+    def close(self):
+        """Close the audit logger's file handle (releases the lock on Windows)."""
+        if getattr(self, "_file_handler", None) is not None:
+            self._file_handler.flush()
+            self._file_handler.close()
+            self.logger.removeHandler(self._file_handler)
+            self._file_handler = None
+        # The stdlib caches loggers by name for the process lifetime, so the
+        # FileHandler's OS file handle would otherwise stay open (blocking
+        # deletion of the log file on Windows) until interpreter exit. Drop the
+        # logger from the manager cache so it can be garbage collected.
+        manager = getattr(logging.getLogger(), "manager", None)
+        if manager is not None:
+            manager.loggerDict.pop(self.logger.name, None)
 
     def _sign_event(self, event: AuditEvent) -> str:
         """
@@ -365,6 +392,9 @@ class AuditLogger:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         log_file = self.log_dir / "audit.log"
         archived_file = self.log_dir / f"audit_{timestamp}.log"
+
+        # Close the open handle before renaming (required on Windows).
+        self.close()
 
         if log_file.exists():
             log_file.rename(archived_file)

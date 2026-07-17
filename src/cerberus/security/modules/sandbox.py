@@ -9,7 +9,6 @@ Agent and plugin encapsulation and isolation with:
 """
 
 import os
-import resource
 import subprocess
 import sys
 import tempfile
@@ -86,6 +85,8 @@ class AgentSandbox:
     def _set_resource_limits(self):
         """Set resource limits using resource module"""
         if sys.platform != "win32":  # Resource limits not supported on Windows
+            import resource
+
             # Set memory limit
             max_memory_bytes = self.config.max_memory_mb * 1024 * 1024
             resource.setrlimit(
@@ -234,15 +235,20 @@ class PluginSandbox:
 
     def _validate_code(self, code: str):
         """Validate plugin code for dangerous patterns"""
-        # Check for blocked functions
+        # Word-boundary match so 'input' does not trip on 'input_data' and
+        # 'exec' does not trip on 'execute'.
+        import re
+
         for func in self.blocked_functions:
-            if func in code:
+            if re.search(r"(?<![\w.])" + re.escape(func) + r"(?![\w])", code):
                 raise SandboxViolation(f"Blocked function: {func}")
 
         # Check for dangerous imports
         dangerous_imports = ["os", "sys", "subprocess", "socket", "shutil"]
         for module in dangerous_imports:
-            if f"import {module}" in code or f"from {module}" in code:
+            if re.search(
+                r"(?:^|;|import\s+)" + re.escape(module) + r"(?!\w)", code
+            ):
                 raise SandboxViolation(f"Blocked import: {module}")
 
     def _get_restricted_globals(self) -> dict:
@@ -251,6 +257,8 @@ class PluginSandbox:
         restricted = {"__builtins__": {}}
 
         # Add safe builtins
+        import builtins
+
         safe_builtins = {
             "abs",
             "all",
@@ -278,7 +286,7 @@ class PluginSandbox:
         }
 
         for name in safe_builtins:
-            restricted["__builtins__"][name] = getattr(__builtins__, name)
+            restricted["__builtins__"][name] = getattr(builtins, name)
 
         # Add allowed modules
         import importlib

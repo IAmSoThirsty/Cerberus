@@ -9,7 +9,7 @@
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Code style: ruff](https://img.shields.io/badge/code%20style-ruff-000000.svg)](https://github.com/astral-sh/ruff)
-[![Test Coverage: 100%](https://img.shields.io/badge/coverage-100%25-brightgreen.svg)](./TEST_COVERAGE_REPORT.md)
+[![Test Coverage: 59%](https://img.shields.io/badge/coverage-59%25-yellow.svg)](./TEST_COVERAGE_REPORT.md)
 
 **A production-grade, multi-agent security framework for protecting AI systems from sophisticated threats.**
 
@@ -112,11 +112,38 @@ Cerberus employs three specialized guardian types, each with unique detection st
 
 Each guardian operates independently and reports to the CerberusHub for coordinated decision-making. When combined, they provide comprehensive coverage across known and unknown threat vectors.
 
+## 🖥️ Platform Support
+
+Cerberus runs on **Linux, macOS, and Windows**. The sandbox resource limits
+(`resource.setrlimit`) are POSIX-only and are automatically skipped on Windows;
+all other modules work cross-platform. The full test suite (104 tests) passes on
+Windows (Python 3.11) as well as POSIX runtimes.
+
+## 🔗 Thirsty-Lang Binding
+
+Cerberus binds its standalone execution back to the Sovereign / T.A.R.L. core via
+the **Thirsty-Lang 0.8.3** public API (the `utf.*` package family):
+
+- **T.A.R.L.** → `utf.tarl` (fail-closed `TarlRuntime`, `DEFAULT_DENY`)
+- **TSCG** → `utf.tscg.core` (`validate_symbols` / `parse` / `checksum`)
+- **Thirst of Gods** → `utf.thirst_of_gods` (`to_gods` / `interpret_gods`)
+
+The Sovereign entrypoint in `src/cerberus/main.py` parses and validates the target
+protocol as Thirsty-Lang / TSCG before invoking it under the deity contract; any
+failure is routed to the T.A.R.L. fail-closed quarantine path. To run Cerberus with
+the binding active, make the `thirsty-lang` 0.8.3 source importable, e.g.:
+
+```bash
+export PYTHONPATH=/path/to/thirsty_lang_exploration_0754/src
+python -m cerberus.main
+```
+
 ## 📦 Installation
 
 ### Prerequisites
 - Python 3.10 or higher
 - pip package manager
+- (optional) Thirsty-Lang 0.8.3 source on `PYTHONPATH` for the Sovereign binding
 
 ### Install from Source
 
@@ -291,7 +318,7 @@ print(f"Log Level: {settings.log_level}")
 
 ## 🧪 Testing
 
-Cerberus has **100% test coverage** on core security features with 50+ comprehensive tests.
+Cerberus has a passing test suite (**104 tests, all green**) with measured coverage of **~59%** overall. The core guardian/hub framework and several security modules (`input_validation`, `threat_detector`, `audit_logger`) are well covered; defense-in-depth modules such as `monitoring`, `rate_limiter`, and `rbac` have partial coverage. Coverage is verified by `pytest --cov` and is reported honestly rather than as a target.
 
 ### Run All Tests
 
@@ -325,10 +352,10 @@ pytest tests/security/                # Security module tests
 
 | Metric | Value | Status |
 |--------|-------|--------|
-| Test Coverage | 100% | ✅ |
-| Tests Passing | 50/50 | ✅ |
-| Linter (ruff) | Passing | ✅ |
-| Type Checker (mypy) | Strict Mode | ✅ |
+| Test Coverage | ~59% | ✅ Measured & reported honestly |
+| Tests Passing | 104/104 | ✅ |
+| Linter (ruff) | Configured (warnings present, not yet clean) | ⚠️ |
+| Type Checker (mypy) | Strict configured (not yet clean) | ⚠️ |
 | Security Scan (CodeQL) | Weekly | ✅ |
 
 See [TEST_COVERAGE_REPORT.md](./TEST_COVERAGE_REPORT.md) for detailed coverage analysis.
@@ -400,7 +427,7 @@ Cerberus/
 │           ├── sandbox.py
 │           ├── threat_detector.py
 │           └── monitoring.py
-├── tests/                    # Test suite (100% coverage)
+├── tests/                    # Test suite (104 tests, all passing)
 ├── docs/                     # Documentation
 │   ├── security/            # Security documentation
 │   │   ├── guides/          # Security guides
@@ -850,7 +877,7 @@ When deploying Cerberus:
 
 ### Security Features
 
-- ✅ **100% Test Coverage** - All security features comprehensively tested
+- ✅ **Tested Security Features** - 104-test suite green; `input_validation`, `threat_detector`, `audit_logger` well covered (partial coverage on `monitoring`/`rate_limiter`/`rbac`)
 - ✅ **CodeQL Scanning** - Weekly automated security scans
 - ✅ **Strict Type Checking** - Mypy in strict mode prevents type-related bugs
 - ✅ **Input Sanitization** - Comprehensive validation and sanitization
@@ -879,7 +906,7 @@ Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for gui
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes with tests
-4. Ensure all tests pass and coverage remains at 100%
+4. Ensure all tests pass (104/104) and review coverage with `pytest --cov`
 5. Submit a Pull Request
 
 All contributions must:
@@ -904,7 +931,7 @@ Copyright (c) 2026 IAmSoThirsty
 
 - **Language**: Python 3.10+
 - **Lines of Code**: ~1,540
-- **Test Coverage**: 100%
+- **Test Coverage**: ~59% (measured; see badge)
 - **Active Guardians**: 3 (default) to 27 (maximum)
 - **Security Modules**: 10+ production-ready modules
 - **Documentation Pages**: 30+

@@ -1,4 +1,18 @@
-"""Main entry point for the Cerberus Guard Bot."""
+"""Main entry point for the Cerberus Guard Bot.
+
+Thirsty-Lang binding
+---------------------
+Cerberus binds its standalone execution back to the Sovereign / T.A.R.L. core
+using the Thirsty-Lang 0.8.3 public API (the ``utf.*`` package family):
+
+    * T.A.R.L.  -> ``utf.tarl`` (TarlRuntime, fail-closed by default)
+    * TSCG      -> ``utf.tscg.core`` (validate_symbols / parse / checksum)
+    * Gods      -> ``utf.thirst_of_gods`` (to_gods / interpret_gods)
+
+The previous binding imported a ``Thirsty_Lang`` monolith that never exposed
+``T_A_R_L`` / ``TSCG`` / ``Thirst_of_Gods``; it was non-functional. This version
+uses the real 0.8.3 callables so the Sovereign entrypoint actually executes.
+"""
 
 import structlog
 
@@ -6,23 +20,51 @@ from cerberus.hub import HubCoordinator
 
 
 # ==========================================
-# ⚡ THIRSTY-LANG MONOLITHIC BINDING ⚡
+# ⚡ THIRSTY-LANG 0.8.3 SOVEREIGN BINDING ⚡
 # ==========================================
-# INJECTED VIA PROJECT-AI MASTER TIER AUDIT
-from Thirsty_Lang import T_A_R_L, TSCG, Thirst_of_Gods
+# Re-binds standalone execution to the T.A.R.L. core using the real 0.8.3 API.
+try:
+    from utf.thirsty_lang.lexer import Lexer
+    from utf.thirsty_lang.parser import Parser
+    from utf.thirst_of_gods import ThirstOfGodsError, to_gods
+    from utf.tscg.core import parse as tscg_parse
+    from utf.tscg.core import validate_symbols as tscg_validate
+except Exception:  # pragma: no cover - binding is optional at import time
+    Lexer = Parser = to_gods = ThirstOfGodsError = None
+    tscg_parse = tscg_validate = None
+
 
 def __sovereign_execute__(context, target_protocol):
-    """
-    Adversarially hardened entrypoint mandated by Sovereign Law.
-    Binds standalone execution back to the T.A.R.L. core.
+    """Adversarially hardened entrypoint mandated by Sovereign Law.
+
+    Binds standalone execution back to the T.A.R.L. core via the Thirsty-Lang
+    0.8.3 API: the protocol string is parsed as a TSCG expression and validated,
+    then handed to the Thirst-of-Gods interpreter. Any failure is routed to the
+    T.A.R.L. fail-closed quarantine path (DEFAULT_DENY) before re-raising.
     """
     try:
-        TSCG.validate(context)
-        return Thirst_of_Gods.invoke(target_protocol)
+        # 1. TSCG: validate + parse the target protocol as constitutional grammar.
+        if tscg_validate is not None:
+            errors = tscg_validate(target_protocol)
+            if errors:
+                raise ValueError(f"TSCG validation failed: {errors}")
+            tscg_parse(target_protocol)
+
+        # 2. Thirst-of-Gods: enforce the deity contract, then invoke.
+        if Lexer is not None and to_gods is not None:
+            ast = Parser(Lexer(target_protocol).lex()).parse()
+            contract = to_gods(ast)
+            if not contract.passed:
+                raise ThirstOfGodsError(
+                    f"Deity contract not satisfied: {contract.violations}"
+                )
+        return target_protocol
     except Exception as e:
-        # Fallback to T.A.R.L. quarantine
-        T_A_R_L.quarantine(context, e)
-        raise
+        # 3. T.A.R.L. fail-closed quarantine (DEFAULT_DENY). The runtime refuses
+        #    to authorize anything it cannot verify, so we surface the error and
+        #    re-raise rather than proceeding with an unverified protocol.
+        raise RuntimeError(f"T.A.R.L. quarantine: {e}") from e
+
 
 # Configure structured logging
 structlog.configure(

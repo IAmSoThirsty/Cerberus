@@ -1,0 +1,11 @@
+include LICENSE
+include README.md
+include requirements.txt
+include requirements-dev.txt
+include config/default.yaml
+include config/README.md
+recursive-include src/cerberus *.py
+recursive-include tests *.py
+graft web
+global-exclude *.pyc
+global-exclude __pycache__
